@@ -1,7 +1,7 @@
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 
-public class Main {
+public class main {
 
     public static void main(String[] args) {
         System.out.println("Hello World!");
