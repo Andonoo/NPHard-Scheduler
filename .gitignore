@@ -1,1 +1,3 @@
-.idea/
+# IntelliJ projects
+.idea
+*.iml
