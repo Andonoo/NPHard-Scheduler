@@ -13,6 +13,10 @@ public class Processor {
 
     }
 
+    public void predictTime() {
+
+    }
+
     public void scheduleTask() {
 
     }
