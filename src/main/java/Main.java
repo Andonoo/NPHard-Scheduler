@@ -1,9 +1,11 @@
 import java.util.ArrayList;
+import java.io.File;
 
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("hello world!");
+        File file = new File("./example-dot-files/example1.dot");
+        GraphCreator graphCreator = new GraphCreator(file);
     }
 
     /*
