@@ -1,20 +1,20 @@
 public class SolutionNode {
 
-    private String taskID;
-    private int processor;
-    private SolutionNode next;
+    private String _taskID;
+    private int _processor;
+    private SolutionNode _next;
 
     SolutionNode(String taskID, int processor, SolutionNode next) {
-        this.taskID = taskID;
-        this.processor = processor;
-        this.next = next;
+        _taskID = taskID;
+        _processor = processor;
+        _next = next;
     }
 
     public void setProcessor(int nextProcessor) {
-        processor = nextProcessor;
+        _processor = nextProcessor;
     }
 
     public void setNext(SolutionNode nextNode) {
-        next = nextNode;
+        _next = nextNode;
     }
 }

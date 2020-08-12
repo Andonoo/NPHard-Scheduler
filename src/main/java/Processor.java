@@ -2,19 +2,15 @@ import java.util.ArrayList;
 
 public class Processor {
 
-    private int currentTime = 0;
-    private ArrayList<SolutionNode> currentTasks;
+    private int _currentTime = 0;
+    private ArrayList<SolutionNode> _currentTasks;
 
     Processor() {
 
     }
 
     public int getCurrentTime() {
-        return currentTime;
-    }
-
-    public void predictTime(/* Node */) {
-
+        return _currentTime;
     }
 
     public SolutionNode scheduleTask() {

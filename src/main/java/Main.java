@@ -75,7 +75,7 @@ public class Main {
         For d' in d
             Find SolutionNode x that has d'
             If !p.hasTask(d')
-                startTime = max{startTime, x.processor + w(d', v)
+                startTime = max{startTime, x.processor.currentTime + w(d', v)}
          */
     }
 
