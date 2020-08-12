@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
+import org.graphstream.ui.view.Viewer;
 
 public class GraphCreator {
 
@@ -27,13 +28,46 @@ public class GraphCreator {
         }
     }
 
-    public void addToGraph(String inputLine) {
-
-
-
-        System.out.println(inputLine);
-        if (inputLine.contains("->")) {
-            // handle edges
+    public void displayGraphStats(String type) {
+        if (type.equals("Nodes")) {
+            System.out.println("Showing weights for nodes....\n");
+            for(Node n:_graph) {
+                n.addAttribute("ui.label", n.getId());
+                System.out.println("Node id: " + n.getId() + " Weight: " + n.getAttribute("Weight"));
+            }
+        } else if (type.equals("Edges")) {
+            System.out.println("Showing weights for nodes....\n");
+            for(Edge e:_graph.getEdgeSet()) {
+                System.out.println("Edge id: " + e.getId() + " Weight: " + e.getAttribute("Weight"));
+            }
         }
+    }
+
+    private void addToGraph(String inputLine) {
+
+        //NOTE: format of .dot file consistent or no? ask Oliver
+        String nonWeightInfo = inputLine.replaceAll("\\s", "").split("\\[")[0];
+        String weight = inputLine.replaceAll("\\D+","");
+
+        if (inputLine.contains(">")) {
+            // handle edges
+            //a −> b [Weight=1];
+            //[a, b, weight];
+            String[] nodeNames = nonWeightInfo.split("\\−\\>");
+            _graph.addEdge(nodeNames[0] + nodeNames[1], nodeNames[0], nodeNames[1]);
+            Edge edge = _graph.getEdge(nodeNames[0] + nodeNames[1]);
+            edge.setAttribute("Weight", Integer.parseInt(weight));
+        } else {
+            //a [Weight=2];
+            //[a, weight]
+
+            _graph.addNode(nonWeightInfo);
+            Node node = _graph.getNode(nonWeightInfo);
+            node.setAttribute("Weight", Integer.parseInt(weight));
+        }
+    }
+
+    public void showGraph() {
+        _graph.display();
     }
 }
