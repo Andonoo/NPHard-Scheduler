@@ -6,6 +6,9 @@ public class Main {
     public static void main(String[] args) {
         File file = new File("./example-dot-files/example1.dot");
         GraphCreator graphCreator = new GraphCreator(file);
+        graphCreator.showGraph();
+        graphCreator.displayGraphStats("Nodes");
+        graphCreator.displayGraphStats("Edges");
     }
 
     /*
