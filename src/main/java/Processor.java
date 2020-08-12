@@ -9,16 +9,17 @@ public class Processor {
 
     }
 
-    public void getCurrentTime() {
+    public int getCurrentTime() {
+        return currentTime;
+    }
+
+    public void predictTime(/* Node */) {
 
     }
 
-    public void predictTime() {
+    public SolutionNode scheduleTask() {
 
-    }
-
-    public void scheduleTask() {
-
+        return null;
     }
 
 }

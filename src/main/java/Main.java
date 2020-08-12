@@ -16,13 +16,13 @@ public class Main {
     /*
     executeAlgorithm() will return a valid schedule
      */
-    public ArrayList<?> executeAlgorithm(/* Graph G */) {
+    public ArrayList<SolutionNode> executeAlgorithm(/* Graph G */) {
 
         /*
         Let D be an adjacency list where D{V} is the dependencies of V
         sortTopologically(G);
         For all v in V
-            scheduleByGreedy(v);
+            Add output of scheduleByGreedy(v) to ArrayList
          */
 
         return null;
@@ -48,7 +48,7 @@ public class Main {
     /*
     selectByGreedy will schedule a task based on the greedy heuristic: Earliest Start Time
      */
-    public void scheduleByGreedy(/* Node v */) {
+    public SolutionNode scheduleByGreedy(/* Node v */) {
 
         /*
         Let P = {Processor one, Processor two, Processor three ...}
@@ -56,8 +56,10 @@ public class Main {
         For p in P
             If calculateStartTime(p, v) < calculateStartTime(earliest, v)
                 earliest = p;
-        earliest.scheduleTask(v);
+        return earliest.scheduleTask(v);
          */
+
+        return null;
 
 
     }
