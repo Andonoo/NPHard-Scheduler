@@ -5,10 +5,6 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
-<<<<<<< HEAD
-=======
-import org.graphstream.ui.view.Viewer;
->>>>>>> 0c140dbe3e0b1349665235e0a486f8a842b8d7c3
 
 public class GraphCreator {
 
@@ -56,11 +52,7 @@ public class GraphCreator {
             // handle edges
             //a −> b [Weight=1];
             //[a, b, weight];
-<<<<<<< HEAD
             String[] nodeNames = nonWeightInfo.split("\\-\\>");
-=======
-            String[] nodeNames = nonWeightInfo.split("\\−\\>");
->>>>>>> 0c140dbe3e0b1349665235e0a486f8a842b8d7c3
             _graph.addEdge(nodeNames[0] + nodeNames[1], nodeNames[0], nodeNames[1]);
             Edge edge = _graph.getEdge(nodeNames[0] + nodeNames[1]);
             edge.setAttribute("Weight", Integer.parseInt(weight));
@@ -73,13 +65,7 @@ public class GraphCreator {
             node.setAttribute("Weight", Integer.parseInt(weight));
         }
     }
-
-<<<<<<< HEAD
     public Graph getGraph() {
         return _graph;
-=======
-    public void showGraph() {
-        _graph.display();
->>>>>>> 0c140dbe3e0b1349665235e0a486f8a842b8d7c3
     }
 }
