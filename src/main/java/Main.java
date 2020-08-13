@@ -45,17 +45,64 @@ public class Main {
     /**
      * executeAlgorithm() will return a valid schedule
      */
-    public static ArrayList<SolutionNode> executeAlgorithm(Graph g, int numProcessors) {
-        /*
-        Let D be an adjacency list where D{V} is the dependencies of V
-        sortTopologically(G);
-        For all v in V
-            Add output of scheduleByGreedy(v) to ArrayList
-         */
-
+    public static List<Node>[] executeAlgorithm(Graph g, int numProcessors) {
         Node[] nodes = sortTopologically(g);
 
-        return null;
+        return scheduleByGreedy(nodes, numProcessors);
+    }
+
+    /**
+     * scheduleByGreedy will schedule a task based on the greedy heuristic: Earliest Start Time.
+     * This depends on the input nodes being on a valid topoligical order
+     */
+    public static List<Node>[] scheduleByGreedy(Node[] tasks, int numProcessors) {
+        // Initializing a schedule for each processor
+        List<Node>[] processorSchedules = new ArrayList[numProcessors];
+        for (int i = 0; i < numProcessors; i++) {
+            processorSchedules[i] = new ArrayList<Node>();
+        }
+
+        // Scheduling each task on earliest available processor heuristic
+        List<Node> currentEarliestFreeProcessor = processorSchedules[0];
+        for (Node task: tasks) {
+            boolean foundFreeProcessor = false;
+            int i = 0;
+            // Checking each processor to determine earliest availability
+            while(!foundFreeProcessor && i < processorSchedules.length) {
+                List<Node> p = processorSchedules[i];
+                // Set to break after finding free processor
+                if (p.size() == 0) {
+                    foundFreeProcessor = true;
+                }
+                // Determine if this processor can schedule the task earlier
+                if (startTime(p, task) < startTime(currentEarliestFreeProcessor, task)) {
+                    currentEarliestFreeProcessor = p;
+                }
+            }
+
+            // Scheduling task to the earliest available processor
+            task.addAttribute("Processor", currentEarliestFreeProcessor);
+            currentEarliestFreeProcessor.add(task);
+        }
+
+        return processorSchedules;
+    }
+
+    /**
+     * startTime() will return the earliest possible scheduling of task in a specified processor
+     */
+    public static int startTime(List<Node> processor, Node task) {
+
+        /*
+        Let d = D(v)
+        int startTime = p.getCurrentTime();
+        For d' in d
+            Find SolutionNode x that has d'
+            If !p.hasTask(d')
+                startTime = max{startTime, x.processor.currentTime + w(d', v)}
+         */
+
+        return -1;
     }
 
     /**
@@ -81,9 +128,7 @@ public class Main {
             topOrder[orderIndex] = n;
             orderIndex++;
 
-            /*
-                Remove the edges leaving our selected node and update our set of noIncomingEdges
-             */
+            // Remove the edges leaving our selected node and update our set of noIncomingEdges
             Collection<Edge> removedEdges = new HashSet<Edge>();
             for (Edge e: n.getLeavingEdgeSet()) {
                 if (e.getTargetNode().getInDegree() == 1) {
@@ -100,40 +145,6 @@ public class Main {
         }
 
         return topOrder;
-    }
-
-    /**
-     * selectByGreedy will schedule a task based on the greedy heuristic: Earliest Start Time
-     */
-    public SolutionNode scheduleByGreedy(/* Node v */) {
-
-        /*
-        Let P = {Processor one, Processor two, Processor three ...}
-        Processor earliest = one;
-        For p in P
-            If calculateStartTime(p, v) < calculateStartTime(earliest, v)
-                earliest = p;
-        return earliest.scheduleTask(v);
-         */
-
-        return null;
-
-
-    }
-
-    /**
-     * calculateStartTime() will return the earliest possible scheduling of task in a specified processor
-     */
-    public void calculateStartTime(/* Processor p, Node v */) {
-
-        /*
-        Let d = D(v)
-        int startTime = p.getCurrentTime();
-        For d' in d
-            Find SolutionNode x that has d'
-            If !p.hasTask(d')
-                startTime = max{startTime, x.processor.currentTime + w(d', v)}
-         */
     }
 
     /**
