@@ -55,8 +55,6 @@ public class Main {
 
         Node[] nodes = sortTopologically(g);
 
-
-
         return null;
     }
 
