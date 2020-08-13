@@ -1,21 +1,39 @@
+import org.graphstream.graph.Graph;
+
 import java.util.ArrayList;
 import java.io.File;
+import java.util.List;
 
 public class Main {
 
+    private static List<String> _options = new ArrayList<String>();
+    private static String _filename;
+    private static int _numProcessors;
+    private static Graph _graph;
+
     public static void main(String[] args) {
-        File file = new File("./example-dot-files/example1.dot");
-        GraphCreator graphCreator = new GraphCreator(file);
-        graphCreator.showGraph();
-        graphCreator.displayGraphStats("Nodes");
-        graphCreator.displayGraphStats("Edges");
+        parseInput(args);
     }
 
     /*
-    parseInput() will utilise the dot file inputted by the user and parse it to a usable object using GraphStream
+    createGraph() will utilise the dot file inputted by the user and parse it to a usable object using GraphStream
      */
-    public void parseInput() {
-
+    public static void parseInput(String[] input) {
+        _filename = input[0];
+        _numProcessors = Integer.parseInt(input[1]);
+        if (input.length > 2) {
+            for (int i = 2; i < input.length; i++) {
+                _options.add(input[i]);
+            }
+        }
+        System.out.println("Number of processors: " + _numProcessors);
+        GraphCreator graphCreator = new GraphCreator(new File(_filename)); // ./example-dot-files/example1.dot
+        _graph = graphCreator.getGraph();
+        if (_options.contains("-v")) {
+            _graph.display();
+        }
+        graphCreator.displayGraphStats("Nodes");
+        graphCreator.displayGraphStats("Edges");
     }
 
     /*
