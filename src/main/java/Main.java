@@ -42,10 +42,10 @@ public class Main {
         graphCreator.displayGraphStats("Edges");
     }
 
-    /*
-    executeAlgorithm() will return a valid schedule
+    /**
+     * executeAlgorithm() will return a valid schedule
      */
-    public ArrayList<SolutionNode> executeAlgorithm(Graph g) {
+    public static ArrayList<SolutionNode> executeAlgorithm(Graph g, int numProcessors) {
         /*
         Let D be an adjacency list where D{V} is the dependencies of V
         sortTopologically(G);
@@ -53,11 +53,15 @@ public class Main {
             Add output of scheduleByGreedy(v) to ArrayList
          */
 
+        Node[] nodes = sortTopologically(g);
+
+
+
         return null;
     }
 
-    /*
-        sortTopologically() will return a topological ordering of the vertices in Graph G using Kahn's algorithm
+    /**
+     * sortTopologically() will return a topological ordering of the vertices in Graph G using Kahn's algorithm
      */
     public static Node[] sortTopologically(Graph g) {
         Graph graphToDestruct = Graphs.clone(g);
@@ -73,11 +77,15 @@ public class Main {
             }
         }
 
+        // While we still have nodes with no incoming edges, remove one and add to the topological order
         while (!noIncomingEdges.isEmpty()) {
             Node n = noIncomingEdges.iterator().next();
             topOrder[orderIndex] = n;
             orderIndex++;
 
+            /*
+                Remove the edges leaving our selected node and update our set of noIncomingEdges
+             */
             Collection<Edge> removedEdges = new HashSet<Edge>();
             for (Edge e: n.getLeavingEdgeSet()) {
                 if (e.getTargetNode().getInDegree() == 1) {
@@ -85,17 +93,19 @@ public class Main {
                 }
                 removedEdges.add(e);
             }
-            noIncomingEdges.remove(n);
             for (Edge e: removedEdges) {
                 n.getGraph().removeEdge(e);
             }
+
+            // Remove our node from the set of noIncomingEdges
+            noIncomingEdges.remove(n);
         }
 
         return topOrder;
     }
 
-    /*
-    selectByGreedy will schedule a task based on the greedy heuristic: Earliest Start Time
+    /**
+     * selectByGreedy will schedule a task based on the greedy heuristic: Earliest Start Time
      */
     public SolutionNode scheduleByGreedy(/* Node v */) {
 
@@ -113,8 +123,8 @@ public class Main {
 
     }
 
-    /*
-    calculateStartTime() will return the earliest possible scheduling of task in a specified processor
+    /**
+     * calculateStartTime() will return the earliest possible scheduling of task in a specified processor
      */
     public void calculateStartTime(/* Processor p, Node v */) {
 
@@ -128,8 +138,8 @@ public class Main {
          */
     }
 
-    /*
-    printOutput() will read the valid array of SolutionNodes and parse it into the dot output file
+    /**
+     * printOutput() will read the valid array of SolutionNodes and parse it into the dot output file
      */
     public void printOutput() {
 
