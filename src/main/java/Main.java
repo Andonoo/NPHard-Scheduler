@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.io.File;
 import java.util.List;
 
+import java.io.File;
+import java.util.*;
+
+import org.graphstream.graph.implementations.*;
+import org.graphstream.graph.*;
 
 public class Main {
 
@@ -40,8 +45,7 @@ public class Main {
     /*
     executeAlgorithm() will return a valid schedule
      */
-    public ArrayList<SolutionNode> executeAlgorithm(/* Graph G */) {
-
+    public ArrayList<SolutionNode> executeAlgorithm(Graph g) {
         /*
         Let D be an adjacency list where D{V} is the dependencies of V
         sortTopologically(G);
@@ -53,20 +57,41 @@ public class Main {
     }
 
     /*
-    sortTopologically() will return a topological ordering of the vertices in Graph G
+        sortTopologically() will return a topological ordering of the vertices in Graph G using Kahn's algorithm
      */
-    public ArrayList<?> sortTopologically(/* Graph G */) {
+    public static Node[] sortTopologically(Graph g) {
+        Graph graphToDestruct = Graphs.clone(g);
 
-        /*
-        Let topOrder be an array of vertices/nodes
-        While V is not empty
-            Find a vertex v in V with no outgoing edges
-            Pop v from V
-            Add v to topological order
-        Reverse topOrder
-         */
+        Node[] topOrder = new Node[graphToDestruct.getNodeSet().size()];
+        int orderIndex = 0;
 
-        return null;
+        // Initializing set containing nodes with no incoming edges
+        Set<Node> noIncomingEdges = new HashSet<Node>();
+        for (Node n: graphToDestruct.getNodeSet()) {
+            if(n.getInDegree() == 0) {
+                noIncomingEdges.add(n);
+            }
+        }
+
+        while (!noIncomingEdges.isEmpty()) {
+            Node n = noIncomingEdges.iterator().next();
+            topOrder[orderIndex] = n;
+            orderIndex++;
+
+            Collection<Edge> removedEdges = new HashSet<Edge>();
+            for (Edge e: n.getLeavingEdgeSet()) {
+                if (e.getTargetNode().getInDegree() == 1) {
+                    noIncomingEdges.add(e.getTargetNode());
+                }
+                removedEdges.add(e);
+            }
+            noIncomingEdges.remove(n);
+            for (Edge e: removedEdges) {
+                n.getGraph().removeEdge(e);
+            }
+        }
+
+        return topOrder;
     }
 
     /*
