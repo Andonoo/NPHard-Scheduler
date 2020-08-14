@@ -64,6 +64,8 @@ public class Main {
 
         // Scheduling each task on earliest available processor heuristic
         List<Node> currentEarliestFreeProcessor = processorSchedules[0];
+        int earliestStartTime = 0;
+
         for (Node task: tasks) {
             boolean foundFreeProcessor = false;
             int i = 0;
@@ -76,13 +78,17 @@ public class Main {
                     foundFreeProcessor = true;
                 }
                 // Determine if this processor can schedule the task earlier
-                if (startTime(p, task) < startTime(currentEarliestFreeProcessor, task)) {
+                int startTimeOfferedByP = startTime(p, task);
+                if (startTimeOfferedByP < earliestStartTime) {
                     currentEarliestFreeProcessor = p;
+                    earliestStartTime = startTimeOfferedByP;
                 }
             }
 
             // Scheduling task to the earliest available processor
             task.addAttribute("Processor", currentEarliestFreeProcessor);
+            task.addAttribute("startTime", earliestStartTime);
+            task.addAttribute("endTime", earliestStartTime + (Integer)task.getAttribute("Weight"));
             currentEarliestFreeProcessor.add(task);
         }
 
@@ -93,17 +99,23 @@ public class Main {
      * startTime() will return the earliest possible scheduling of task in a specified processor
      */
     public static int startTime(List<Node> processor, Node task) {
+        Collection<Edge> dependencies = task.getEnteringEdgeSet();
+        List<Node> dependencyTasks = new ArrayList<Node>();
 
-        /*
-        Let d = D(v)
-        int startTime = p.getCurrentTime();
-        For d' in d
-            Find SolutionNode x that has d'
-            If !p.hasTask(d')
-                startTime = max{startTime, x.processor.currentTime + w(d', v)}
-         */
+        for (Edge e: dependencies) {
+            dependencyTasks.add(e.getSourceNode());
+        }
 
-        return -1;
+        Integer currentProcFinishTime = processor.size() > 0 ? (Integer)processor.get(processor.size()-1).getAttribute("endTime") : 0;
+        int earliestStartOnP = currentProcFinishTime == null ? 0 : currentProcFinishTime;
+
+        for (Node d: dependencyTasks) {
+            if (!d.getAttribute("Processor").equals(task.getAttribute("Processor"))) {
+                earliestStartOnP = Math.max(earliestStartOnP, (Integer)d.getAttribute("endTime") + d.<Integer>getAttribute("Weight"));
+            }
+        }
+
+        return earliestStartOnP;
     }
 
     /**
@@ -112,7 +124,7 @@ public class Main {
     public static Node[] sortTopologically(Graph g) {
         Graph graphToDestruct = Graphs.clone(g);
 
-        Node[] topOrder = new Node[graphToDestruct.getNodeSet().size()];
+        String[] topOrder = new String[graphToDestruct.getNodeSet().size()];
         int orderIndex = 0;
 
         // Initializing set containing nodes with no incoming edges
@@ -126,7 +138,7 @@ public class Main {
         // While we still have nodes with no incoming edges, remove one and add to the topological order
         while (!noIncomingEdges.isEmpty()) {
             Node n = noIncomingEdges.iterator().next();
-            topOrder[orderIndex] = n;
+            topOrder[orderIndex] = n.getId();
             orderIndex++;
 
             // Remove the edges leaving our selected node and update our set of noIncomingEdges
@@ -145,7 +157,15 @@ public class Main {
             noIncomingEdges.remove(n);
         }
 
-        return topOrder;
+        // Converting string representation of topological order to references of the nodes from our intact graph
+        Node[] topOrderedNodes = new Node[topOrder.length];
+        int i = 0;
+        for (String node: topOrder) {
+            topOrderedNodes[i] = g.getNode(node);
+            i++;
+        }
+
+        return topOrderedNodes;
     }
 
     /**
