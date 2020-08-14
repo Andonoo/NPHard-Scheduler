@@ -70,6 +70,7 @@ public class Main {
             // Checking each processor to determine earliest availability
             while(!foundFreeProcessor && i < processorSchedules.length) {
                 List<Node> p = processorSchedules[i];
+                i++;
                 // Set to break after finding free processor
                 if (p.size() == 0) {
                     foundFreeProcessor = true;
