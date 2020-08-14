@@ -46,7 +46,7 @@ public class GraphCreator {
 
         //NOTE: format of .dot file consistent or no? ask Oliver
         String nonWeightInfo = inputLine.replaceAll("\\s", "").split("\\[")[0];
-        String weight = inputLine.replaceAll("\\D+","");
+        int weight = Integer.parseInt(inputLine.replaceAll("\\D+",""));
 
         if (inputLine.contains(">")) {
             // handle edges
@@ -55,14 +55,14 @@ public class GraphCreator {
             String[] nodeNames = nonWeightInfo.split("\\-\\>");
             _graph.addEdge(nodeNames[0] + nodeNames[1], nodeNames[0], nodeNames[1]);
             Edge edge = _graph.getEdge(nodeNames[0] + nodeNames[1]);
-            edge.setAttribute("Weight", Integer.parseInt(weight));
+            edge.setAttribute("Weight", weight);
         } else {
             //a [Weight=2];
             //[a, weight]
 
             _graph.addNode(nonWeightInfo);
             Node node = _graph.getNode(nonWeightInfo);
-            node.setAttribute("Weight", Integer.parseInt(weight));
+            node.setAttribute("Weight", weight);
         }
     }
     public Graph getGraph() {
