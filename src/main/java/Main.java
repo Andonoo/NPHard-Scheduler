@@ -32,13 +32,16 @@ public class Main {
             }
         }
         System.out.println("Number of processors: " + _numProcessors);
-        GraphCreator graphCreator = new GraphCreator(new File(_filename)); // ./example-dot-files/example1.dot
-        _graph = graphCreator.getGraph();
+        FileParser parser = new FileParser(_filename);
+        _graph = parser.getGraph();
+
+//        GraphCreator graphCreator = new GraphCreator(new File(_filename)); // ./example-dot-files/example1.dot
+//        _graph = graphCreator.getGraph();
         if (_options.contains("-v")) {
             _graph.display();
         }
-        graphCreator.displayGraphStats("Nodes");
-        graphCreator.displayGraphStats("Edges");
+//        graphCreator.displayGraphStats("Nodes");
+//        graphCreator.displayGraphStats("Edges");
     }
 
     /**
