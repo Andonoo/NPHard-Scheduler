@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.io.File;
 import java.util.List;
 
-import java.io.File;
 import java.util.*;
 
 import org.graphstream.graph.implementations.*;
 import org.graphstream.graph.*;
 
 public class Main {
-
     private static List<String> _options = new ArrayList<String>();
     private static String _filename;
     private static int _numProcessors;
@@ -19,6 +17,7 @@ public class Main {
 
     public static void main(String[] args) {
         parseInput(args);
+        executeAlgorithm(_graph, _numProcessors);
     }
 
     /*
@@ -63,10 +62,12 @@ public class Main {
         }
 
         // Scheduling each task on earliest available processor heuristic
-        List<Node> currentEarliestFreeProcessor = processorSchedules[0];
-        int earliestStartTime = 0;
-
+        List<Node> currentEarliestFreeProcessor;
+        int earliestStartTime;
         for (Node task: tasks) {
+            currentEarliestFreeProcessor = processorSchedules[0];
+            earliestStartTime = startTime(processorSchedules[0], task);
+
             boolean foundFreeProcessor = false;
             int i = 0;
             // Checking each processor to determine earliest availability
@@ -100,18 +101,14 @@ public class Main {
      */
     public static int startTime(List<Node> processor, Node task) {
         Collection<Edge> dependencies = task.getEnteringEdgeSet();
-        List<Node> dependencyTasks = new ArrayList<Node>();
-
-        for (Edge e: dependencies) {
-            dependencyTasks.add(e.getSourceNode());
-        }
 
         Integer currentProcFinishTime = processor.size() > 0 ? (Integer)processor.get(processor.size()-1).getAttribute("endTime") : 0;
         int earliestStartOnP = currentProcFinishTime == null ? 0 : currentProcFinishTime;
 
-        for (Node d: dependencyTasks) {
-            if (!d.getAttribute("Processor").equals(task.getAttribute("Processor"))) {
-                earliestStartOnP = Math.max(earliestStartOnP, (Integer)d.getAttribute("endTime") + d.<Integer>getAttribute("Weight"));
+        for (Edge d: dependencies) {
+            Node dependencyTask = d.getSourceNode();
+            if (!dependencyTask.getAttribute("Processor").equals(processor)) {
+                earliestStartOnP = Math.max(earliestStartOnP, (Integer)dependencyTask.getAttribute("endTime") + d.<Integer>getAttribute("Weight"));
             }
         }
 

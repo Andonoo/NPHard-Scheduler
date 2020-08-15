@@ -53,7 +53,7 @@ public class GraphCreator {
             //a −> b [Weight=1];
             //[a, b, weight];
             String[] nodeNames = nonWeightInfo.split("\\-\\>");
-            _graph.addEdge(nodeNames[0] + nodeNames[1], nodeNames[0], nodeNames[1]);
+            _graph.addEdge(nodeNames[0] + nodeNames[1], nodeNames[0], nodeNames[1], true);
             Edge edge = _graph.getEdge(nodeNames[0] + nodeNames[1]);
             edge.setAttribute("Weight", weight);
         } else {
