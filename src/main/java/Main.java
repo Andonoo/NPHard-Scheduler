@@ -1,4 +1,6 @@
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 
 import java.util.ArrayList;
 import java.io.File;
@@ -34,10 +36,22 @@ public class Main {
         System.out.println("Number of processors: " + _numProcessors);
         FileParser parser = new FileParser(_filename);
         _graph = parser.getGraph();
+        printOutput(parser);
 
 //        GraphCreator graphCreator = new GraphCreator(new File(_filename)); // ./example-dot-files/example1.dot
 //        _graph = graphCreator.getGraph();
         if (_options.contains("-v")) {
+            System.out.println(_graph.getNodeCount());
+            System.out.println("Displaying data...");
+            for (Node n : _graph) {
+                System.out.println(n.getId());
+                n.addAttribute("ui.label", n.getId());
+                System.out.println("Node id: " + n.getId() + " Weight: " + ((Double) n.getAttribute("Weight")).intValue());
+            }
+            for (Edge e : _graph.getEdgeSet()) {
+                System.out.println(e.getId());
+                System.out.println("Edge id: " + e.getId() + " Weight: " + ((Double) e.getAttribute("Weight")).intValue());
+            }
             _graph.display();
         }
 //        graphCreator.displayGraphStats("Nodes");
@@ -173,7 +187,9 @@ public class Main {
     /**
      * printOutput() will read the valid array of SolutionNodes and parse it into the dot output file
      */
-    public void printOutput() {
-
+    public static void printOutput(FileParser parser) {
+        int fileEndingIndex = _filename.indexOf(".dot");
+        String outputName = _filename.substring(0, fileEndingIndex) + "-output.dot";
+        parser.createOutputFile(null, outputName, _graph);
     }
 }

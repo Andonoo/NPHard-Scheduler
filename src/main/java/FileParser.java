@@ -22,21 +22,10 @@ public class FileParser {
         try {
             fs.addSink(_graph);
             fs.readAll(_fileName);
-        } catch( IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             fs.removeSink(_graph);
-        }
-        System.out.println(_graph.getNodeCount());
-        System.out.println("Displaying data...");
-        for(Node n:_graph) {
-            System.out.println(n.getId());
-            n.addAttribute("ui.label", n.getId());
-            System.out.println("Node id: " + n.getId() + " Weight: " + n.getAttribute("Weight"));
-        }
-        for(Edge e:_graph.getEdgeSet()) {
-            System.out.println(e.getId());
-            System.out.println("Edge id: " + e.getId() + " Weight: " + e.getAttribute("Weight"));
         }
     }
 
@@ -44,16 +33,19 @@ public class FileParser {
         return _graph;
     }
 
-    public void createOutputFile(List<Node>[] schedule, String outputName) {
-//        for (List<Node> processor: schedule) {
-//            for (Node)
-//        }
+    public void createOutputFile(List<Node>[] schedule, String outputName, Graph graph) {
+
+        for (Node n : graph) {
+            n.changeAttribute("Weight", ((Double) n.getAttribute("Weight")).intValue());
+        }
+        for (Edge e : graph.getEdgeSet()) {
+            e.changeAttribute("Weight", ((Double) e.getAttribute("Weight")).intValue());
+        }
         FileSink file = new FileSinkDOT(true);
         try {
-            file.writeAll(_graph, outputName);
+            file.writeAll(graph, outputName);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
