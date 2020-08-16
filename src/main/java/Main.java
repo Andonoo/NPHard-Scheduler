@@ -51,7 +51,7 @@ public class Main {
 
     /**
      * scheduleByGreedy will schedule a task based on the greedy heuristic: Earliest Start Time.
-     * This depends on the input nodes being on a valid topoligical order
+     * This depends on the input nodes being on a valid topological order
      */
     public static void scheduleByGreedy(Node[] tasks, int numProcessors) {
         // Initializing a schedule for each processor
