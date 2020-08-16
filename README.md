@@ -4,13 +4,13 @@ different processors whilst minimising the execution time of the program.
 
 ## Implementation technologies
 
-**Programming language🌏🛬**  
+**Programming language 🌏🛬**  
 This project is implemented in **Java** (compatible with Java 1.8)
 
-**OS🐧🔍**  
+**OS 🐧🔍**  
 The targeted OS is Linux but also works under Windows.  
 
-**Input📥**  
+**Input 📥**  
 The input is a graph and the number of processors on which to schedule the graph as command
 line parameters.  The graph is in dot format (.dot).  
 e.g 
@@ -27,7 +27,7 @@ digraph "example" {
 }
 ```
 
-**Output🚪**  
+**Output 🚪**  
 Output file is in dot format (.dot). It is essentially a copy of the input with two added 
 attributes to each task: start time and allocated processor.  
 e.g
