@@ -99,11 +99,15 @@ public class Main {
     public static int startTime(List<Node> processor, Node task) {
         Collection<Edge> dependencies = task.getEnteringEdgeSet();
 
+        // Determining the time at which this processor will be free
         Integer currentProcFinishTime = processor.size() > 0 ? (Integer)processor.get(processor.size()-1).getAttribute("endTime") : 0;
         int earliestStartOnP = currentProcFinishTime == null ? 0 : currentProcFinishTime;
 
+        /* For each dependency task, check whether this processor will have to wait for data to arrive - in which case the earliest
+        potential scheduling on this processor may increase */
         for (Edge d: dependencies) {
             Node dependencyTask = d.getSourceNode();
+            // Checking if dependency is scheduled on another processor
             if (!dependencyTask.getAttribute("Processor").equals(processor)) {
                 earliestStartOnP = Math.max(earliestStartOnP, (Integer)dependencyTask.getAttribute("endTime") + d.<Integer>getAttribute("Weight"));
             }
