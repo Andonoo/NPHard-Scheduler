@@ -5,9 +5,9 @@ Here you will find documentation for this project. Instructions on how to run th
 in the [README](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/README.md).
 ___
 **Wiki Links:**
-+ Project Management
-+ Milestone 1
-+ Milestone 2
++ [Project Management](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/ProjectManagement.md)
++ [Milestone 1](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Milestone1.md)
++ [Milestone 2](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Milestone2.md)
 
 
 ___
