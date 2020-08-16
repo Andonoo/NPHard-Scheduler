@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.io.File;
 import java.util.List;
 
+import java.util.*;
+
+import org.graphstream.graph.implementations.*;
+import org.graphstream.graph.*;
 
 public class Main {
-
     private static List<String> _options = new ArrayList<String>();
     private static String _filename;
     private static int _numProcessors;
@@ -14,6 +17,7 @@ public class Main {
 
     public static void main(String[] args) {
         parseInput(args);
+        executeAlgorithm(_graph, _numProcessors);
     }
 
     /*
@@ -37,74 +41,133 @@ public class Main {
         graphCreator.displayGraphStats("Edges");
     }
 
-    /*
-    executeAlgorithm() will return a valid schedule
+    /**
+     * executeAlgorithm() will return a valid schedule
      */
-    public ArrayList<SolutionNode> executeAlgorithm(/* Graph G */) {
-
-        /*
-        Let D be an adjacency list where D{V} is the dependencies of V
-        sortTopologically(G);
-        For all v in V
-            Add output of scheduleByGreedy(v) to ArrayList
-         */
-
-        return null;
+    public static void executeAlgorithm(Graph g, int numProcessors) {
+        Node[] nodes = sortTopologically(g);
+        scheduleByGreedy(nodes, numProcessors);
     }
 
-    /*
-    sortTopologically() will return a topological ordering of the vertices in Graph G
+    /**
+     * scheduleByGreedy will schedule a task based on the greedy heuristic: Earliest Start Time.
+     * This depends on the input nodes being on a valid topological order
      */
-    public ArrayList<?> sortTopologically(/* Graph G */) {
+    public static void scheduleByGreedy(Node[] tasks, int numProcessors) {
+        // Initializing a schedule for each processor
+        List<Node>[] processorSchedules = new ArrayList[numProcessors];
+        for (int i = 0; i < numProcessors; i++) {
+            processorSchedules[i] = new ArrayList<Node>();
+        }
 
-        /*
-        Let topOrder be an array of vertices/nodes
-        While V is not empty
-            Find a vertex v in V with no outgoing edges
-            Pop v from V
-            Add v to topological order
-        Reverse topOrder
-         */
+        // Scheduling each task on earliest available processor heuristic
+        List<Node> currentEarliestFreeProcessor;
+        int earliestStartTime;
+        for (Node task: tasks) {
+            currentEarliestFreeProcessor = processorSchedules[0];
+            earliestStartTime = startTime(processorSchedules[0], task);
 
-        return null;
+            boolean foundFreeProcessor = false;
+            int i = 0;
+            // Checking each processor to determine earliest availability
+            while(!foundFreeProcessor && i < processorSchedules.length) {
+                List<Node> p = processorSchedules[i];
+                i++;
+                // Set to break after finding free processor
+                if (p.size() == 0) {
+                    foundFreeProcessor = true;
+                }
+                // Determine if this processor can schedule the task earlier
+                int startTimeOfferedByP = startTime(p, task);
+                if (startTimeOfferedByP < earliestStartTime) {
+                    currentEarliestFreeProcessor = p;
+                    earliestStartTime = startTimeOfferedByP;
+                }
+            }
+
+            // Scheduling task to the earliest available processor
+            task.addAttribute("Processor", currentEarliestFreeProcessor);
+            task.addAttribute("startTime", earliestStartTime);
+            task.addAttribute("endTime", earliestStartTime + (Integer)task.getAttribute("Weight"));
+            currentEarliestFreeProcessor.add(task);
+        }
     }
 
-    /*
-    selectByGreedy will schedule a task based on the greedy heuristic: Earliest Start Time
+    /**
+     * startTime() will return the earliest possible scheduling of task in a specified processor
      */
-    public SolutionNode scheduleByGreedy(/* Node v */) {
+    public static int startTime(List<Node> processor, Node task) {
+        Collection<Edge> dependencies = task.getEnteringEdgeSet();
 
-        /*
-        Let P = {Processor one, Processor two, Processor three ...}
-        Processor earliest = one;
-        For p in P
-            If calculateStartTime(p, v) < calculateStartTime(earliest, v)
-                earliest = p;
-        return earliest.scheduleTask(v);
-         */
+        // Determining the time at which this processor will be free
+        Integer currentProcFinishTime = processor.size() > 0 ? (Integer)processor.get(processor.size()-1).getAttribute("endTime") : 0;
+        int earliestStartOnP = currentProcFinishTime == null ? 0 : currentProcFinishTime;
 
-        return null;
+        /* For each dependency task, check whether this processor will have to wait for data to arrive - in which case the earliest
+        potential scheduling on this processor may increase */
+        for (Edge d: dependencies) {
+            Node dependencyTask = d.getSourceNode();
+            // Checking if dependency is scheduled on another processor
+            if (!dependencyTask.getAttribute("Processor").equals(processor)) {
+                earliestStartOnP = Math.max(earliestStartOnP, (Integer)dependencyTask.getAttribute("endTime") + d.<Integer>getAttribute("Weight"));
+            }
+        }
 
-
+        return earliestStartOnP;
     }
 
-    /*
-    calculateStartTime() will return the earliest possible scheduling of task in a specified processor
+    /**
+     * sortTopologically() will return a topological ordering of the vertices in Graph G using Kahn's algorithm
      */
-    public void calculateStartTime(/* Processor p, Node v */) {
+    public static Node[] sortTopologically(Graph g) {
+        Graph graphToDestruct = Graphs.clone(g);
 
-        /*
-        Let d = D(v)
-        int startTime = p.getCurrentTime();
-        For d' in d
-            Find SolutionNode x that has d'
-            If !p.hasTask(d')
-                startTime = max{startTime, x.processor.currentTime + w(d', v)}
-         */
+        String[] topOrder = new String[graphToDestruct.getNodeSet().size()];
+        int orderIndex = 0;
+
+        // Initializing set containing nodes with no incoming edges
+        Set<Node> noIncomingEdges = new HashSet<Node>();
+        for (Node n: graphToDestruct.getNodeSet()) {
+            if(n.getInDegree() == 0) {
+                noIncomingEdges.add(n);
+            }
+        }
+
+        // While we still have nodes with no incoming edges, remove one and add to the topological order
+        while (!noIncomingEdges.isEmpty()) {
+            Node n = noIncomingEdges.iterator().next();
+            topOrder[orderIndex] = n.getId();
+            orderIndex++;
+
+            // Remove the edges leaving our selected node and update our set of noIncomingEdges
+            Collection<Edge> removedEdges = new HashSet<Edge>();
+            for (Edge e: n.getLeavingEdgeSet()) {
+                if (e.getTargetNode().getInDegree() == 1) {
+                    noIncomingEdges.add(e.getTargetNode());
+                }
+                removedEdges.add(e);
+            }
+            for (Edge e: removedEdges) {
+                n.getGraph().removeEdge(e);
+            }
+
+            // Remove our node from the set of noIncomingEdges
+            noIncomingEdges.remove(n);
+        }
+
+        // Converting string representation of topological order to references of the nodes from our intact graph
+        Node[] topOrderedNodes = new Node[topOrder.length];
+        int i = 0;
+        for (String node: topOrder) {
+            topOrderedNodes[i] = g.getNode(node);
+            i++;
+        }
+
+        return topOrderedNodes;
     }
 
-    /*
-    printOutput() will read the valid array of SolutionNodes and parse it into the dot output file
+    /**
+     * printOutput() will read the valid array of SolutionNodes and parse it into the dot output file
      */
     public void printOutput() {
 
