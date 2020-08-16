@@ -1,8 +1,8 @@
-#Scheduling Problem by 🥇SINNEN 11🥇
+# Scheduling Problem by 🥇SINNEN 11🥇
 This project aims to solve an NP-hard problem which involves dividing multiple tasks into
 different processors whilst minimising the execution time of the program.
 
-##Implementation technologies
+## Implementation technologies
 
 **Programming language🌏🛬**  
 This project is implemented in **Java** (compatible with Java 1.8)
@@ -43,7 +43,7 @@ digraph "example" {
 	c -> d  [Weight=1];
 }
 ```
-##How to run
+## How to run
 To clone, you'll need [Git](https://git-scm.com)  
 ```bash
 # Clone this repository
