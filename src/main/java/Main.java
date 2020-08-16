@@ -44,17 +44,16 @@ public class Main {
     /**
      * executeAlgorithm() will return a valid schedule
      */
-    public static List<Node>[] executeAlgorithm(Graph g, int numProcessors) {
+    public static void executeAlgorithm(Graph g, int numProcessors) {
         Node[] nodes = sortTopologically(g);
-
-        return scheduleByGreedy(nodes, numProcessors);
+        scheduleByGreedy(nodes, numProcessors);
     }
 
     /**
      * scheduleByGreedy will schedule a task based on the greedy heuristic: Earliest Start Time.
      * This depends on the input nodes being on a valid topoligical order
      */
-    public static List<Node>[] scheduleByGreedy(Node[] tasks, int numProcessors) {
+    public static void scheduleByGreedy(Node[] tasks, int numProcessors) {
         // Initializing a schedule for each processor
         List<Node>[] processorSchedules = new ArrayList[numProcessors];
         for (int i = 0; i < numProcessors; i++) {
@@ -92,8 +91,6 @@ public class Main {
             task.addAttribute("endTime", earliestStartTime + (Integer)task.getAttribute("Weight"));
             currentEarliestFreeProcessor.add(task);
         }
-
-        return processorSchedules;
     }
 
     /**
