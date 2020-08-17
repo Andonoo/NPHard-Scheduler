@@ -16,8 +16,10 @@ public class Main {
     private static AdjacencyListGraph _graph;
 
     public static void main(String[] args) {
+        final long startTime = System.nanoTime();
         parseInput(args);
         executeAlgorithm(_graph, _numProcessors);
+        System.out.println(System.nanoTime() - startTime);
     }
 
     /*
@@ -90,6 +92,10 @@ public class Main {
             task.addAttribute("startTime", earliestStartTime);
             task.addAttribute("endTime", earliestStartTime + (Integer)task.getAttribute("Weight"));
             currentEarliestFreeProcessor.add(task);
+            System.out.println ("\n" + task);
+            System.out.println(currentEarliestFreeProcessor);
+            System.out.println(earliestStartTime);
+            System.out.println(earliestStartTime + (Integer)task.getAttribute("Weight"));
         }
     }
 
@@ -122,7 +128,7 @@ public class Main {
     public static Node[] sortTopologically(AdjacencyListGraph g) {
         AdjacencyListGraph graphToDestruct = (AdjacencyListGraph) Graphs.clone(g);
 
-        String[] topOrder = new String[graphToDestruct.getNodeSet().size()];
+        String[] topOrder = new String[graphToDestruct.getNodeCount()];
         int orderIndex = 0;
 
         // Initializing set containing nodes with no incoming edges
@@ -160,6 +166,7 @@ public class Main {
         int i = 0;
         for (String node: topOrder) {
             topOrderedNodes[i] = g.getNode(node);
+            System.out.println(topOrderedNodes[i]);
             i++;
         }
 
