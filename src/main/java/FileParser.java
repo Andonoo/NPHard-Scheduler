@@ -9,7 +9,6 @@ import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceDOT;
 
 import java.io.IOException;
-import java.util.List;
 
 public class FileParser {
     private String _fileName;
@@ -17,7 +16,6 @@ public class FileParser {
 
     public FileParser(String fileName) {
         _fileName = fileName;
-        System.out.println(_fileName);
         _graph = new DefaultGraph("Input Graph");
         FileSource fs = new FileSourceDOT();
         try {
@@ -34,7 +32,7 @@ public class FileParser {
         return _graph;
     }
 
-    public void createOutputFile(List<Node>[] schedule, String outputName, Graph graph) {
+    public void createOutputFile(String outputName, Graph graph) {
 
         for (Node n : graph) {
             n.changeAttribute("Weight", ((Double) n.getAttribute("Weight")).intValue());
