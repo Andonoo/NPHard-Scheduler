@@ -2,9 +2,10 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
+import java.io.*;
 import java.util.ArrayList;
-import java.io.File;
 import java.util.List;
+import java.util.Scanner;
 
 import java.util.*;
 
@@ -46,11 +47,11 @@ public class Main {
             for (Node n : _graph) {
                 System.out.println(n.getId());
                 n.addAttribute("ui.label", n.getId());
-                System.out.println("Node id: " + n.getId() + " Weight: " + ((Double) n.getAttribute("Weight")).intValue());
+                System.out.println("Node id: " + n.getId() + " Weight: " + (n.getAttribute("Weight")));
             }
             for (Edge e : _graph.getEdgeSet()) {
                 System.out.println(e.getId());
-                System.out.println("Edge id: " + e.getId() + " Weight: " + ((Double) e.getAttribute("Weight")).intValue());
+                System.out.println("Edge id: " + e.getId() + " Weight: " + (e.getAttribute("Weight")));
             }
             _graph.display();
         }
@@ -191,5 +192,52 @@ public class Main {
         int fileEndingIndex = _filename.indexOf(".dot");
         String outputName = _filename.substring(0, fileEndingIndex) + "-output.dot";
         parser.createOutputFile(null, outputName, _graph);
+
+        formatDotFile(outputName);
+    }
+
+    public static void formatDotFile(String fileName) {
+
+        try {
+
+            File f = new File(fileName);
+            System.out.println(fileName);
+
+
+            StringBuilder sb = new StringBuilder();
+            StringBuilder head = new StringBuilder();
+
+            Scanner scanner = new Scanner(f);
+
+            String line;
+            while (scanner.hasNextLine()) {
+                line = scanner.nextLine();
+                if (line.contains("{")) {
+                    int index = line.indexOf("{");
+                    head.append(line.substring(0, index))
+                            .append("\"")
+                            .append(fileName.substring(fileName.lastIndexOf("/")+1,fileName.lastIndexOf(".")+1))
+                            .append("\" ")
+                            .append(line.substring(index))
+                            .append("\n");
+                } else {
+                    sb.append(line);
+                    sb.append("\n");
+                }
+            }
+
+            scanner.close();
+
+            String data = head.append(sb.toString().replaceAll("\"", "")).toString();
+
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+
+            bw.write(data);
+            bw.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
