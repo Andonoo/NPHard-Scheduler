@@ -21,6 +21,16 @@ public class Main {
         parseInput(args);
         executeAlgorithm(_graph, _numProcessors);
         printOutput(_parser);
+        displayOutput();
+    }
+
+    private static void displayOutput() {
+        if (_options.contains("-v")) {
+            for (Node n : _graph) {
+                n.addAttribute("ui.label", n.getId());
+            }
+            _graph.display();
+        }
     }
 
     /*
@@ -36,13 +46,6 @@ public class Main {
         }
         _parser = new FileParser(_filename);
         _graph = _parser.getGraph();
-
-        if (_options.contains("-v")) {
-            for (Node n : _graph) {
-                n.addAttribute("ui.label", n.getId());
-            }
-            _graph.display();
-        }
     }
 
     /**
@@ -176,8 +179,17 @@ public class Main {
      * printOutput() will read the valid array of SolutionNodes and parse it into the dot output file
      */
     public static void printOutput(FileParser parser) {
+
         int fileEndingIndex = _filename.indexOf(".dot");
-        String outputName = _filename.substring(0, fileEndingIndex) + "-output.dot";
+        String outputName;
+        int outputIndex = _options.indexOf("-o");
+        if (outputIndex != -1) {
+            String desiredOutputName = _options.get(outputIndex + 1);
+            outputName = _filename.substring(0, _filename.lastIndexOf(File.separator) + 1) + desiredOutputName + "-output.dot";
+
+        } else {
+            outputName = _filename.substring(0, fileEndingIndex) + "-output.dot";
+        }
 
         for (Node n : _graph) {
             n.changeAttribute("Processor", Arrays.asList(_processorSchedules).indexOf(n.getAttribute("Processor")) + 1);
@@ -206,7 +218,7 @@ public class Main {
                     int index = line.indexOf("{");
                     head.append(line.substring(0, index))
                             .append("\"")
-                            .append(fileName.substring(fileName.lastIndexOf("/") + 1, fileName.lastIndexOf(".")))
+                            .append(fileName.substring(fileName.lastIndexOf(File.separator) + 1, fileName.lastIndexOf(".")))
                             .append("\" ")
                             .append(line.substring(index))
                             .append("\n");
