@@ -13,7 +13,7 @@ public class Main {
     private static List<String> _options = new ArrayList<String>();
     private static String _filename;
     private static int _numProcessors;
-    private static Graph _graph;
+    private static AdjacencyListGraph _graph;
 
     public static void main(String[] args) {
         parseInput(args);
@@ -44,7 +44,7 @@ public class Main {
     /**
      * executeAlgorithm() will return a valid schedule
      */
-    public static void executeAlgorithm(Graph g, int numProcessors) {
+    public static void executeAlgorithm(AdjacencyListGraph g, int numProcessors) {
         Node[] nodes = sortTopologically(g);
         scheduleByGreedy(nodes, numProcessors);
     }
@@ -119,8 +119,8 @@ public class Main {
     /**
      * sortTopologically() will return a topological ordering of the vertices in Graph G using Kahn's algorithm
      */
-    public static Node[] sortTopologically(Graph g) {
-        Graph graphToDestruct = Graphs.clone(g);
+    public static Node[] sortTopologically(AdjacencyListGraph g) {
+        AdjacencyListGraph graphToDestruct = (AdjacencyListGraph) Graphs.clone(g);
 
         String[] topOrder = new String[graphToDestruct.getNodeSet().size()];
         int orderIndex = 0;
