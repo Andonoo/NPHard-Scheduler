@@ -16,10 +16,8 @@ public class Main {
     private static AdjacencyListGraph _graph;
 
     public static void main(String[] args) {
-        final long startTime = System.nanoTime();
         parseInput(args);
         executeAlgorithm(_graph, _numProcessors);
-        System.out.println(System.nanoTime() - startTime);
     }
 
     /*
@@ -92,10 +90,6 @@ public class Main {
             task.addAttribute("startTime", earliestStartTime);
             task.addAttribute("endTime", earliestStartTime + (Integer)task.getAttribute("Weight"));
             currentEarliestFreeProcessor.add(task);
-            System.out.println ("\n" + task);
-            System.out.println(currentEarliestFreeProcessor);
-            System.out.println(earliestStartTime);
-            System.out.println(earliestStartTime + (Integer)task.getAttribute("Weight"));
         }
     }
 
