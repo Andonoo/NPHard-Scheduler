@@ -65,7 +65,7 @@ You will see the following file:
 Finally, use the following line to run:
 
 ```
-java -jar project1-1.0-jar-with-dependencies.jar INPUT.dot P [OPTION]
+java -jar scheduler.jar INPUT.dot P [OPTION]
 ```
 Adjust command with the following:
 
@@ -82,5 +82,5 @@ Optional:
 ```
 An example would be:
 ```
-java -jar project1-1.0-jar-with-dependencies.jar ../example-dot-files/example1.dot 2
+java -jar scheduler.jar example-dot-files/example1.dot 2 -v
 ```
