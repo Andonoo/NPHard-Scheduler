@@ -8,7 +8,7 @@ import org.graphstream.graph.implementations.*;
 
 public class GraphCreator {
 
-    Graph _graph = new SingleGraph("Input Graph");
+    AdjacencyListGraph _graph = new SingleGraph("Input Graph");
 
     public GraphCreator (File filename) {
         try {
@@ -65,7 +65,7 @@ public class GraphCreator {
             node.setAttribute("Weight", weight);
         }
     }
-    public Graph getGraph() {
+    public AdjacencyListGraph getGraph() {
         return _graph;
     }
 }
