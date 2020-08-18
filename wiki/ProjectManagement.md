@@ -22,3 +22,7 @@ A WBS diagram was developed to break our project into smaller tasks. This way, w
 goals easily, delegate tasks, and have a visual representation of what we need to do.
 From our WBS diagram, we could derive a project network, and a Gantt chart to manage the 
 overall workflow of our project and set timeframes. 
+
+![](../img/wbs.JPG)
+
+![](../img/gantt.JPG)
