@@ -1,23 +1,36 @@
-import org.graphstream.graph.Graph;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.Graphs;
 
-import java.util.ArrayList;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.util.List;
-
+import java.io.FileWriter;
 import java.util.*;
 
 import org.graphstream.graph.implementations.*;
-import org.graphstream.graph.*;
 
 public class Main {
     private static List<String> _options = new ArrayList<String>();
     private static String _filename;
     private static int _numProcessors;
     private static AdjacencyListGraph _graph;
+    private static FileParser _parser;
+    private static List<Node>[] _processorSchedules;
 
     public static void main(String[] args) {
         parseInput(args);
         executeAlgorithm(_graph, _numProcessors);
+        printOutput(_parser);
+        displayOutput();
+    }
+
+    private static void displayOutput() {
+        if (_options.contains("-v")) {
+            for (Node n : _graph) {
+                n.addAttribute("ui.label", n.getId());
+            }
+            _graph.display();
+        }
     }
 
     /*
@@ -31,14 +44,8 @@ public class Main {
                 _options.add(input[i]);
             }
         }
-        System.out.println("Number of processors: " + _numProcessors);
-        GraphCreator graphCreator = new GraphCreator(new File(_filename)); // ./example-dot-files/example1.dot
-        _graph = graphCreator.getGraph();
-        if (_options.contains("-v")) {
-            _graph.display();
-        }
-        graphCreator.displayGraphStats("Nodes");
-        graphCreator.displayGraphStats("Edges");
+        _parser = new FileParser(_filename);
+        _graph = _parser.getGraph();
     }
 
     /**
@@ -55,30 +62,31 @@ public class Main {
      */
     public static void scheduleByGreedy(Node[] tasks, int numProcessors) {
         // Initializing a schedule for each processor
-        List<Node>[] processorSchedules = new ArrayList[numProcessors];
+        _processorSchedules = new ArrayList[numProcessors];
         for (int i = 0; i < numProcessors; i++) {
-            processorSchedules[i] = new ArrayList<Node>();
+            _processorSchedules[i] = new ArrayList<Node>();
         }
 
         // Scheduling each task on earliest available processor heuristic
         List<Node> currentEarliestFreeProcessor;
-        int earliestStartTime;
-        for (Node task: tasks) {
-            currentEarliestFreeProcessor = processorSchedules[0];
-            earliestStartTime = startTime(processorSchedules[0], task);
+        double earliestStartTime;
+        for (Node node : tasks) {
+            Node task = _graph.getNode(node.getId());
+            currentEarliestFreeProcessor = _processorSchedules[0];
+            earliestStartTime = startTime(_processorSchedules[0], task);
 
             boolean foundFreeProcessor = false;
             int i = 0;
             // Checking each processor to determine earliest availability
-            while(!foundFreeProcessor && i < processorSchedules.length) {
-                List<Node> p = processorSchedules[i];
+            while (!foundFreeProcessor && i < _processorSchedules.length) {
+                List<Node> p = _processorSchedules[i];
                 i++;
                 // Set to break after finding free processor
                 if (p.size() == 0) {
                     foundFreeProcessor = true;
                 }
                 // Determine if this processor can schedule the task earlier
-                int startTimeOfferedByP = startTime(p, task);
+                double startTimeOfferedByP = startTime(p, task);
                 if (startTimeOfferedByP < earliestStartTime) {
                     currentEarliestFreeProcessor = p;
                     earliestStartTime = startTimeOfferedByP;
@@ -87,8 +95,8 @@ public class Main {
 
             // Scheduling task to the earliest available processor
             task.addAttribute("Processor", currentEarliestFreeProcessor);
-            task.addAttribute("startTime", earliestStartTime);
-            task.addAttribute("endTime", earliestStartTime + (Integer)task.getAttribute("Weight"));
+            task.addAttribute("Start", earliestStartTime);
+            task.addAttribute("endTime", earliestStartTime + (Double) task.getAttribute("Weight"));
             currentEarliestFreeProcessor.add(task);
         }
     }
@@ -96,20 +104,20 @@ public class Main {
     /**
      * startTime() will return the earliest possible scheduling of task in a specified processor
      */
-    public static int startTime(List<Node> processor, Node task) {
+    public static double startTime(List<Node> processor, Node task) {
         Collection<Edge> dependencies = task.getEnteringEdgeSet();
 
         // Determining the time at which this processor will be free
-        Integer currentProcFinishTime = processor.size() > 0 ? (Integer)processor.get(processor.size()-1).getAttribute("endTime") : 0;
-        int earliestStartOnP = currentProcFinishTime == null ? 0 : currentProcFinishTime;
+        Double currentProcFinishTime = processor.size() > 0 ? (Double) processor.get(processor.size() - 1).getAttribute("endTime") : 0;
+        double earliestStartOnP = currentProcFinishTime == null ? 0 : currentProcFinishTime;
 
         /* For each dependency task, check whether this processor will have to wait for data to arrive - in which case the earliest
         potential scheduling on this processor may increase */
-        for (Edge d: dependencies) {
+        for (Edge d : dependencies) {
             Node dependencyTask = d.getSourceNode();
             // Checking if dependency is scheduled on another processor
             if (!dependencyTask.getAttribute("Processor").equals(processor)) {
-                earliestStartOnP = Math.max(earliestStartOnP, (Integer)dependencyTask.getAttribute("endTime") + d.<Integer>getAttribute("Weight"));
+                earliestStartOnP = Math.max(earliestStartOnP, (Double) dependencyTask.getAttribute("endTime") + d.<Double>getAttribute("Weight"));
             }
         }
 
@@ -127,8 +135,8 @@ public class Main {
 
         // Initializing set containing nodes with no incoming edges
         Set<Node> noIncomingEdges = new HashSet<Node>();
-        for (Node n: graphToDestruct.getNodeSet()) {
-            if(n.getInDegree() == 0) {
+        for (Node n : graphToDestruct.getNodeSet()) {
+            if (n.getInDegree() == 0) {
                 noIncomingEdges.add(n);
             }
         }
@@ -141,13 +149,13 @@ public class Main {
 
             // Remove the edges leaving our selected node and update our set of noIncomingEdges
             Collection<Edge> removedEdges = new HashSet<Edge>();
-            for (Edge e: n.getLeavingEdgeSet()) {
+            for (Edge e : n.getLeavingEdgeSet()) {
                 if (e.getTargetNode().getInDegree() == 1) {
                     noIncomingEdges.add(e.getTargetNode());
                 }
                 removedEdges.add(e);
             }
-            for (Edge e: removedEdges) {
+            for (Edge e : removedEdges) {
                 n.getGraph().removeEdge(e);
             }
 
@@ -158,7 +166,7 @@ public class Main {
         // Converting string representation of topological order to references of the nodes from our intact graph
         Node[] topOrderedNodes = new Node[topOrder.length];
         int i = 0;
-        for (String node: topOrder) {
+        for (String node : topOrder) {
             topOrderedNodes[i] = g.getNode(node);
             System.out.println(topOrderedNodes[i]);
             i++;
@@ -170,7 +178,68 @@ public class Main {
     /**
      * printOutput() will read the valid array of SolutionNodes and parse it into the dot output file
      */
-    public void printOutput() {
+    public static void printOutput(FileParser parser) {
+
+        int fileEndingIndex = _filename.indexOf(".dot");
+        String outputName;
+        int outputIndex = _options.indexOf("-o");
+        if (outputIndex != -1) {
+            String desiredOutputName = _options.get(outputIndex + 1);
+            outputName = _filename.substring(0, _filename.lastIndexOf(File.separator) + 1) + desiredOutputName + "-output.dot";
+
+        } else {
+            outputName = _filename.substring(0, fileEndingIndex) + "-output.dot";
+        }
+
+        for (Node n : _graph) {
+            n.changeAttribute("Processor", Arrays.asList(_processorSchedules).indexOf(n.getAttribute("Processor")) + 1);
+            n.removeAttribute("endTime");
+            n.changeAttribute("Start", ((Double) n.getAttribute("Start")).intValue());
+        }
+        parser.createOutputFile(outputName, _graph);
+
+        formatDotFile(outputName);
+    }
+
+    public static void formatDotFile(String fileName) {
+
+        try {
+
+            File f = new File(fileName);
+            StringBuilder sb = new StringBuilder();
+            StringBuilder head = new StringBuilder();
+
+            Scanner scanner = new Scanner(f);
+
+            String line;
+            while (scanner.hasNextLine()) {
+                line = scanner.nextLine();
+                if (line.contains("{")) {
+                    int index = line.indexOf("{");
+                    head.append(line.substring(0, index))
+                            .append("\"")
+                            .append(fileName.substring(fileName.lastIndexOf(File.separator) + 1, fileName.lastIndexOf(".")))
+                            .append("\" ")
+                            .append(line.substring(index))
+                            .append("\n");
+                } else {
+                    sb.append(line);
+                    sb.append("\n");
+                }
+            }
+
+            scanner.close();
+
+            String data = head.append(sb.toString().replaceAll("\"", "")).toString();
+
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+
+            bw.write(data);
+            bw.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }
