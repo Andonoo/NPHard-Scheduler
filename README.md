@@ -1,4 +1,5 @@
 # Scheduling Problem by 🥇SINNEN 11🥇
+<img src="img/sinnen11.png" alt="Aimeos logo" title="Aimeos" align="right" height="70" />
 This project aims to solve an NP-hard problem which involves dividing multiple tasks into
 different processors whilst minimising the execution time of the program.
 
