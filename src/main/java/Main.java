@@ -1,5 +1,4 @@
 import org.graphstream.graph.Edge;
-import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
 import java.io.*;
@@ -10,7 +9,6 @@ import java.util.Scanner;
 import java.util.*;
 
 import org.graphstream.graph.implementations.*;
-import org.graphstream.graph.*;
 
 public class Main {
     private static List<String> _options = new ArrayList<String>();

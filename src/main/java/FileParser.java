@@ -1,6 +1,7 @@
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSinkDOT;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class FileParser {
     private String _fileName;
-    private Graph _graph;
+    private AdjacencyListGraph _graph;
 
     public FileParser(String fileName) {
         _fileName = fileName;
@@ -29,7 +30,7 @@ public class FileParser {
         }
     }
 
-    public Graph getGraph() {
+    public AdjacencyListGraph getGraph() {
         return _graph;
     }
 
