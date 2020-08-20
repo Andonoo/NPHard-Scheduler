@@ -19,10 +19,10 @@ public class Main {
 
     public static void main(String[] args) {
         parseInput(args);
-        Node[] initialOrder = executeAlgorithm(_graph, _numProcessors);
+        executeAlgorithm(_graph, _numProcessors);
         printOutput(_parser);
         displayOutput();
-        getTopologicalOrders(initialOrder);
+        printTopologicalOrders(_graph);
     }
 
     private static void displayOutput() {
@@ -52,10 +52,9 @@ public class Main {
     /**
      * executeAlgorithm() will return a valid schedule
      */
-    public static Node[] executeAlgorithm(AdjacencyListGraph g, int numProcessors) {
+    public static void executeAlgorithm(AdjacencyListGraph g, int numProcessors) {
         Node[] nodes = sortTopologically(g);
         scheduleByGreedy(nodes, numProcessors);
-        return nodes;
     }
 
     /**
@@ -170,7 +169,6 @@ public class Main {
         int i = 0;
         for (String node : topOrder) {
             topOrderedNodes[i] = g.getNode(node);
-            System.out.println(topOrderedNodes[i]);
             i++;
         }
 
@@ -245,7 +243,40 @@ public class Main {
 
     }
 
-    public static void getTopologicalOrders(Node[] init) {
-        init.
+    public static void printTopologicalOrders(AdjacencyListGraph g) {
+        AdjacencyListGraph graphToDestruct = (AdjacencyListGraph) Graphs.clone(g);
+
+        Stack<Node> nodeStack = new Stack<Node>();
+        Map<Node, Boolean> discovered = new HashMap();
+
+        for (Node node: graphToDestruct.getNodeSet()) {
+            discovered.put(node, false);
+        }
+
+        getTopologicalOrders(graphToDestruct, nodeStack, discovered);
+    }
+
+    public static void getTopologicalOrders(AdjacencyListGraph g, Stack<Node> nodeStack, Map<Node, Boolean> discovered) {
+
+        for (Node node: g.getNodeSet()) {
+            System.out.println(node + " " + node.getInDegree() + " " + !discovered.get(node));
+            if (node.getInDegree() == 0 && !discovered.get(node)) {
+                System.out.println("Reached");
+
+                for (Iterator<Node> it = node.getNeighborNodeIterator(); it.hasNext(); ) {
+                    Node adj = it.next();
+                    if (adj.hasEdgeFrom(node)) {
+                        System.out.println(node + " connected to " + adj);
+                    }
+                }
+            }
+        }
+        // Remove last node from initial order
+
+        // Check if this node's parent node has other children. If so, make that child
+
+        //
+
+
     }
 }
