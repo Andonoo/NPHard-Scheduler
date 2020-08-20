@@ -9,13 +9,27 @@ import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceDOT;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileParser {
     private String _fileName;
     private AdjacencyListGraph _graph;
+    private int _numProcessors;
+    private List<String> _options = new ArrayList<String>();
 
-    public FileParser(String fileName) {
-        _fileName = fileName;
+    public FileParser(String[] input) {
+        _fileName = input[0];
+        _numProcessors = Integer.parseInt(input[1]);
+        if (input.length > 2) {
+            for (int i = 2; i < input.length; i++) {
+                _options.add(input[i]);
+            }
+        }
+        createGraph(_fileName);
+    }
+
+    private void createGraph(String fileName) {
         _graph = new DefaultGraph("Input Graph");
         FileSource fs = new FileSourceDOT();
         try {

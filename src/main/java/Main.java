@@ -10,14 +10,11 @@ import java.util.*;
 import org.graphstream.graph.implementations.*;
 
 public class Main {
-    private static List<String> _options = new ArrayList<String>();
-    private static String _filename;
-    private static int _numProcessors;
-    private static AdjacencyListGraph _graph;
-    private static FileParser _parser;
     private static List<Node>[] _processorSchedules;
 
     public static void main(String[] args) {
+        FileParser parser = new FileParser(args);
+        Scheduler scheduler = new Scheduler(parser);
         parseInput(args);
         executeAlgorithm(_graph, _numProcessors);
         printOutput(_parser);
@@ -37,15 +34,7 @@ public class Main {
     createGraph() will utilise the dot file inputted by the user and parse it to a usable object using GraphStream
      */
     public static void parseInput(String[] input) {
-        _filename = input[0];
-        _numProcessors = Integer.parseInt(input[1]);
-        if (input.length > 2) {
-            for (int i = 2; i < input.length; i++) {
-                _options.add(input[i]);
-            }
-        }
-        _parser = new FileParser(_filename);
-        _graph = _parser.getGraph();
+
     }
 
     /**
