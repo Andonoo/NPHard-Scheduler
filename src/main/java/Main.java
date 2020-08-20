@@ -258,22 +258,21 @@ public class Main {
 
     public static void getTopologicalOrders(AdjacencyListGraph g, Stack<Node> nodeStack, Map<Node, Boolean> discovered, int totalNodes) {
 
-        // Iterate through each node in the graph
         for (Node node: g.getNodeSet()) {
 
-            //System.out.println(nodeStack + " : " + node);
-            //System.out.println(node.getInDegree() + " : " + !discovered.get(node));
+            // System.out.println(nodeStack + " : " + node);
+            // System.out.println(node.getInDegree() + " : " + !discovered.get(node));
 
-            // Find next node in topological order
+            // Order the node only if it has an in-degree of zero and it has not been previously processed
             if (node.getInDegree() == 0 && !discovered.get(node)) {
 
-                //System.out.println(node + " has been added to stack\n");
-                // Add this node to the stack and mark it as discovered
+                // System.out.println(node + " has been added to stack\n");
 
+                // Add this node to the stack and mark as discovered
                 nodeStack.add(node);
                 discovered.replace(node, true);
 
-                // Find and remove outgoing edges from this node from the graph
+                // Find all edges outgoing from this node, and remove it from the graph
                 Collection<Edge> removedEdges = new HashSet<Edge>();
                 for (Edge edge: node.getLeavingEdgeSet()) {
                     //System.out.println(edge + " will be deleted");
@@ -283,32 +282,28 @@ public class Main {
                     g.removeEdge(edge);
                 }
 
-               // Return the stack if all the nodes have been stacked - it is a topological order
-                // else call this method on the graph without the node and it's edges
+                // If every node has been added to the stack - it is now topologically sorted
                 if (nodeStack.size() == totalNodes) {
                     System.out.println(nodeStack);
+                    // Add scheduling algorithm here**
                 }
+                // Else recursively call this method on a graph with the removed edges
                 else {
-                    //System.out.println("Recurse here\n\n");
+                    // System.out.println("Recurse here\n\n");
                     getTopologicalOrders(g, nodeStack, discovered, totalNodes);
                 }
 
-                // Backtrack and add this node and all it's edges back to the graph
-               //g.addNode(node.getId());
+                // Backtrack: add the removed edges back
+                for (Edge edge: removedEdges) {
+                    // System.out.println(edge + " will be re-added");
+                    g.addEdge(edge.getId(), (Node) edge.getSourceNode(), edge.getTargetNode(), true);
+                }
 
-               for (Edge edge: removedEdges) {
-                   //System.out.println(edge + " will be re-added");
-                   g.addEdge(edge.getId(), (Node) edge.getSourceNode(), edge.getTargetNode(), true);
-               }
-
-               // Backtrack and remove this node from the stack
-               nodeStack.pop();
-               discovered.replace(node, false);
-
+                // Backtrack: remove the node from the stack
+                nodeStack.pop();
+                discovered.replace(node, false);
 
             }
-
         }
-
     }
 }
