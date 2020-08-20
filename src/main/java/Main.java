@@ -16,13 +16,13 @@ public class Main {
     private static AdjacencyListGraph _graph;
     private static FileParser _parser;
     private static List<Node>[] _processorSchedules;
-    private static Node[] initialOrder;
 
     public static void main(String[] args) {
         parseInput(args);
-        executeAlgorithm(_graph, _numProcessors);
+        Node[] initialOrder = executeAlgorithm(_graph, _numProcessors);
         printOutput(_parser);
         displayOutput();
+        getTopologicalOrders(initialOrder);
     }
 
     private static void displayOutput() {
@@ -52,9 +52,10 @@ public class Main {
     /**
      * executeAlgorithm() will return a valid schedule
      */
-    public static void executeAlgorithm(AdjacencyListGraph g, int numProcessors) {
-        initialOrder = sortTopologically(g);
-        scheduleByGreedy(initialOrder, numProcessors);
+    public static Node[] executeAlgorithm(AdjacencyListGraph g, int numProcessors) {
+        Node[] nodes = sortTopologically(g);
+        scheduleByGreedy(nodes, numProcessors);
+        return nodes;
     }
 
     /**
@@ -242,5 +243,9 @@ public class Main {
             e.printStackTrace();
         }
 
-    }z
+    }
+
+    public static void getTopologicalOrders(Node[] init) {
+        init.
+    }
 }
