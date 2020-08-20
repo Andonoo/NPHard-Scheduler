@@ -16,6 +16,7 @@ public class Main {
     private static AdjacencyListGraph _graph;
     private static FileParser _parser;
     private static List<Node>[] _processorSchedules;
+    private static Node[] initialOrder;
 
     public static void main(String[] args) {
         parseInput(args);
@@ -52,8 +53,8 @@ public class Main {
      * executeAlgorithm() will return a valid schedule
      */
     public static void executeAlgorithm(AdjacencyListGraph g, int numProcessors) {
-        Node[] nodes = sortTopologically(g);
-        scheduleByGreedy(nodes, numProcessors);
+        initialOrder = sortTopologically(g);
+        scheduleByGreedy(initialOrder, numProcessors);
     }
 
     /**
@@ -241,5 +242,5 @@ public class Main {
             e.printStackTrace();
         }
 
-    }
+    }z
 }
