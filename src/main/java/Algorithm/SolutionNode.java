@@ -1,3 +1,5 @@
+package Algorithm;
+
 public class SolutionNode {
 
     private String _taskID;
