@@ -205,7 +205,7 @@ public class PartialSchedule {
     /**
      * @return Returns the end time of the task which was scheduled with the creation of this node (PartialSchedule)
      */
-    private double getScheduledTaskEndTime() {
+    public double getScheduledTaskEndTime() {
         return _scheduledTaskEndTime;
     }
 
@@ -232,5 +232,13 @@ public class PartialSchedule {
             return true;
         }
         return false;
+    }
+
+    public int getProcessorIndex() {
+        return _processorUsedIndex;
+    }
+
+    public Map<TaskNode, PartialSchedule> getSchedulings() {
+        return _schedulings;
     }
 }

@@ -1,5 +1,6 @@
 import algorithm.GreedyScheduler;
 import algorithm.SequentialOptimalScheduler;
+import domain.PartialSchedule;
 import io.InputHandler;
 import io.OutputHandler;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
@@ -7,8 +8,6 @@ import org.graphstream.graph.implementations.AdjacencyListGraph;
 public class Main {
 
     public static void main(String[] args) {
-        long startTime = System.nanoTime();
-
         InputHandler inputParser = new InputHandler(args);
         if (inputParser.produceGUI()) {
             //javafx shazam
@@ -20,9 +19,13 @@ public class Main {
         greedyScheduler.executeAlgorithm();
 
         SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), inputParser.getProcessors());
-        optimalScheduler.executeBranchAndBoundAlgorithm(800);
+        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
 
-        long endTime = System.nanoTime();
-        System.out.println("Runtime: " + (endTime - startTime)/1000000000);
+        OutputHandler outputHandler = new OutputHandler();
+        if (moreOptimalFound) {
+            outputHandler.createOutputFile(optimalScheduler.getSolution(), g);
+        } else {
+            outputHandler.createOutputFile(greedyScheduler.getSolution());
+        }
     }
 }

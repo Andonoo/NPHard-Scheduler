@@ -106,7 +106,7 @@ public class GreedyScheduler {
             task.addAttribute("Processor", currentEarliestFreeProcessor);
             task.addAttribute("Start", earliestStartTime);
             task.addAttribute("endTime", earliestStartTime + (Double) task.getAttribute("Weight"));
-            if (earliestStartTime + (Double) task.getAttribute("Weight") < _solutionLength) {
+            if (earliestStartTime + (Double) task.getAttribute("Weight") > _solutionLength) {
                 _solutionLength = earliestStartTime + (Double) task.getAttribute("Weight");
             }
             currentEarliestFreeProcessor.add(task);

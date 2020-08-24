@@ -12,22 +12,22 @@ import java.util.*;
  */
 public class SequentialOptimalScheduler {
 
-    private final Collection<TaskNode>  _tasksToBeScheduled;
     private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
-
     private PartialSchedule _solution;
 
     public SequentialOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors) {
         _numProcessors = numProcessors;
         _rootNodes = new ArrayList<TaskNode>();
-        _tasksToBeScheduled = populateTaskNodes(topologicalOrderedTasks);
+        populateTaskNodes(topologicalOrderedTasks);
     }
 
     /**
      * Executes the branch and bound scheduling algorithm on the provided input graph.
+     * @param initialBoundValue Value used to bound search for schedules
+     * @return Returns true if a schedule was found which is shorter than the provided bound value
      */
-    public void executeBranchAndBoundAlgorithm(double initialBoundValue) {
+    public boolean executeBranchAndBoundAlgorithm(double initialBoundValue) {
         // Initializing the search tree with a partial schedule for each root node
         Stack<PartialSchedule> searchTree = new Stack<PartialSchedule>();
         for (TaskNode rootNode: _rootNodes) {
@@ -48,7 +48,7 @@ public class SequentialOptimalScheduler {
             for (PartialSchedule child: foundChildren) {
                 double childLength = child.getScheduleLength();
                 // Check if we've found our new most optimal
-                if (child.isComplete() && childLength <= boundValue) {
+                if (child.isComplete() && childLength < boundValue) {
                     boundValue = childLength;
                     currentBest = child;
                 }
@@ -60,15 +60,28 @@ public class SequentialOptimalScheduler {
         }
 
         _solution = currentBest;
-        System.out.println("Schedule length: " +  _solution.getScheduleLength());
+        if (_solution == null) {
+            return false;
+        }
+        return true;
     }
 
     /**
-     * Populates the TaskNode data structures which are used in the algorithm execution
+     * Gets the schedule which was computed by the branch and bound algorithm. Will return null if no schedule was found
+     * with a shorter length than the provided initialBoundValue
+     * @return
+     */
+    public PartialSchedule getSolution() {
+        return _solution;
+    }
+
+    /**
+     * Populates the TaskNode data structures which are used in the algorithm execution. Also finds the root nodes which
+     * will be used to start the algorithm.
      * @param topologicalOrder
      * @return
      */
-    private Collection<TaskNode> populateTaskNodes(Node[] topologicalOrder) {
+    private void populateTaskNodes(Node[] topologicalOrder) {
         Map<String, TaskNode> taskNodes = new HashMap<String, TaskNode>();
 
         for (Node task: topologicalOrder) {
@@ -79,14 +92,12 @@ public class SequentialOptimalScheduler {
             int i = 0;
             for (Edge dependency: dependencies) {
                 TaskNode dependencyTaskNode = taskNodes.get(dependency.getSourceNode().getId());
-                // TODO - Work out what's going on with GraphStream parsing Weight into an Integer
                 dependencyWeights.put(dependencyTaskNode, (double)((Integer)dependency.getAttribute("Weight")));
                 taskNodeDependencies[i] = dependencyTaskNode;
                 i++;
             }
 
             // Creating the TaskNode, and adding it to the set
-            // TODO - Work out what's going on with GraphStream parsing Weight into an Integer
             TaskNode taskNode = new TaskNode(task.getId(), taskNodeDependencies, (double)((Integer)task.getAttribute("Weight")), dependencyWeights);
             taskNodes.put(task.getId(), taskNode);
 
@@ -101,7 +112,5 @@ public class SequentialOptimalScheduler {
                 _rootNodes.add(taskNode);
             }
         }
-
-        return taskNodes.values();
     }
 }
