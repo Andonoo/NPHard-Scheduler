@@ -22,7 +22,6 @@ public class Main extends Application{
         Scene scene = new Scene(root);
 
         primaryStage.setTitle("Scheduler visualisation");
-
         primaryStage.setScene(scene);
         primaryStage.show();
     }
