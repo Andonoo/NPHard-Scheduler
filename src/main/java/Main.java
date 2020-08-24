@@ -22,6 +22,7 @@ public class Main extends Application{
         Scene scene = new Scene(root);
 
         primaryStage.setTitle("Scheduler visualisation");
+
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -35,7 +36,6 @@ public class Main extends Application{
         }
 
         if (inputParser.produceGUI()) {
-            //javafx shazam
             launch(args);
         }
 
