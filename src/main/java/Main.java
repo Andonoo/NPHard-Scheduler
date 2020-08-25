@@ -15,36 +15,42 @@ import java.io.IOException;
 
 public class Main extends Application{
 
+    static InputHandler _inputHandler;
+
     @Override
     public void start(Stage primaryStage) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
 
         Scene scene = new Scene(root);
 
+        new Thread(Main::executeAlgorithm).start();
         primaryStage.setTitle("Scheduler visualisation");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
     public static void main(String[] args) {
-        InputHandler inputParser = null;
         try {
-            inputParser = new InputHandler(args);
+            _inputHandler = new InputHandler(args);
         } catch (CommandLineException e) {
             e.printStackTrace();
         }
 
-        if (inputParser.produceGUI()) {
+        if (_inputHandler.produceGUI()) {
             launch(args);
+        } else {
+            executeAlgorithm();
         }
+    }
 
-        AdjacencyListGraph g = inputParser.getGraph();
-        GreedyScheduler greedyScheduler = new GreedyScheduler(g, inputParser.getProcessors());
+    public static void executeAlgorithm() {
+        AdjacencyListGraph g = _inputHandler.getGraph();
+        GreedyScheduler greedyScheduler = new GreedyScheduler(g, _inputHandler.getProcessors());
         greedyScheduler.executeAlgorithm();
 
-        if (inputParser.getCores() == 1) {
+        if (_inputHandler.getCores() == 1) {
             System.out.println("Sequential");
-            SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), inputParser.getProcessors());
+            SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), _inputHandler.getProcessors());
             boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
 
             OutputHandler outputHandler = new OutputHandler();
@@ -56,7 +62,7 @@ public class Main extends Application{
         }
         else {
             System.out.println("Parallel");
-            ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), inputParser.getProcessors());
+            ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), _inputHandler.getProcessors());
             boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
 
             OutputHandler outputHandler = new OutputHandler();

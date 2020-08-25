@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #DBD4D3;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #DBD4D3;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Rectangle fill="#387780" height="107.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="900.0" />
       <Rectangle fill="#d2cca1" height="433.0" layoutX="385.0" layoutY="129.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="297.0" />
@@ -45,7 +45,7 @@
                         <Font name="Segoe UI Symbol" size="14.0" />
                      </font>
                   </Label>
-                  <Text fill="#77eb9d" strokeType="OUTSIDE" strokeWidth="0.0" text="RUNNING">
+                  <Text fx:id="status" fill="#77eb9d" strokeType="OUTSIDE" strokeWidth="0.0" text="RUNNING">
                      <font>
                         <Font name="Segoe UI Symbol" size="34.0" />
                      </font>
@@ -59,7 +59,7 @@
                         <Font name="Segoe UI Symbol" size="14.0" />
                      </font>
                   </Label>
-                  <Text fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="0h00m00s">
+                  <Text fx:id="timeElapsed" fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="0h00m00s">
                      <font>
                         <Font name="Segoe UI Symbol" size="34.0" />
                      </font>
@@ -73,7 +73,7 @@
                         <Font name="Segoe UI Symbol" size="14.0" />
                      </font>
                   </Label>
-                  <Text fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="5239">
+                  <Text fx:id="searchesMade" fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="5239">
                      <font>
                         <Font name="Segoe UI Symbol" size="34.0" />
                      </font>
@@ -100,7 +100,7 @@
                         <Font name="Segoe UI Symbol" size="14.0" />
                      </font>
                   </Label>
-                  <Text fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="450">
+                  <Text fx:id="currentBest" fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="450">
                      <font>
                         <Font name="Segoe UI Symbol" size="61.0" />
                      </font>
@@ -131,7 +131,7 @@
                   <Font name="Segoe UI Symbol" size="28.0" />
                </font>
             </Label>
-            <Label alignment="CENTER_RIGHT" text="example-graph1.dot" textFill="WHITE">
+            <Label fx:id="inputGraph" alignment="CENTER_RIGHT" text="example-graph1.dot" textFill="WHITE">
                <font>
                   <Font name="Segoe UI Symbol" size="16.0" />
                </font>
@@ -147,7 +147,7 @@
                         <Font name="Segoe UI Symbol" size="14.0" />
                      </font>
                   </Label>
-                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
+                  <Text fx:id="processorsCount" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
                      <font>
                         <Font name="Segoe UI Symbol" size="34.0" />
                      </font>
@@ -164,7 +164,7 @@
                         <Font name="Segoe UI Symbol" size="14.0" />
                      </font>
                   </Label>
-                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="6">
+                  <Text fx:id="cpuCount" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="6">
                      <font>
                         <Font name="Segoe UI Symbol" size="34.0" />
                      </font>
