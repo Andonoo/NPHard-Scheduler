@@ -1,5 +1,9 @@
-import Algorithm.Scheduler;
-import IO.InputHandler;
+import algorithm.GreedyScheduler;
+import algorithm.SequentialOptimalScheduler;
+import domain.PartialSchedule;
+import io.InputHandler;
+import io.OutputHandler;
+import org.graphstream.graph.implementations.AdjacencyListGraph;
 
 public class Main {
 
@@ -9,7 +13,19 @@ public class Main {
             //javafx shazam
             System.out.println("Thanks Francis");
         }
-        Scheduler scheduler = new Scheduler(inputParser.getGraph(), inputParser.getProcessors());
-        scheduler.executeAlgorithm();
+
+        AdjacencyListGraph g = inputParser.getGraph();
+        GreedyScheduler greedyScheduler = new GreedyScheduler(g, inputParser.getProcessors());
+        greedyScheduler.executeAlgorithm();
+
+        SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), inputParser.getProcessors());
+        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
+
+        OutputHandler outputHandler = new OutputHandler();
+        if (moreOptimalFound) {
+            outputHandler.createOutputFile(optimalScheduler.getSolution(), g);
+        } else {
+            outputHandler.createOutputFile(greedyScheduler.getSolution());
+        }
     }
 }

@@ -1,7 +1,11 @@
-package IO;
+package io;
 
+import domain.PartialSchedule;
+import domain.TaskNode;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
+import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSinkDOT;
 
@@ -9,11 +13,28 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Scanner;
 
 public class OutputHandler {
 
-    public OutputHandler(AdjacencyListGraph graph) {
+    /**
+     * Populates provided graph with the scheduling information from the schedule, before passing it off to be
+     * parsed into an output file
+     * @param schedule
+     * @param graph
+     */
+    public void createOutputFile(PartialSchedule schedule, Graph graph) {
+        Map<TaskNode, PartialSchedule> schedulings = schedule.getSchedulings();
+
+        for (TaskNode task: schedulings.keySet()) {
+            Node node = graph.getNode(task.getId());
+            PartialSchedule nodeScheduling = schedulings.get(task);
+            node.setAttribute("Processor", nodeScheduling.getProcessorIndex() + 1);
+            node.setAttribute("Start", nodeScheduling.getScheduledTaskEndTime() - task.getWeight());
+            node.setAttribute("Weight", task.getWeight());
+        }
+
         createOutputFile(graph);
     }
 

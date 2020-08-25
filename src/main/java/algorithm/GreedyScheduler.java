@@ -1,6 +1,5 @@
-package Algorithm;
+package algorithm;
 
-import IO.OutputHandler;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
@@ -8,26 +7,36 @@ import org.graphstream.graph.implementations.Graphs;
 
 import java.util.*;
 
-public class Scheduler {
+/**
+ * Takes an input graph and schedules the tasks on n processors based on a greedy selection heuristic. Note that
+ * this implementation is dependent on GraphStream for it's data structures and is not memory efficient.
+ */
+public class GreedyScheduler {
 
     private List<Node>[] _processorSchedules;
     private final AdjacencyListGraph _graph;
     private final int _numProcessors;
+    private double _solutionLength;
+    private Node[] _topologicalOrder;
 
-    public Scheduler(AdjacencyListGraph graph, int processors) {
+    public GreedyScheduler(AdjacencyListGraph graph, int processors) {
         _graph = graph;
         _numProcessors = processors;
+        _solutionLength = 0;
     }
 
     /**
      * executeAlgorithm() will return a valid schedule
      */
     public void executeAlgorithm() {
-        Node[] nodes = sortTopologically();
-        scheduleByGreedy(nodes);
+        sortTopologically();
+        scheduleByGreedy(_topologicalOrder);
         prepForOutput();
     }
 
+    /**
+     * Updates the graphs attributes to meet the expected output format.
+     */
     private void prepForOutput() {
         for (Node n : _graph) {
             n.changeAttribute("Processor", Arrays.asList(_processorSchedules).indexOf(n.getAttribute("Processor")) + 1);
@@ -39,7 +48,21 @@ public class Scheduler {
         for (Edge e : _graph.getEdgeSet()) {
             e.changeAttribute("Weight", ((Double) e.getAttribute("Weight")).intValue());
         }
-        OutputHandler outputParser = new OutputHandler(_graph);
+    }
+
+    /**
+     * @return Returns the graph representation of a valid scheduling. Each node is annotated with it's processor, start time and
+     * end time.
+     */
+    public AdjacencyListGraph getSolution() {
+        return _graph;
+    }
+
+    /**
+     * @return Returns length of computed solution, or 0 if the solution has not been computed.
+     */
+    public double getSolutionLength() {
+        return _solutionLength;
     }
 
     /**
@@ -83,6 +106,9 @@ public class Scheduler {
             task.addAttribute("Processor", currentEarliestFreeProcessor);
             task.addAttribute("Start", earliestStartTime);
             task.addAttribute("endTime", earliestStartTime + (Double) task.getAttribute("Weight"));
+            if (earliestStartTime + (Double) task.getAttribute("Weight") > _solutionLength) {
+                _solutionLength = earliestStartTime + (Double) task.getAttribute("Weight");
+            }
             currentEarliestFreeProcessor.add(task);
         }
     }
@@ -113,7 +139,7 @@ public class Scheduler {
     /**
      * sortTopologically() will return a topological ordering of the vertices in Graph G using Kahn's algorithm
      */
-    public Node[] sortTopologically() {
+    public void sortTopologically() {
         AdjacencyListGraph graphToDestruct = (AdjacencyListGraph) Graphs.clone(_graph);
 
         String[] topOrder = new String[graphToDestruct.getNodeCount()];
@@ -157,6 +183,14 @@ public class Scheduler {
             i++;
         }
 
-        return topOrderedNodes;
+        _topologicalOrder = topOrderedNodes;
+    }
+
+    /**
+     * Returns the topological order which was used to compute the schedule.
+     * @return
+     */
+    public Node[] getTopologicalOrder() {
+        return _topologicalOrder;
     }
 }

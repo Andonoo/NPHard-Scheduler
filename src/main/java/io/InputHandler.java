@@ -1,4 +1,4 @@
-package IO;
+package io;
 
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.DefaultGraph;
