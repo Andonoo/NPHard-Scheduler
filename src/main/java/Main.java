@@ -1,4 +1,5 @@
 import algorithm.GreedyScheduler;
+import algorithm.ParallelOptimalScheduler;
 import algorithm.SequentialOptimalScheduler;
 import io.CommandLineException;
 import io.InputHandler;
@@ -24,7 +25,8 @@ public class Main {
         GreedyScheduler greedyScheduler = new GreedyScheduler(g, inputParser.getProcessors());
         greedyScheduler.executeAlgorithm();
 
-        SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), inputParser.getProcessors());
+        // SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), inputParser.getProcessors());
+        ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), inputParser.getProcessors());
         boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
 
         OutputHandler outputHandler = new OutputHandler();
