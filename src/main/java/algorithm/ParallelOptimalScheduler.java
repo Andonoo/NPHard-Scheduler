@@ -7,14 +7,21 @@ import org.graphstream.graph.Node;
 
 import java.util.*;
 
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
+
 /**
  * Class implementing an optimal scheduling algorithm based on an exhaustive branch and bound search.
  */
 public class ParallelOptimalScheduler {
 
+    private static final int threadDepth = 3;
+
     private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
-    private PartialSchedule _solution;
+    private PartialSchedule _solution = null;
+    private int numThreads = 4;
+    private double boundValue;
 
     public ParallelOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors) {
         _numProcessors = numProcessors;
@@ -37,9 +44,24 @@ public class ParallelOptimalScheduler {
             PartialSchedule rootSchedule = new PartialSchedule(_numProcessors, rootNode, canBeScheduled);
             searchTree.push(rootSchedule);
         }
+        System.out.println(searchTree.size() + " : " + initialBoundValue);
 
-        double boundValue = initialBoundValue;
-        PartialSchedule currentBest = null;
+        boundValue = initialBoundValue;
+
+        Search searchFork = new Search(searchTree);
+        ForkJoinPool fjp = new ForkJoinPool(numThreads);
+        fjp.invoke(searchFork);
+
+        if (_solution == null) {
+            return false;
+        }
+        else {
+            return true;
+        }
+
+
+
+       /* PartialSchedule currentBest = null;
         // While we have unexplored nodes, continue DFS with bound
         while (!searchTree.empty()) {
             PartialSchedule nodeToExplore = searchTree.pop();
@@ -64,6 +86,65 @@ public class ParallelOptimalScheduler {
             return false;
         }
         return true;
+
+        */
+    }
+
+    private class Search extends RecursiveAction {
+
+        Stack<PartialSchedule> searchTree;
+        private double localBound = boundValue;
+
+        private Search(Stack<PartialSchedule> searchTree) {
+            this.searchTree = searchTree;
+        }
+
+        @Override
+        protected void compute() {
+            // While we have unexplored nodes, continue DFS with bound
+            while (!searchTree.empty()) {
+                PartialSchedule nodeToExplore = searchTree.pop();
+                PartialSchedule[] foundChildren = nodeToExplore.createChildren();
+
+                System.out.println("\nSize of schedule before: " + searchTree.size());
+                System.out.println("This schedule has " + foundChildren.length + " children.");
+                for (PartialSchedule child: foundChildren) {
+                    double childLength = child.getScheduleLength();
+                    // Check if we've found our new most optimal
+                    if (child.isComplete() && childLength < localBound) {
+                        boundValue = childLength;
+                        updateCurrentOptimal(child, localBound);
+                    }
+                    // Branch by pushing child into search tree or bound
+                    if (childLength < localBound) {
+                        searchTree.push(child);
+                    }
+                    System.out.println("Size of child: " + childLength);
+                }
+                System.out.println("Bound: " + boundValue);
+                System.out.println("Size of tree after: " + searchTree.size() + "\n");
+
+
+               if (searchTree.size() > threadDepth) {
+                    Stack<PartialSchedule> forkedStack = new Stack<PartialSchedule>();
+                    PartialSchedule temp = searchTree.pop();
+                    forkedStack.add(temp);
+                    System.out.println(" FORKING ");
+                    invokeAll( new Search(searchTree), new Search(forkedStack));
+                    return;
+                }
+
+
+            }
+            return;
+        }
+    }
+
+    private synchronized void updateCurrentOptimal(PartialSchedule optimal, double localBound) {
+        if (optimal.getScheduleLength() < boundValue) {
+            _solution = optimal;
+            boundValue = localBound;
+        }
     }
 
     /**
