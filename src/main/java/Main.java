@@ -25,9 +25,15 @@ public class Main {
         GreedyScheduler greedyScheduler = new GreedyScheduler(g, inputParser.getProcessors());
         greedyScheduler.executeAlgorithm();
 
+        long start = System.nanoTime();
+
         // SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), inputParser.getProcessors());
         ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), inputParser.getProcessors());
         boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
+
+        long end = System.nanoTime();
+        double duration = (double) (end-start)/1000000000;
+        System.out.println("Duration: " + duration + " seconds!!!");
 
         OutputHandler outputHandler = new OutputHandler();
         if (moreOptimalFound) {
