@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.StackedBarChart?>
 <?import javafx.scene.control.Label?>
@@ -19,7 +18,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #DBD4D3;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Rectangle fill="#387780" height="107.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="900.0" />
-      <Rectangle fill="#d2cca1" height="433.0" layoutX="385.0" layoutY="129.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="297.0" />
+      <Rectangle fill="#d2cca1" height="433.0" layoutX="385.0" layoutY="129.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="300.0" />
       <Rectangle fill="#387780" height="316.0" layoutX="697.0" layoutY="28.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="188.0">
          <effect>
             <DropShadow color="#00000066" height="29.9" width="12.1" />
@@ -111,14 +110,6 @@
          </children>
       </VBox>
       <VBox alignment="CENTER_RIGHT" layoutX="80.0" layoutY="521.0" />
-      <LineChart layoutX="385.0" layoutY="136.0" prefHeight="187.0" prefWidth="297.0">
-        <xAxis>
-          <CategoryAxis side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
-      </LineChart>
       <Rectangle fill="#d2cca1" height="66.0" layoutX="463.0" layoutY="521.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="206.0">
          <effect>
             <DropShadow color="#00000066" height="29.9" width="12.1" />
@@ -138,7 +129,7 @@
             </Label>
          </children>
       </VBox>
-      <HBox layoutX="385.0" layoutY="406.0" prefHeight="100.0" prefWidth="297.0">
+      <HBox layoutX="386.0" layoutY="421.0" prefHeight="100.0" prefWidth="297.0">
          <children>
             <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0">
                <children>
@@ -189,5 +180,6 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </StackedBarChart>
+      <ImageView fx:id="graphImage" fitHeight="300.0" fitWidth="300.0" layoutX="385.0" layoutY="129.0" pickOnBounds="true" preserveRatio="true" />
    </children>
 </AnchorPane>

@@ -9,9 +9,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.text.DecimalFormat;
 
 
@@ -38,6 +41,8 @@ public class Controller {
     @FXML
     private Text _cpuCount;
 
+    @FXML
+    private ImageView graphImage;
 
     private InfoTracker _infoTracker;
     private boolean pollingRanOnce = false;
@@ -58,27 +63,17 @@ public class Controller {
         _currentBest.setText(String.valueOf(currentBest));
     }
 
-    public void setInputGraph(String inputGraph) {
-        _inputGraph.setText(inputGraph);
-    }
-
-    public void setProcessorsCount(int processorsCount) {
-        _processorsCount.setText(String.valueOf(processorsCount));
-    }
-
-    public void setCpuCount(int cpuCount) {
-        _cpuCount.setText(String.valueOf(cpuCount));
-    }
-
     public void setInputHandler(InfoTracker infoTracker) {
         _infoTracker = infoTracker;
     }
 
     public void init() {
         startTimer();
-        setInputGraph(_infoTracker.get_fileName());
-        setProcessorsCount(_infoTracker.get_processors());
-        setCpuCount(_infoTracker.get_cores());
+        _inputGraph.setText(_infoTracker.get_fileName());
+        _processorsCount.setText(String.valueOf(_infoTracker.get_processors()));
+        _cpuCount.setText(String.valueOf(_infoTracker.get_cores()));
+        File file = new File("graph.png");
+        graphImage.setImage(new Image(file.toURI().toString()));
         startPolling();
     }
 

@@ -1,7 +1,9 @@
 package io;
 
+import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.DefaultGraph;
+import org.graphstream.stream.file.FileSinkImages;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceDOT;
 
@@ -68,10 +70,28 @@ public class InputHandler {
 
     private void createGraph() {
         _graph = new DefaultGraph(_outputFileName);
+
         FileSource fs = new FileSourceDOT();
+        FileSinkImages pic = new FileSinkImages(FileSinkImages.OutputType.PNG, FileSinkImages.Resolutions.VGA);
+        pic.setResolution(500,500);
         try {
             fs.addSink(_graph);
             fs.readAll(_fileName);
+            _graph.addAttribute("ui.stylesheet", styleSheet);
+            for (Node n: _graph) {
+                n.addAttribute("ui.style", "size: 15px; fill-color: #D22; text-alignment: center; text-style: bold; text-size: 25px;");
+                n.addAttribute("ui.label", n.getId() );
+
+            }
+            pic.setLayoutPolicy(FileSinkImages.LayoutPolicy.COMPUTED_FULLY_AT_NEW_IMAGE);
+            pic.setAutofit(true);
+            pic.writeAll(_graph, "graph.png");
+            for (Node n: _graph) {
+                n.removeAttribute("ui.label");
+                n.removeAttribute("ui.style");
+            }
+            _graph.removeAttribute("ui.stylesheet");
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -152,4 +172,8 @@ public class InputHandler {
         String displayedName = _fileName.substring(_fileName.lastIndexOf(File.separator) + 1);
         return displayedName;
     }
+
+    protected String styleSheet =
+            "edge { size: 2px; shape: cubic-curve; arrow-size: 15px, 8px; fill-color: white;}" +
+                    "graph { padding: 45px; fill-color: #d2cca1; }";
 }
