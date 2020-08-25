@@ -37,7 +37,6 @@ public class Main extends Application{
         if (inputParser.produceGUI()) {
             //javafx shazam
             launch(args);
-            System.out.println("Thanks Francis");
         }
 
         AdjacencyListGraph g = inputParser.getGraph();

@@ -1,11 +1,193 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.TextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.StackedBarChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #DBD4D3;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TextField alignment="CENTER" layoutX="198.0" layoutY="188.0" prefHeight="24.0" prefWidth="204.0" text="Whos the best? Steven's the best! :)" />
+      <Rectangle fill="#387780" height="107.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="900.0" />
+      <Rectangle fill="#d2cca1" height="433.0" layoutX="385.0" layoutY="129.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="297.0" />
+      <Rectangle fill="#387780" height="316.0" layoutX="697.0" layoutY="28.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="188.0">
+         <effect>
+            <DropShadow color="#00000066" height="29.9" width="12.1" />
+         </effect>
+      </Rectangle>
+      <Rectangle fill="#e83151" height="538.0" layoutX="14.0" layoutY="23.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="355.0">
+         <effect>
+            <DropShadow color="#0000005e" />
+         </effect>
+      </Rectangle>
+      <Rectangle fill="#387780" height="207.0" layoutX="697.0" layoutY="354.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="188.0" />
+      <ImageView fitHeight="88.0" fitWidth="108.0" layoutX="480.0" layoutY="13.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/sinnen11.png" />
+         </image>
+      </ImageView>
+      <VBox alignment="CENTER" layoutX="697.0" layoutY="28.0" prefHeight="316.0" prefWidth="188.0" spacing="30.0">
+         <children>
+            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0">
+               <children>
+                  <Label text="STATUS" textFill="#d2cca1">
+                     <font>
+                        <Font name="Segoe UI Symbol" size="14.0" />
+                     </font>
+                  </Label>
+                  <Text fill="#77eb9d" strokeType="OUTSIDE" strokeWidth="0.0" text="RUNNING">
+                     <font>
+                        <Font name="Segoe UI Symbol" size="34.0" />
+                     </font>
+                  </Text>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0">
+               <children>
+                  <Label text="TIME ELAPSED" textFill="#d2cca1">
+                     <font>
+                        <Font name="Segoe UI Symbol" size="14.0" />
+                     </font>
+                  </Label>
+                  <Text fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="0h00m00s">
+                     <font>
+                        <Font name="Segoe UI Symbol" size="34.0" />
+                     </font>
+                  </Text>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0">
+               <children>
+                  <Label text="SEARCHES MADE" textFill="#d2cca1">
+                     <font>
+                        <Font name="Segoe UI Symbol" size="14.0" />
+                     </font>
+                  </Label>
+                  <Text fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="5239">
+                     <font>
+                        <Font name="Segoe UI Symbol" size="34.0" />
+                     </font>
+                  </Text>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets right="10.0" />
+         </padding>
+      </VBox>
+      <Rectangle fill="#e83151" height="66.0" layoutX="57.0" layoutY="521.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="281.0">
+         <effect>
+            <DropShadow color="#00000066" height="29.9" width="12.1" />
+         </effect>
+      </Rectangle>
+      <VBox alignment="CENTER" layoutX="697.0" layoutY="355.0" prefHeight="207.0" prefWidth="188.0" spacing="30.0">
+         <children>
+            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0" />
+            <VBox alignment="CENTER" prefHeight="70.0" prefWidth="192.0">
+               <children>
+                  <Label text="CURRENT BEST" textFill="#d2cca1">
+                     <font>
+                        <Font name="Segoe UI Symbol" size="14.0" />
+                     </font>
+                  </Label>
+                  <Text fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="450">
+                     <font>
+                        <Font name="Segoe UI Symbol" size="61.0" />
+                     </font>
+                  </Text>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0" />
+         </children>
+      </VBox>
+      <VBox alignment="CENTER_RIGHT" layoutX="80.0" layoutY="521.0" />
+      <LineChart layoutX="385.0" layoutY="136.0" prefHeight="187.0" prefWidth="297.0">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </LineChart>
+      <Rectangle fill="#d2cca1" height="66.0" layoutX="463.0" layoutY="521.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="206.0">
+         <effect>
+            <DropShadow color="#00000066" height="29.9" width="12.1" />
+         </effect>
+      </Rectangle>
+      <VBox alignment="CENTER_RIGHT" layoutX="463.0" layoutY="522.0">
+         <children>
+            <Label alignment="CENTER_RIGHT" prefHeight="36.0" prefWidth="195.0" text="INPUT GRAPH" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Symbol" size="28.0" />
+               </font>
+            </Label>
+            <Label alignment="CENTER_RIGHT" text="example-graph1.dot" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Symbol" size="16.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+      <HBox layoutX="385.0" layoutY="406.0" prefHeight="100.0" prefWidth="297.0">
+         <children>
+            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0">
+               <children>
+                  <Label text="PROCESSORS" textFill="WHITE">
+                     <font>
+                        <Font name="Segoe UI Symbol" size="14.0" />
+                     </font>
+                  </Label>
+                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
+                     <font>
+                        <Font name="Segoe UI Symbol" size="34.0" />
+                     </font>
+                  </Text>
+               </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </VBox>
+            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0">
+               <children>
+                  <Label text="CPU COUNT" textFill="WHITE">
+                     <font>
+                        <Font name="Segoe UI Symbol" size="14.0" />
+                     </font>
+                  </Label>
+                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="6">
+                     <font>
+                        <Font name="Segoe UI Symbol" size="34.0" />
+                     </font>
+                  </Text>
+               </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </VBox>
+         </children>
+      </HBox>
+      <Label alignment="CENTER_RIGHT" layoutX="66.0" layoutY="534.0" prefHeight="40.0" prefWidth="264.0" text="CURRENT SCHEDULE" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Symbol" size="28.0" />
+         </font>
+      </Label>
+      <StackedBarChart layoutX="14.0" layoutY="23.0" prefHeight="459.0" prefWidth="355.0">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </StackedBarChart>
    </children>
 </AnchorPane>
