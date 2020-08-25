@@ -15,7 +15,7 @@ import java.util.concurrent.RecursiveAction;
  */
 public class ParallelOptimalScheduler {
 
-    private static final int threadDepth = 3;
+    private static final int threadDepth = 5;
 
     private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
@@ -44,7 +44,6 @@ public class ParallelOptimalScheduler {
             PartialSchedule rootSchedule = new PartialSchedule(_numProcessors, rootNode, canBeScheduled);
             searchTree.push(rootSchedule);
         }
-        System.out.println(searchTree.size() + " : " + initialBoundValue);
 
         boundValue = initialBoundValue;
 
@@ -58,42 +57,13 @@ public class ParallelOptimalScheduler {
         else {
             return true;
         }
-
-
-
-       /* PartialSchedule currentBest = null;
-        // While we have unexplored nodes, continue DFS with bound
-        while (!searchTree.empty()) {
-            PartialSchedule nodeToExplore = searchTree.pop();
-            PartialSchedule[] foundChildren = nodeToExplore.createChildren();
-
-            for (PartialSchedule child: foundChildren) {
-                double childLength = child.getScheduleLength();
-                // Check if we've found our new most optimal
-                if (child.isComplete() && childLength < boundValue) {
-                    boundValue = childLength;
-                    currentBest = child;
-                }
-                // Branch by pushing child into search tree or bound
-                if (childLength < boundValue) {
-                    searchTree.push(child);
-                }
-            }
-        }
-
-        _solution = currentBest;
-        if (_solution == null) {
-            return false;
-        }
-        return true;
-
-        */
     }
 
     private class Search extends RecursiveAction {
 
         Stack<PartialSchedule> searchTree;
         private double localBound = boundValue;
+        int count = 0;
 
         private Search(Stack<PartialSchedule> searchTree) {
             this.searchTree = searchTree;
@@ -102,48 +72,46 @@ public class ParallelOptimalScheduler {
         @Override
         protected void compute() {
             // While we have unexplored nodes, continue DFS with bound
+
             while (!searchTree.empty()) {
+
                 PartialSchedule nodeToExplore = searchTree.pop();
                 PartialSchedule[] foundChildren = nodeToExplore.createChildren();
 
-                System.out.println("\nSize of schedule before: " + searchTree.size());
-                System.out.println("This schedule has " + foundChildren.length + " children.");
                 for (PartialSchedule child: foundChildren) {
                     double childLength = child.getScheduleLength();
                     // Check if we've found our new most optimal
                     if (child.isComplete() && childLength < localBound) {
-                        boundValue = childLength;
-                        updateCurrentOptimal(child, localBound);
+                        localBound = childLength;
+                        updateCurrentOptimal(child);
                     }
                     // Branch by pushing child into search tree or bound
                     if (childLength < localBound) {
                         searchTree.push(child);
                     }
-                    System.out.println("Size of child: " + childLength);
                 }
-                System.out.println("Bound: " + boundValue);
-                System.out.println("Size of tree after: " + searchTree.size() + "\n");
 
 
-               if (searchTree.size() > threadDepth) {
+                if (searchTree.size() > threadDepth) {
                     Stack<PartialSchedule> forkedStack = new Stack<PartialSchedule>();
                     PartialSchedule temp = searchTree.pop();
                     forkedStack.add(temp);
                     System.out.println(" FORKING ");
-                    invokeAll( new Search(searchTree), new Search(forkedStack));
-                    return;
+                    invokeAll(new Search(searchTree), new Search(forkedStack));
                 }
 
-
+                count++;
+                if (count > 10000) {
+                    count = 0;
+                    localBound = boundValue;
+                }
             }
-            return;
         }
     }
 
-    private synchronized void updateCurrentOptimal(PartialSchedule optimal, double localBound) {
+    private synchronized void updateCurrentOptimal(PartialSchedule optimal) {
         if (optimal.getScheduleLength() < boundValue) {
             _solution = optimal;
-            boundValue = localBound;
         }
     }
 

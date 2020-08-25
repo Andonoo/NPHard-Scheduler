@@ -38,6 +38,8 @@ public class SequentialOptimalScheduler {
             searchTree.push(rootSchedule);
         }
 
+        int counter = 0;
+
         double boundValue = initialBoundValue;
         PartialSchedule currentBest = null;
         // While we have unexplored nodes, continue DFS with bound
@@ -48,6 +50,7 @@ public class SequentialOptimalScheduler {
             for (PartialSchedule child: foundChildren) {
                 double childLength = child.getScheduleLength();
                 // Check if we've found our new most optimal
+                counter++;
                 if (child.isComplete() && childLength < boundValue) {
                     boundValue = childLength;
                     currentBest = child;
@@ -58,6 +61,7 @@ public class SequentialOptimalScheduler {
                 }
             }
         }
+        System.out.println(counter);
 
         _solution = currentBest;
         if (_solution == null) {
