@@ -11,6 +11,7 @@ public class InfoTracker {
     String _fileName;
     int _processors;
     int _cores;
+    boolean _currentBestHasChanged = false;
 
 
 
@@ -26,6 +27,14 @@ public class InfoTracker {
 
     public void set_currentBest(int _currentBest) {
         this._currentBest = _currentBest;
+    }
+
+    public boolean get_currentBestHasChanged() {
+        return _currentBestHasChanged;
+    }
+
+    public void set_currentBestHasChanged(boolean currentBestHasChanged) {
+        this._currentBestHasChanged = currentBestHasChanged;
     }
 
     public PartialSchedule get_scheduledToBeDisplayed() {
@@ -83,5 +92,4 @@ public class InfoTracker {
     public void set_cores(int _cores) {
         this._cores = _cores;
     }
-
 }

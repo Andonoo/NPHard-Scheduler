@@ -2,6 +2,7 @@ package algorithm;
 
 import domain.PartialSchedule;
 import domain.TaskNode;
+import javafx.InfoTracker;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 
@@ -15,11 +16,13 @@ public class SequentialOptimalScheduler {
     private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution;
+    private InfoTracker _infoTracker;
     private List<TaskNode> _topologicalOrderedTasks;
 
-    public SequentialOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors) {
+    public SequentialOptimalScheduler(Node[] topologicalOrderedTasks, InfoTracker infoTracker) {
         _topologicalOrderedTasks = new ArrayList<TaskNode>();
-        _numProcessors = numProcessors;
+        _infoTracker = infoTracker;
+        _numProcessors = infoTracker.get_processors();
         _rootNodes = new ArrayList<TaskNode>();
         populateTaskNodes(topologicalOrderedTasks);
     }
@@ -49,10 +52,14 @@ public class SequentialOptimalScheduler {
 
             for (PartialSchedule child: foundChildren) {
                 double childLength = child.getScheduleLength();
+                _infoTracker.setSearchesMade(_infoTracker.getSearchesMade() + 1);
+
                 // Check if we've found our new most optimal
                 if (child.isComplete() && childLength < boundValue) {
                     boundValue = childLength;
                     currentBest = child;
+                    _infoTracker.set_currentBestHasChanged(true);
+                    _infoTracker.set_currentBest((int)childLength);
                 }
                 // Branch by pushing child into search tree or bound
                 if (childLength < boundValue && child.getEstimatedFinish() < boundValue) {

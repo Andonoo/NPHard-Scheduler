@@ -149,6 +149,7 @@ public class InputHandler {
     }
 
     public String getFileName() {
-        return _fileName;
+        String displayedName = _fileName.substring(_fileName.lastIndexOf(File.separator) + 1);
+        return displayedName;
     }
 }

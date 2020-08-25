@@ -50,8 +50,8 @@ public class Controller {
         _status.setText(status);
     }
 
-    public void setSearchesMade(int searchesMade) {
-        _searchesMade.setText(String.valueOf(searchesMade));
+    public void setSearchesMade(String searchesMade) {
+        _searchesMade.setText(searchesMade);
     }
 
     public void setCurrentBest(int currentBest) {
@@ -79,31 +79,32 @@ public class Controller {
         setInputGraph(_infoTracker.get_fileName());
         setProcessorsCount(_infoTracker.get_processors());
         setCpuCount(_infoTracker.get_cores());
-//        startPolling();
+        startPolling();
     }
 
-//    private void startPolling() {
-//        Timeline poller = new Timeline(new KeyFrame(Duration.millis(50), event -> {
-//            if(_infoTracker.isFinished()){
-//                setStatus("Done");
-////                stopTimer();
-//
-//                if(pollingRanOnce) {
-//                    return;
-//                }
-//            }
-//
-//            if(_infoTracker.get_currentBest() != -1){
-//                setCurrentBest(_infoTracker.get_currentBest());
-//                setSchedule(_infoTracker.get_scheduledToBeDisplayed());
-//            }
-//            setSearchesMade(_infoTracker.getSearchesMade());
-//
-//            pollingRanOnce = true;
-//        }));
-//        poller.setCycleCount(Animation.INDEFINITE);
-//        poller.play();
-//    }
+    private void startPolling() {
+        Timeline poller = new Timeline(new KeyFrame(Duration.millis(50), event -> {
+            if(_infoTracker.isFinished()){
+                setStatus("DONE");
+                stopTimer();
+                if(pollingRanOnce) {
+                    return;
+                }
+            }
+
+            if(_infoTracker.get_currentBestHasChanged()){
+                setCurrentBest(_infoTracker.get_currentBest());
+                setSchedule(_infoTracker.get_scheduledToBeDisplayed());
+                _infoTracker.set_currentBestHasChanged(false);
+            }
+            int numSearches = _infoTracker.getSearchesMade();
+            setSearchesMade(numSearches > 1000 ? numSearches/1000 + "k" : String.valueOf(numSearches));
+
+            pollingRanOnce = true;
+        }));
+        poller.setCycleCount(Animation.INDEFINITE);
+        poller.play();
+    }
 
     private void setSchedule(PartialSchedule scheduledToBeDisplayed) {
         //display the schedule
@@ -126,7 +127,7 @@ public class Controller {
         timerHandler.setCycleCount(Timeline.INDEFINITE);
         timerHandler.play();
     }
-//    public void stopTimer(){
-//        timerHandler.stop();
-//    }
+    public void stopTimer(){
+        timerHandler.stop();
+    }
 }
