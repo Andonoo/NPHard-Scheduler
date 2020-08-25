@@ -1,6 +1,6 @@
 import algorithm.GreedyScheduler;
 import algorithm.SequentialOptimalScheduler;
-import domain.PartialSchedule;
+import io.CommandLineException;
 import io.InputHandler;
 import io.OutputHandler;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
@@ -8,7 +8,13 @@ import org.graphstream.graph.implementations.AdjacencyListGraph;
 public class Main {
 
     public static void main(String[] args) {
-        InputHandler inputParser = new InputHandler(args);
+        InputHandler inputParser = null;
+        try {
+            inputParser = new InputHandler(args);
+        } catch (CommandLineException e) {
+            e.printStackTrace();
+        }
+
         if (inputParser.produceGUI()) {
             //javafx shazam
             System.out.println("Thanks Francis");
