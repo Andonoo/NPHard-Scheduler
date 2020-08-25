@@ -147,4 +147,8 @@ public class InputHandler {
     public boolean produceGUI() {
         return _options.contains("-v");
     }
+
+    public String getFileName() {
+        return _fileName;
+    }
 }

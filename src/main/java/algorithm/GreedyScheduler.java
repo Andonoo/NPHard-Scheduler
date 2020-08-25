@@ -32,7 +32,6 @@ public class GreedyScheduler {
         sortTopologically();
         scheduleByGreedy(_topologicalOrder);
         prepForOutput();
-        System.out.println("finished executing algorithm");
     }
 
     /**

@@ -45,7 +45,7 @@
                         <Font name="Segoe UI Symbol" size="14.0" />
                      </font>
                   </Label>
-                  <Text fx:id="status" fill="#77eb9d" strokeType="OUTSIDE" strokeWidth="0.0" text="RUNNING">
+                  <Text fx:id="_status" fill="#77eb9d" strokeType="OUTSIDE" strokeWidth="0.0" text="RUNNING">
                      <font>
                         <Font name="Segoe UI Symbol" size="34.0" />
                      </font>
@@ -59,7 +59,7 @@
                         <Font name="Segoe UI Symbol" size="14.0" />
                      </font>
                   </Label>
-                  <Text fx:id="timeElapsed" fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="0h00m00s">
+                  <Text fx:id="_timeElapsed" fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="0h00m00s">
                      <font>
                         <Font name="Segoe UI Symbol" size="34.0" />
                      </font>
@@ -73,7 +73,7 @@
                         <Font name="Segoe UI Symbol" size="14.0" />
                      </font>
                   </Label>
-                  <Text fx:id="searchesMade" fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="5239">
+                  <Text fx:id="_searchesMade" fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="5239">
                      <font>
                         <Font name="Segoe UI Symbol" size="34.0" />
                      </font>
@@ -100,7 +100,7 @@
                         <Font name="Segoe UI Symbol" size="14.0" />
                      </font>
                   </Label>
-                  <Text fx:id="currentBest" fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="450">
+                  <Text fx:id="_currentBest" fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="450">
                      <font>
                         <Font name="Segoe UI Symbol" size="61.0" />
                      </font>
@@ -131,7 +131,7 @@
                   <Font name="Segoe UI Symbol" size="28.0" />
                </font>
             </Label>
-            <Label fx:id="inputGraph" alignment="CENTER_RIGHT" text="example-graph1.dot" textFill="WHITE">
+            <Label fx:id="_inputGraph" alignment="CENTER_RIGHT" text="example-graph1.dot" textFill="WHITE">
                <font>
                   <Font name="Segoe UI Symbol" size="16.0" />
                </font>
@@ -147,7 +147,7 @@
                         <Font name="Segoe UI Symbol" size="14.0" />
                      </font>
                   </Label>
-                  <Text fx:id="processorsCount" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
+                  <Text fx:id="_processorsCount" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
                      <font>
                         <Font name="Segoe UI Symbol" size="34.0" />
                      </font>
@@ -164,7 +164,7 @@
                         <Font name="Segoe UI Symbol" size="14.0" />
                      </font>
                   </Label>
-                  <Text fx:id="cpuCount" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="6">
+                  <Text fx:id="_cpuCount" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="6">
                      <font>
                         <Font name="Segoe UI Symbol" size="34.0" />
                      </font>
