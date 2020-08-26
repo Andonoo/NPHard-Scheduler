@@ -15,12 +15,12 @@ import java.util.concurrent.RecursiveAction;
  */
 public class ParallelOptimalScheduler {
 
-    private static final int threadDepth = 5;
+    private static final int threadDepth = 10;
 
     private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution = null;
-    private int numThreads = 4;
+    private int numThreads = Runtime.getRuntime().availableProcessors();
     private double boundValue;
 
     public ParallelOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors) {
@@ -36,7 +36,7 @@ public class ParallelOptimalScheduler {
      */
     public boolean executeBranchAndBoundAlgorithm(double initialBoundValue) {
         // Initializing the search tree with a partial schedule for each root node
-        Stack<PartialSchedule> searchTree = new Stack<PartialSchedule>();
+        LinkedList<PartialSchedule> searchTree = new LinkedList<PartialSchedule>();
         for (TaskNode rootNode: _rootNodes) {
             List<TaskNode> canBeScheduled = new ArrayList<TaskNode>(_rootNodes);
             canBeScheduled.remove(rootNode);
@@ -61,11 +61,11 @@ public class ParallelOptimalScheduler {
 
     private class Search extends RecursiveAction {
 
-        Stack<PartialSchedule> searchTree;
+        LinkedList<PartialSchedule> searchTree;
         private double localBound = boundValue;
         int count = 0;
 
-        private Search(Stack<PartialSchedule> searchTree) {
+        private Search(LinkedList<PartialSchedule> searchTree) {
             this.searchTree = searchTree;
         }
 
@@ -73,18 +73,26 @@ public class ParallelOptimalScheduler {
         protected void compute() {
             // While we have unexplored nodes, continue DFS with bound
 
-            while (!searchTree.empty()) {
+            while (!searchTree.isEmpty()) {
 
                 PartialSchedule nodeToExplore = searchTree.pop();
+
+                if (nodeToExplore.isComplete() && nodeToExplore.getScheduleLength() < localBound) {
+                    //System.out.println("Current: " + nodeToExplore.getScheduleLength() + " vs Old: " + localBound);
+                    localBound = nodeToExplore.getScheduleLength();
+                    updateCurrentOptimal(nodeToExplore, nodeToExplore.getScheduleLength());
+                    continue;
+                }
+
                 PartialSchedule[] foundChildren = nodeToExplore.createChildren();
 
                 for (PartialSchedule child: foundChildren) {
                     double childLength = child.getScheduleLength();
                     // Check if we've found our new most optimal
-                    if (child.isComplete() && childLength < localBound) {
+                    /*if (child.isComplete() && childLength < localBound) {
                         localBound = childLength;
                         updateCurrentOptimal(child);
-                    }
+                    }*/
                     // Branch by pushing child into search tree or bound
                     if (childLength < localBound) {
                         searchTree.push(child);
@@ -92,12 +100,13 @@ public class ParallelOptimalScheduler {
                 }
 
 
+                // If the work delegated is too much, create another task for it and queue it
                 if (searchTree.size() > threadDepth) {
-                    Stack<PartialSchedule> forkedStack = new Stack<PartialSchedule>();
-                    PartialSchedule temp = searchTree.pop();
-                    forkedStack.add(temp);
-                    System.out.println(" FORKING ");
+                    LinkedList<PartialSchedule> forkedStack = new LinkedList<PartialSchedule>();
+                    forkedStack.add(searchTree.removeLast());
+                    // invokeAll(new Search(searchTree), new Search(forkedStack)); // This breaks the code
                     invokeAll(new Search(searchTree), new Search(forkedStack));
+                    //System.out.println("RUNNING");
                 }
 
                 count++;
@@ -109,9 +118,10 @@ public class ParallelOptimalScheduler {
         }
     }
 
-    private synchronized void updateCurrentOptimal(PartialSchedule optimal) {
+    private synchronized void updateCurrentOptimal(PartialSchedule optimal, double optimalLength) {
         if (optimal.getScheduleLength() < boundValue) {
             _solution = optimal;
+            boundValue = optimalLength;
         }
     }
 

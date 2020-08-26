@@ -61,7 +61,6 @@ public class SequentialOptimalScheduler {
                 }
             }
         }
-        System.out.println(counter);
 
         _solution = currentBest;
         if (_solution == null) {
