@@ -24,6 +24,7 @@ public class Main {
         AdjacencyListGraph g = inputParser.getGraph();
         GreedyScheduler greedyScheduler = new GreedyScheduler(g, inputParser.getProcessors());
         greedyScheduler.executeAlgorithm();
+        System.out.println("Greedy length: " + greedyScheduler.getSolutionLength());
 
         if (inputParser.getCores() == 1) {
             System.out.println("Sequential");
@@ -49,5 +50,8 @@ public class Main {
                 outputHandler.createOutputFile(greedyScheduler.getSolution());
             }
         }
+
+        long endTime = System.nanoTime();
+        System.out.println("Time taken: " + (endTime-startTime)/1000000000);
     }
 }

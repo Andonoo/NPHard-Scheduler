@@ -51,6 +51,7 @@ public class SequentialOptimalScheduler {
                 if (child.isComplete() && childLength < boundValue) {
                     boundValue = childLength;
                     currentBest = child;
+                    System.out.println("New Best Found");
                 }
                 // Branch by pushing child into search tree or bound
                 if (childLength < boundValue) {
