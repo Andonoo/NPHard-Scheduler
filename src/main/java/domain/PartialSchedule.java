@@ -16,6 +16,7 @@ public class PartialSchedule {
     private TaskNode[][] _processorSchedules;
     private final Set<TaskNode> _canBeScheduled;
     private final double _scheduleLength;
+    private int _firstAvailibleProcessor;
 
     // State relating to the scheduling, which created this PartialSchedule
     private final Map<TaskNode, PartialSchedule> _schedulings; // Maps the scheduling of a task to the PartialOrder in which it was added
@@ -36,6 +37,7 @@ public class PartialSchedule {
         }
 
         _processorUsedIndex = 0;
+        _firstAvailibleProcessor = Math.min(_processorSchedules.length-1, 1);
 
         _schedulings = new HashMap<TaskNode, PartialSchedule>();
         _schedulings.put(scheduledNode, this);
@@ -55,10 +57,11 @@ public class PartialSchedule {
      * @param scheduledTask task to be scheduled
      */
     private PartialSchedule(Map<TaskNode, PartialSchedule> schedulings, TaskNode[][] parentProcessorSchedules, Set<TaskNode> canBeScheduled,
-                           int scheduledProcessorIndex, TaskNode scheduledTask) {
+                           int scheduledProcessorIndex, TaskNode scheduledTask, int firstAvailableProcessor) {
         generateProcessorSchedules(parentProcessorSchedules, scheduledTask, scheduledProcessorIndex);
 
         _processorUsedIndex = scheduledProcessorIndex;
+        _firstAvailibleProcessor = firstAvailableProcessor;
 
         _schedulings = new HashMap<TaskNode, PartialSchedule>(schedulings);
         _schedulings.put(scheduledTask, this);
@@ -105,15 +108,16 @@ public class PartialSchedule {
      * @return child schedules
      */
     public PartialSchedule[] createChildren() {
-        PartialSchedule[] children = new PartialSchedule[_canBeScheduled.size() * _processorSchedules.length];
+        PartialSchedule[] children = new PartialSchedule[_canBeScheduled.size() * (_firstAvailibleProcessor+1)];
 
         int i = 0;
         Set<TaskNode> scheduled = new HashSet<TaskNode>();
         // Initializing a child for every task to processor combination
         for (TaskNode task: _canBeScheduled) {
             scheduled.add(task);
-            for (int processorIndex = 0; processorIndex < _processorSchedules.length; processorIndex++) {
-                children[i] = new PartialSchedule(_schedulings, _processorSchedules, _canBeScheduled, processorIndex, task);
+            for (int processorIndex = 0; processorIndex <= _firstAvailibleProcessor; processorIndex++) {
+                int firstAvailableProcessor = Math.min(processorIndex + 1, _processorSchedules.length-1);
+                children[i] = new PartialSchedule(_schedulings, _processorSchedules, _canBeScheduled, processorIndex, task, firstAvailableProcessor);
                 i++;
             }
         }
