@@ -175,5 +175,5 @@ public class InputHandler {
 
     protected String styleSheet =
             "edge { size: 2px; shape: cubic-curve; arrow-size: 15px, 8px; fill-color: white;}" +
-                    "graph { padding: 45px; fill-color: #d2cca1; }";
+                    "graph { padding: 45px; fill-color: #EF8354; }";
 }
