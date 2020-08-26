@@ -1,7 +1,9 @@
 package algorithm;
 
+import com.sun.xml.internal.ws.wsdl.writer.document.Part;
 import domain.PartialSchedule;
 import domain.TaskNode;
+import javafx.concurrent.Task;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 
@@ -15,8 +17,10 @@ public class SequentialOptimalScheduler {
     private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution;
+    List<TaskNode> _topologicalOrderedTasks;
 
     public SequentialOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors) {
+        _topologicalOrderedTasks = new ArrayList<TaskNode>();
         _numProcessors = numProcessors;
         _rootNodes = new ArrayList<TaskNode>();
         populateTaskNodes(topologicalOrderedTasks);
@@ -34,16 +38,19 @@ public class SequentialOptimalScheduler {
             List<TaskNode> canBeScheduled = new ArrayList<TaskNode>(_rootNodes);
             canBeScheduled.remove(rootNode);
 
-            PartialSchedule rootSchedule = new PartialSchedule(_numProcessors, rootNode, canBeScheduled);
+            PartialSchedule rootSchedule = new PartialSchedule(_numProcessors, rootNode, canBeScheduled, _topologicalOrderedTasks);
             searchTree.push(rootSchedule);
         }
+
+        int count = 0;
 
         double boundValue = initialBoundValue;
         PartialSchedule currentBest = null;
         // While we have unexplored nodes, continue DFS with bound
         while (!searchTree.empty()) {
             PartialSchedule nodeToExplore = searchTree.pop();
-            PartialSchedule[] foundChildren = nodeToExplore.createChildren();
+            PartialSchedule[] foundChildren = nodeToExplore.createChildren(_topologicalOrderedTasks);
+            //Arrays.sort(foundChildren, Comparator.reverseOrder());
 
             for (PartialSchedule child: foundChildren) {
                 double childLength = child.getScheduleLength();
@@ -54,12 +61,14 @@ public class SequentialOptimalScheduler {
                     System.out.println("New Best Found");
                 }
                 // Branch by pushing child into search tree or bound
-                if (childLength < boundValue) {
+                if (childLength < boundValue && child.getEstimatedFinish() < boundValue) {
                     searchTree.push(child);
                 }
             }
+            count++;
         }
 
+        System.out.println("Number explored: " + count);
         _solution = currentBest;
         if (_solution == null) {
             return false;
@@ -101,6 +110,8 @@ public class SequentialOptimalScheduler {
             // Creating the TaskNode, and adding it to the set
             TaskNode taskNode = new TaskNode(task.getId(), taskNodeDependencies, (double)((Integer)task.getAttribute("Weight")), dependencyWeights);
             taskNodes.put(task.getId(), taskNode);
+            _topologicalOrderedTasks.add(taskNode);
+
 
             // Adding this TaskNode as a dependent where necessary
             for (Edge dependency: dependencies) {
