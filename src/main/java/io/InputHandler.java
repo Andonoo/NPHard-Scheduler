@@ -11,21 +11,55 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InputHandler {
-    private final String _fileName;
+    private String _fileName;
     private AdjacencyListGraph _graph;
-    private final int _numProcessors;
+    private int _numProcessors;
     private final List<String> _options = new ArrayList<String>();
     private String _outputFileName;
 
-    public InputHandler(String[] input) {
-        _fileName = input[0];
-        _numProcessors = Integer.parseInt(input[1]);
+    public InputHandler(String[] input ) throws CommandLineException {
+
+        // Checks that all compulsory arguments are inputted
+        if (input.length < 2) {
+            throw new CommandLineException("Please enter a valid input file and number of processors");
+        }
+
+        // Checks that the input file is valid
+        if (!input[0].contains(".dot")){
+            throw new CommandLineException("Please enter a valid input file (.dot file)");
+        } else {
+            _fileName = input[0];
+        }
+
+        if(!new File(_fileName).isFile()) {
+            throw new CommandLineException("Please enter a valid input file that exists");
+        }
+
+        // Checks that the number of processors is actually a number
+        try {
+            _numProcessors = Integer.parseInt(input[1]);
+        } catch (Exception e){
+            throw new CommandLineException("Please enter an integer for the number of processors to be used");
+        }
+
+        // Check that number of processors is at least 1
+        if (_numProcessors < 1) {
+            throw new CommandLineException("Please enter a valid number for the number of processors (at least 1)");
+        }
+
         if (input.length > 2) {
             for (int i = 2; i < input.length; i++) {
                 _options.add(input[i]);
             }
         }
+
         setOutputFileName();
+
+        // Overwrites the output file
+        if(new File(_outputFileName).isFile()) {
+            System.out.println("WARNING: OUTPUT FILE ALREADY EXISTS. FILE WILL BE OVERWRITTEN.");
+        }
+
         createGraph();
     }
 
