@@ -47,9 +47,10 @@ public class ParallelOptimalScheduler {
             searchTree.push(rootSchedule);
         }
 
-        SearchTask searchFork = new SearchTask(searchTree);
+        // Declare task to be run concurrently on a pool of worker threads
+        BranchAndBoundTask task = new BranchAndBoundTask(searchTree);
         ForkJoinPool workers = new ForkJoinPool(NUM_RUNTIME_PROCESSORS);
-        workers.invoke(searchFork);
+        workers.invoke(task);
 
         if (_solution == null) {
             return false;
@@ -107,12 +108,15 @@ public class ParallelOptimalScheduler {
         }
     }
 
-    private class SearchTask extends RecursiveAction {
+    /**
+     * A nested inner class which computes the branch and bound algorithm. It is called recursively and concurrently.
+     */
+    private class BranchAndBoundTask extends RecursiveAction {
 
         LinkedList<PartialSchedule> searchTree;
         private double localBound = globalBound;
 
-        private SearchTask(LinkedList<PartialSchedule> searchTree) {
+        private BranchAndBoundTask(LinkedList<PartialSchedule> searchTree) {
             this.searchTree = searchTree;
         }
 
@@ -122,35 +126,41 @@ public class ParallelOptimalScheduler {
             while (!searchTree.isEmpty()) {
 
                 PartialSchedule nodeToExplore = searchTree.pop();
-
-                if (nodeToExplore.isComplete()) {
-                    // Update the optimal schedule (shared by all tasks)
-                    if (nodeToExplore.getScheduleLength() < localBound) {
-                        localBound = nodeToExplore.getScheduleLength();
-                        updateGlobal(nodeToExplore, localBound);
-                    }
-                    continue;
-                }
-
                 PartialSchedule[] foundChildren = nodeToExplore.createChildren();
 
                 for (PartialSchedule child: foundChildren) {
                     double childLength = child.getScheduleLength();
+
+                    if (child.isComplete()) {
+                        // Update the solution if this child is more optimal
+                        if (child.getScheduleLength() < localBound) {
+                            localBound = child.getScheduleLength();
+                            updateGlobal(child, localBound);
+                        }
+                        continue;
+                    }
+
                     // Branch by pushing child into search tree or bound
                     if (childLength < localBound) {
-                        searchTree.push(child);
+                        searchTree.addFirst(child);
                     }
                 }
 
-                // If the task takes on too much, delegate some work to another task and queue it in thread
+                // If the task takes on too much computation, delegate some work to another task and queue it in the pool of worker threads
                 if (searchTree.size() > THREAD_DEPTH) {
                     LinkedList<PartialSchedule> partitionList = new LinkedList<PartialSchedule>(Arrays.asList(searchTree.removeLast()));
-                    invokeAll(new SearchTask(searchTree), new SearchTask(partitionList));
+                    invokeAll(new BranchAndBoundTask(searchTree), new BranchAndBoundTask(partitionList));
                 }
             }
         }
     }
 
+    /**
+     * Updates the global shared solution synchronously
+     * @param localSchedule
+     * @param localBound
+     * @return
+     */
     private synchronized void updateGlobal(PartialSchedule localSchedule, double localBound) {
         // Double check in the case of asynchronicity
         if (localSchedule.getScheduleLength() < globalBound) {
