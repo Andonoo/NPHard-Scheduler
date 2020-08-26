@@ -33,7 +33,8 @@ public class Main extends Application{
         new Thread(Main::executeAlgorithm).start();
         primaryStage.setTitle("Scheduler visualisation");
         primaryStage.setScene(scene);
-
+        
+        primaryStage.setOnCloseRequest(event -> System.exit(0));
         primaryStage.show();
     }
 
@@ -51,7 +52,7 @@ public class Main extends Application{
         } else {
             executeAlgorithm();
         }
-
+        System.exit(0);
     }
 
     public static void executeAlgorithm() {

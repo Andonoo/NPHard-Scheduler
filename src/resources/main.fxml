@@ -12,29 +12,27 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #DBD4D3;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #DBD4D3;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Rectangle fill="#387780" height="107.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="900.0" />
-      <Rectangle fill="#d2cca1" height="433.0" layoutX="385.0" layoutY="129.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="300.0" />
-      <Rectangle fill="#387780" height="316.0" layoutX="697.0" layoutY="28.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="188.0">
+      <Rectangle fill="#d2cca1" height="126.0" layoutX="260.0" layoutY="134.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="294.0" />
+      <Rectangle fill="#387780" height="208.0" layoutX="562.0" layoutY="380.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="176.0" />
+      <Rectangle fill="#e83151" height="320.0" layoutX="6.0" layoutY="268.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="548.0" />
+      <Rectangle fill="#e83151" height="81.0" layoutX="6.0" layoutY="115.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="247.0" />
+      <Rectangle fill="#d2cca1" height="330.0" layoutX="561.0" layoutY="38.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="330.0">
          <effect>
-            <DropShadow color="#00000066" height="29.9" width="12.1" />
+            <DropShadow color="#0000007b" />
          </effect>
       </Rectangle>
-      <Rectangle fill="#e83151" height="538.0" layoutX="14.0" layoutY="23.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="355.0">
-         <effect>
-            <DropShadow color="#0000005e" />
-         </effect>
-      </Rectangle>
-      <Rectangle fill="#387780" height="207.0" layoutX="697.0" layoutY="354.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="188.0" />
-      <ImageView fitHeight="88.0" fitWidth="108.0" layoutX="480.0" layoutY="13.0" pickOnBounds="true" preserveRatio="true">
+      <Rectangle fill="#387780" height="208.0" layoutX="748.0" layoutY="380.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="144.0" />
+      <ImageView fitHeight="81.0" fitWidth="100.0" layoutX="85.0" layoutY="16.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../img/sinnen11.png" />
          </image>
       </ImageView>
-      <VBox alignment="CENTER" layoutX="697.0" layoutY="28.0" prefHeight="316.0" prefWidth="188.0" spacing="30.0">
+      <VBox alignment="CENTER" layoutX="573.0" layoutY="403.0" prefHeight="162.0" prefWidth="157.0" spacing="30.0">
          <children>
-            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0">
+            <VBox alignment="CENTER" prefHeight="0.0" prefWidth="188.0">
                <children>
                   <Label text="STATUS" textFill="#d2cca1">
                      <font>
@@ -48,7 +46,7 @@
                   </Text>
                </children>
             </VBox>
-            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0">
+            <VBox alignment="CENTER" prefHeight="0.0" prefWidth="188.0">
                <children>
                   <Label text="TIME ELAPSED" textFill="#d2cca1">
                      <font>
@@ -62,59 +60,20 @@
                   </Text>
                </children>
             </VBox>
-            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0">
-               <children>
-                  <Label text="SEARCHES MADE" textFill="#d2cca1">
-                     <font>
-                        <Font name="Segoe UI Symbol" size="14.0" />
-                     </font>
-                  </Label>
-                  <Text fx:id="_searchesMade" fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="5239">
-                     <font>
-                        <Font name="Segoe UI Symbol" size="34.0" />
-                     </font>
-                  </Text>
-               </children>
-            </VBox>
          </children>
          <padding>
             <Insets right="10.0" />
          </padding>
       </VBox>
-      <Rectangle fill="#e83151" height="66.0" layoutX="57.0" layoutY="521.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="281.0">
-         <effect>
-            <DropShadow color="#00000066" height="29.9" width="12.1" />
-         </effect>
-      </Rectangle>
-      <VBox alignment="CENTER" layoutX="697.0" layoutY="355.0" prefHeight="207.0" prefWidth="188.0" spacing="30.0">
-         <children>
-            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0" />
-            <VBox alignment="CENTER" prefHeight="70.0" prefWidth="192.0">
-               <children>
-                  <Label text="CURRENT BEST" textFill="#d2cca1">
-                     <font>
-                        <Font name="Segoe UI Symbol" size="14.0" />
-                     </font>
-                  </Label>
-                  <Text fx:id="_currentBest" fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="450">
-                     <font>
-                        <Font name="Segoe UI Symbol" size="61.0" />
-                     </font>
-                  </Text>
-               </children>
-            </VBox>
-            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0" />
-         </children>
-      </VBox>
       <VBox alignment="CENTER_RIGHT" layoutX="80.0" layoutY="521.0" />
-      <Rectangle fill="#d2cca1" height="66.0" layoutX="463.0" layoutY="521.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="206.0">
+      <Rectangle fill="#d2cca1" height="88.0" layoutX="260.0" layoutY="38.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="294.0">
          <effect>
-            <DropShadow color="#00000066" height="29.9" width="12.1" />
+            <DropShadow color="#0000007b" />
          </effect>
       </Rectangle>
-      <VBox alignment="CENTER_RIGHT" layoutX="463.0" layoutY="522.0">
+      <VBox alignment="CENTER" layoutX="308.0" layoutY="50.0">
          <children>
-            <Label alignment="CENTER_RIGHT" prefHeight="36.0" prefWidth="195.0" text="INPUT GRAPH" textFill="WHITE">
+            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="36.0" prefWidth="195.0" text="INPUT GRAPH" textFill="WHITE">
                <font>
                   <Font name="Segoe UI Symbol" size="28.0" />
                </font>
@@ -126,9 +85,17 @@
             </Label>
          </children>
       </VBox>
-      <HBox layoutX="386.0" layoutY="421.0" prefHeight="100.0" prefWidth="297.0">
+      <ImageView fx:id="graphImage" fitHeight="330.0" fitWidth="330.0" layoutX="562.0" layoutY="38.0" pickOnBounds="true" preserveRatio="true" />
+      <VBox fx:id="scheduleBox" layoutX="6.0" layoutY="268.0" prefHeight="320.0" prefWidth="548.0" />
+      <Rectangle fill="#e83151" height="65.0" layoutX="6.0" layoutY="203.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="247.0" />
+      <Label alignment="CENTER_RIGHT" layoutX="25.0" layoutY="216.0" prefHeight="40.0" prefWidth="209.0" text="CURRENT SCHEDULE" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Symbol" size="22.0" />
+         </font>
+      </Label>
+      <HBox layoutX="277.0" layoutY="147.0" prefHeight="100.0" spacing="20.0">
          <children>
-            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0">
+            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="120.0">
                <children>
                   <Label text="PROCESSORS" textFill="WHITE">
                      <font>
@@ -145,7 +112,7 @@
                   <Insets right="10.0" />
                </padding>
             </VBox>
-            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="188.0">
+            <VBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="120.0">
                <children>
                   <Label text="CPU COUNT" textFill="WHITE">
                      <font>
@@ -164,12 +131,33 @@
             </VBox>
          </children>
       </HBox>
-      <Label alignment="CENTER_RIGHT" layoutX="66.0" layoutY="534.0" prefHeight="40.0" prefWidth="264.0" text="CURRENT SCHEDULE" textFill="WHITE">
-         <font>
-            <Font name="Segoe UI Symbol" size="28.0" />
-         </font>
-      </Label>
-      <ImageView fx:id="graphImage" fitHeight="300.0" fitWidth="300.0" layoutX="385.0" layoutY="129.0" pickOnBounds="true" preserveRatio="true" />
-      <VBox fx:id="scheduleBox" layoutX="14.0" layoutY="23.0" prefHeight="480.0" prefWidth="355.0" />
+      <VBox alignment="CENTER" layoutX="770.0" layoutY="433.0" prefHeight="70.0">
+         <children>
+            <Label text="CURRENT BEST" textFill="#d2cca1">
+               <font>
+                  <Font name="Segoe UI Symbol" size="14.0" />
+               </font>
+            </Label>
+            <Text fx:id="_currentBest" fill="#d2cca1" strokeType="OUTSIDE" strokeWidth="0.0" text="450">
+               <font>
+                  <Font name="Segoe UI Symbol" size="61.0" />
+               </font>
+            </Text>
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" layoutX="6.0" layoutY="121.0" prefHeight="70.0" prefWidth="247.0">
+         <children>
+            <Label text="SEARCHES MADE" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Symbol" size="14.0" />
+               </font>
+            </Label>
+            <Text fx:id="_searchesMade" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="5239">
+               <font>
+                  <Font name="Segoe UI Symbol" size="37.0" />
+               </font>
+            </Text>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>
