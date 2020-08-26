@@ -15,13 +15,13 @@ import java.util.concurrent.RecursiveAction;
  */
 public class ParallelOptimalScheduler {
 
-    private static final int threadDepth = 10;
+    private static final int THREAD_DEPTH = 10;
+    private static final int NUM_RUNTIME_PROCESSORS = 4;
 
     private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution = null;
-    private int numThreads = Runtime.getRuntime().availableProcessors();
-    private double boundValue;
+    private double globalBound;
 
     public ParallelOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors) {
         _numProcessors = numProcessors;
@@ -37,6 +37,8 @@ public class ParallelOptimalScheduler {
     public boolean executeBranchAndBoundAlgorithm(double initialBoundValue) {
         // Initializing the search tree with a partial schedule for each root node
         LinkedList<PartialSchedule> searchTree = new LinkedList<PartialSchedule>();
+        globalBound = initialBoundValue;
+
         for (TaskNode rootNode: _rootNodes) {
             List<TaskNode> canBeScheduled = new ArrayList<TaskNode>(_rootNodes);
             canBeScheduled.remove(rootNode);
@@ -45,83 +47,15 @@ public class ParallelOptimalScheduler {
             searchTree.push(rootSchedule);
         }
 
-        boundValue = initialBoundValue;
-
-        Search searchFork = new Search(searchTree);
-        ForkJoinPool fjp = new ForkJoinPool(numThreads);
-        fjp.invoke(searchFork);
+        SearchTask searchFork = new SearchTask(searchTree);
+        ForkJoinPool workers = new ForkJoinPool(NUM_RUNTIME_PROCESSORS);
+        workers.invoke(searchFork);
 
         if (_solution == null) {
             return false;
         }
         else {
             return true;
-        }
-    }
-
-    private class Search extends RecursiveAction {
-
-        LinkedList<PartialSchedule> searchTree;
-        private double localBound = boundValue;
-        int count = 0;
-
-        private Search(LinkedList<PartialSchedule> searchTree) {
-            this.searchTree = searchTree;
-        }
-
-        @Override
-        protected void compute() {
-            // While we have unexplored nodes, continue DFS with bound
-
-            while (!searchTree.isEmpty()) {
-
-                PartialSchedule nodeToExplore = searchTree.pop();
-
-                if (nodeToExplore.isComplete() && nodeToExplore.getScheduleLength() < localBound) {
-                    //System.out.println("Current: " + nodeToExplore.getScheduleLength() + " vs Old: " + localBound);
-                    localBound = nodeToExplore.getScheduleLength();
-                    updateCurrentOptimal(nodeToExplore, nodeToExplore.getScheduleLength());
-                    continue;
-                }
-
-                PartialSchedule[] foundChildren = nodeToExplore.createChildren();
-
-                for (PartialSchedule child: foundChildren) {
-                    double childLength = child.getScheduleLength();
-                    // Check if we've found our new most optimal
-                    /*if (child.isComplete() && childLength < localBound) {
-                        localBound = childLength;
-                        updateCurrentOptimal(child);
-                    }*/
-                    // Branch by pushing child into search tree or bound
-                    if (childLength < localBound) {
-                        searchTree.push(child);
-                    }
-                }
-
-
-                // If the work delegated is too much, create another task for it and queue it
-                if (searchTree.size() > threadDepth) {
-                    LinkedList<PartialSchedule> forkedStack = new LinkedList<PartialSchedule>();
-                    forkedStack.add(searchTree.removeLast());
-                    // invokeAll(new Search(searchTree), new Search(forkedStack)); // This breaks the code
-                    invokeAll(new Search(searchTree), new Search(forkedStack));
-                    //System.out.println("RUNNING");
-                }
-
-                count++;
-                if (count > 10000) {
-                    count = 0;
-                    localBound = boundValue;
-                }
-            }
-        }
-    }
-
-    private synchronized void updateCurrentOptimal(PartialSchedule optimal, double optimalLength) {
-        if (optimal.getScheduleLength() < boundValue) {
-            _solution = optimal;
-            boundValue = optimalLength;
         }
     }
 
@@ -170,6 +104,58 @@ public class ParallelOptimalScheduler {
             if (task.getInDegree() == 0) {
                 _rootNodes.add(taskNode);
             }
+        }
+    }
+
+    private class SearchTask extends RecursiveAction {
+
+        LinkedList<PartialSchedule> searchTree;
+        private double localBound = globalBound;
+
+        private SearchTask(LinkedList<PartialSchedule> searchTree) {
+            this.searchTree = searchTree;
+        }
+
+        @Override
+        protected void compute() {
+            // While we have unexplored nodes, continue DFS with bound
+            while (!searchTree.isEmpty()) {
+
+                PartialSchedule nodeToExplore = searchTree.pop();
+
+                if (nodeToExplore.isComplete()) {
+                    // Update the optimal schedule (shared by all tasks)
+                    if (nodeToExplore.getScheduleLength() < localBound) {
+                        localBound = nodeToExplore.getScheduleLength();
+                        updateGlobal(nodeToExplore, localBound);
+                    }
+                    continue;
+                }
+
+                PartialSchedule[] foundChildren = nodeToExplore.createChildren();
+
+                for (PartialSchedule child: foundChildren) {
+                    double childLength = child.getScheduleLength();
+                    // Branch by pushing child into search tree or bound
+                    if (childLength < localBound) {
+                        searchTree.push(child);
+                    }
+                }
+
+                // If the task takes on too much, delegate some work to another task and queue it in thread
+                if (searchTree.size() > THREAD_DEPTH) {
+                    LinkedList<PartialSchedule> partitionList = new LinkedList<PartialSchedule>(Arrays.asList(searchTree.removeLast()));
+                    invokeAll(new SearchTask(searchTree), new SearchTask(partitionList));
+                }
+            }
+        }
+    }
+
+    private synchronized void updateGlobal(PartialSchedule localSchedule, double localBound) {
+        // Double check in the case of asynchronicity
+        if (localSchedule.getScheduleLength() < globalBound) {
+            _solution = localSchedule;
+            globalBound = localBound;
         }
     }
 }
