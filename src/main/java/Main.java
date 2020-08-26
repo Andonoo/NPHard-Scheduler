@@ -6,7 +6,6 @@ import io.CommandLineException;
 import io.InputHandler;
 import io.OutputHandler;
 import javafx.InfoTracker;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,7 +17,6 @@ import java.io.IOException;
 public class Main extends Application{
 
     static InfoTracker _infoTracker;
-    static InputHandler _inputHandler;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -40,13 +38,15 @@ public class Main extends Application{
     }
 
     public static void main(String[] args) {
+        InputHandler inputHandler = null;
         try {
-            _inputHandler = new InputHandler(args);
+            inputHandler = new InputHandler(args);
         } catch (CommandLineException e) {
             e.printStackTrace();
         }
-        _infoTracker = new InfoTracker(_inputHandler.getFileName(), _inputHandler.getProcessors(), _inputHandler.getCores());
-        if (_inputHandler.produceGUI()) {
+
+        _infoTracker = new InfoTracker(inputHandler.getFileName(), inputHandler.getProcessors(), inputHandler.getCores(), inputHandler.getGraph());
+        if (inputHandler.produceGUI()) {
             launch(args);
         } else {
             executeAlgorithm();
@@ -55,31 +55,30 @@ public class Main extends Application{
     }
 
     public static void executeAlgorithm() {
-        AdjacencyListGraph g = _inputHandler.getGraph();
         System.out.println("Start executing algorithm");
-        GreedyScheduler greedyScheduler = new GreedyScheduler(g, _inputHandler.getProcessors());
+        GreedyScheduler greedyScheduler = new GreedyScheduler(_infoTracker.getGraph(), _infoTracker.get_processors());
         greedyScheduler.executeAlgorithm();
 
-        if (_inputHandler.getCores() == 1) {
+        if (_infoTracker.get_cores() == 1) {
             System.out.println("Sequential");
             SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), _infoTracker);
             boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
             _infoTracker.setFinished(true);
             OutputHandler outputHandler = new OutputHandler();
             if (moreOptimalFound) {
-                outputHandler.createOutputFile(optimalScheduler.getSolution(), g);
+                outputHandler.createOutputFile(optimalScheduler.getSolution(), _infoTracker.getGraph());
             } else {
                 outputHandler.createOutputFile(greedyScheduler.getSolution());
             }
 
         } else {
             System.out.println("Parallel");
-            ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), _inputHandler.getProcessors());
+            ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), _infoTracker.get_processors());
             boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
             _infoTracker.setFinished(true);
             OutputHandler outputHandler = new OutputHandler();
             if (moreOptimalFound) {
-                outputHandler.createOutputFile(optimalScheduler.getSolution(), g);
+                outputHandler.createOutputFile(optimalScheduler.getSolution(), _infoTracker.getGraph());
             } else {
                 outputHandler.createOutputFile(greedyScheduler.getSolution());
             }

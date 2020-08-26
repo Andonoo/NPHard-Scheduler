@@ -60,6 +60,7 @@ public class SequentialOptimalScheduler {
                     currentBest = child;
                     _infoTracker.set_currentBestHasChanged(true);
                     _infoTracker.set_currentBest((int)childLength);
+                    _infoTracker.set_scheduledToBeDisplayed(child);
                 }
                 // Branch by pushing child into search tree or bound
                 if (childLength < boundValue && child.getEstimatedFinish() < boundValue) {

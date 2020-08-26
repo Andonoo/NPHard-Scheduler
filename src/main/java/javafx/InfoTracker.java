@@ -1,6 +1,7 @@
 package javafx;
 
 import domain.PartialSchedule;
+import org.graphstream.graph.implementations.AdjacencyListGraph;
 
 public class InfoTracker {
     int _currentBest = -1;
@@ -12,13 +13,15 @@ public class InfoTracker {
     int _processors;
     int _cores;
     boolean _currentBestHasChanged = false;
+    AdjacencyListGraph _graph;
 
 
 
-    public InfoTracker(String fileName, int processors, int cores) {
+    public InfoTracker(String fileName, int processors, int cores, AdjacencyListGraph graph) {
         _fileName = fileName;
         _processors = processors;
         _cores = cores;
+        _graph = graph;
     }
 
     public int get_currentBest() {
@@ -91,5 +94,9 @@ public class InfoTracker {
 
     public void set_cores(int _cores) {
         this._cores = _cores;
+    }
+
+    public AdjacencyListGraph getGraph() {
+        return _graph;
     }
 }
