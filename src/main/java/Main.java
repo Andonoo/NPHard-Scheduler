@@ -1,4 +1,5 @@
 import algorithm.GreedyScheduler;
+import algorithm.ParallelOptimalScheduler;
 import algorithm.SequentialOptimalScheduler;
 import io.CommandLineException;
 import io.InputHandler;
@@ -24,14 +25,29 @@ public class Main {
         GreedyScheduler greedyScheduler = new GreedyScheduler(g, inputParser.getProcessors());
         greedyScheduler.executeAlgorithm();
 
-        SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), inputParser.getProcessors());
-        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
+        if (inputParser.getCores() == 1) {
+            System.out.println("Sequential");
+            SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), inputParser.getProcessors());
+            boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
 
-        OutputHandler outputHandler = new OutputHandler();
-        if (moreOptimalFound) {
-            outputHandler.createOutputFile(optimalScheduler.getSolution(), g);
-        } else {
-            outputHandler.createOutputFile(greedyScheduler.getSolution());
+            OutputHandler outputHandler = new OutputHandler();
+            if (moreOptimalFound) {
+                outputHandler.createOutputFile(optimalScheduler.getSolution(), g);
+            } else {
+                outputHandler.createOutputFile(greedyScheduler.getSolution());
+            }
+        }
+        else {
+            System.out.println("Parallel");
+            ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), inputParser.getProcessors());
+            boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
+
+            OutputHandler outputHandler = new OutputHandler();
+            if (moreOptimalFound) {
+                outputHandler.createOutputFile(optimalScheduler.getSolution(), g);
+            } else {
+                outputHandler.createOutputFile(greedyScheduler.getSolution());
+            }
         }
     }
 }

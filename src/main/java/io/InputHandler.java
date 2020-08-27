@@ -14,6 +14,7 @@ public class InputHandler {
     private String _fileName;
     private AdjacencyListGraph _graph;
     private int _numProcessors;
+    private int _numCores;
     private final List<String> _options = new ArrayList<String>();
     private String _outputFileName;
 
@@ -55,6 +56,8 @@ public class InputHandler {
 
         setOutputFileName();
 
+        _numCores = setCores();
+
         // Overwrites the output file
         if(new File(_outputFileName).isFile()) {
             System.out.println("WARNING: OUTPUT FILE ALREADY EXISTS. FILE WILL BE OVERWRITTEN.");
@@ -82,6 +85,53 @@ public class InputHandler {
 
     public int getProcessors() {
         return _numProcessors;
+    }
+
+    public int getCores() { return _numCores; }
+
+    public int setCores() throws CommandLineException {
+        int coresIndex = _options.indexOf("-p");
+
+        if (coresIndex != -1) {
+            try {
+                if (_options.get(coresIndex + 1).startsWith("-")) {
+                    // e.g. -p -v or -p -o, what about -p -
+                    return 1;
+                }
+            }
+            catch (Exception e) {
+                // -p is the last argument
+                return 1;
+            }
+
+            if (isNumeric(_options.get(coresIndex + 1))) {
+                int number = Integer.parseInt(_options.get(coresIndex + 1));
+                if (number >= 1 && number <= 4) {
+                    // valid number
+                    return number;
+                }
+                throw new CommandLineException("Please enter an integer between 1 to 4 for the number of cores to be used");
+            }
+            else {
+                throw new CommandLineException("Please enter a valid integer for the number of cores to be used");
+            }
+        }
+        else {
+            return 1;
+        }
+    }
+
+    public boolean isNumeric(String input) {
+        if (input == null) {
+            return false;
+        }
+        try {
+            int numCores = Integer.parseInt(input);
+        }
+        catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
     }
 
     private void setOutputFileName() {
