@@ -21,9 +21,11 @@ public class ParallelOptimalScheduler {
     private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution = null;
+    private List<TaskNode> _topologicalOrderedTasks;
     private double _globalBound;
 
     public ParallelOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors) {
+        _topologicalOrderedTasks = new ArrayList<TaskNode>();
         _numProcessors = numProcessors;
         _rootNodes = new ArrayList<TaskNode>();
         populateTaskNodes(topologicalOrderedTasks);
@@ -43,7 +45,7 @@ public class ParallelOptimalScheduler {
             List<TaskNode> canBeScheduled = new ArrayList<TaskNode>(_rootNodes);
             canBeScheduled.remove(rootNode);
 
-            PartialSchedule rootSchedule = new PartialSchedule(_numProcessors, rootNode, canBeScheduled);
+            PartialSchedule rootSchedule = new PartialSchedule(_numProcessors, rootNode, canBeScheduled, _topologicalOrderedTasks);
             searchTree.push(rootSchedule);
         }
 
@@ -126,7 +128,7 @@ public class ParallelOptimalScheduler {
             while (!searchTree.isEmpty()) {
 
                 PartialSchedule nodeToExplore = searchTree.pop();
-                PartialSchedule[] foundChildren = nodeToExplore.createChildren();
+                PartialSchedule[] foundChildren = nodeToExplore.createChildren(_topologicalOrderedTasks);
 
                 for (PartialSchedule child: foundChildren) {
                     double childLength = child.getScheduleLength();
@@ -141,7 +143,7 @@ public class ParallelOptimalScheduler {
                     }
 
                     // Branch by pushing child into search tree or bound
-                    if (childLength < localBound) {
+                    if (childLength < localBound && child.getEstimatedFinish() < localBound) {
                         searchTree.addFirst(child);
                     }
                 }

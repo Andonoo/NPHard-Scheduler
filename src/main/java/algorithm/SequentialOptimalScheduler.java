@@ -1,9 +1,7 @@
 package algorithm;
 
-import com.sun.xml.internal.ws.wsdl.writer.document.Part;
 import domain.PartialSchedule;
 import domain.TaskNode;
-import javafx.concurrent.Task;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 
@@ -17,7 +15,7 @@ public class SequentialOptimalScheduler {
     private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution;
-    List<TaskNode> _topologicalOrderedTasks;
+    private List<TaskNode> _topologicalOrderedTasks;
 
     public SequentialOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors) {
         _topologicalOrderedTasks = new ArrayList<TaskNode>();
@@ -50,7 +48,6 @@ public class SequentialOptimalScheduler {
         while (!searchTree.empty()) {
             PartialSchedule nodeToExplore = searchTree.pop();
             PartialSchedule[] foundChildren = nodeToExplore.createChildren(_topologicalOrderedTasks);
-            //Arrays.sort(foundChildren, Comparator.reverseOrder());
 
             for (PartialSchedule child: foundChildren) {
                 double childLength = child.getScheduleLength();
@@ -58,7 +55,6 @@ public class SequentialOptimalScheduler {
                 if (child.isComplete() && childLength < boundValue) {
                     boundValue = childLength;
                     currentBest = child;
-                    System.out.println("New Best Found");
                 }
                 // Branch by pushing child into search tree or bound
                 if (childLength < boundValue && child.getEstimatedFinish() < boundValue) {
@@ -68,7 +64,6 @@ public class SequentialOptimalScheduler {
             count++;
         }
 
-        System.out.println("Number explored: " + count);
         _solution = currentBest;
         if (_solution == null) {
             return false;

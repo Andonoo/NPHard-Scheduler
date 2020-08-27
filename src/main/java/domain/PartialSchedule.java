@@ -1,7 +1,5 @@
 package domain;
 
-import javafx.concurrent.Task;
-
 import java.util.*;
 
 /**
@@ -217,6 +215,12 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
         return newlySchedulableTasks;
     }
 
+    /**
+     * Estimates the end time of this PartialSchedule if it were a full schedule. It does this by using an
+     * earliest available processor heuristic assignment, ignoring dependencies.
+     * @param topologicalOrderedTasks
+     * @return
+     */
     private double estimateFinish(List<TaskNode> topologicalOrderedTasks) {
         double[] processorEndTimes = Arrays.copyOf(_processorEndTimes, _processorEndTimes.length) ;
 
@@ -270,14 +274,23 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
         return false;
     }
 
+    /**
+     * @return Returns an estimate of the length of this PartialSchedule, as if it were a full schedule
+     */
     public double getEstimatedFinish() {
         return _estimatedFinish;
     }
 
+    /**
+     * @return Returns the index of the processor which was used in the scheduling, which created this PartialSchedule
+     */
     public int getProcessorIndex() {
         return _processorUsedIndex;
     }
 
+    /**
+     * @return Returns a mapping of TaskNodes, to the PartialSchedules in which they were scheduled
+     */
     public Map<TaskNode, PartialSchedule> getSchedulings() {
         return _schedulings;
     }
