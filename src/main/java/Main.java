@@ -33,10 +33,8 @@ public class Main {
             OutputHandler outputHandler = new OutputHandler();
             if (moreOptimalFound) {
                 outputHandler.createOutputFile(optimalScheduler.getSolution(), g);
-                System.out.println("Length: " + optimalScheduler.getSolution().getScheduleLength());
             } else {
                 outputHandler.createOutputFile(greedyScheduler.getSolution());
-                System.out.println("Length: " + optimalScheduler.getSolution().getScheduleLength());
             }
         }
         else {
