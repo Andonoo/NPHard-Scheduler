@@ -274,10 +274,6 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
         return _estimatedFinish;
     }
 
-    public double[] getProcessorEndTimes() {
-        return _processorEndTimes;
-    }
-
     public int getProcessorIndex() {
         return _processorUsedIndex;
     }

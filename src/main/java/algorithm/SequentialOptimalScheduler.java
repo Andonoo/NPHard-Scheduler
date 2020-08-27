@@ -112,7 +112,6 @@ public class SequentialOptimalScheduler {
             taskNodes.put(task.getId(), taskNode);
             _topologicalOrderedTasks.add(taskNode);
 
-
             // Adding this TaskNode as a dependent where necessary
             for (Edge dependency: dependencies) {
                 TaskNode dependencyTaskNode = taskNodes.get(dependency.getSourceNode().getId());
