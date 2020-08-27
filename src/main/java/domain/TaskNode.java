@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class TaskNode {
+public class TaskNode implements Comparable<TaskNode> {
     private final String _id;
     private final TaskNode[] _dependencies;
     private final Map<TaskNode, Double> _dependencyWeights;
@@ -74,5 +74,17 @@ public class TaskNode {
 
     public TaskNode[] getDependencies() {
         return _dependencies;
+    }
+
+    @Override
+    public int compareTo(TaskNode o) {
+        if (_dependencyWeights.keySet().contains(o)) {
+            return 1;
+        } else {
+            if (_weight > o._weight) {
+                return -1;
+            }
+            return 1;
+        }
     }
 }

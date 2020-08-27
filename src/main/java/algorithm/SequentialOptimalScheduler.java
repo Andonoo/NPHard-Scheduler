@@ -15,8 +15,10 @@ public class SequentialOptimalScheduler {
     private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution;
+    private List<TaskNode> _topologicalOrderedTasks;
 
     public SequentialOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors) {
+        _topologicalOrderedTasks = new ArrayList<TaskNode>();
         _numProcessors = numProcessors;
         _rootNodes = new ArrayList<TaskNode>();
         populateTaskNodes(topologicalOrderedTasks);
@@ -34,7 +36,7 @@ public class SequentialOptimalScheduler {
             List<TaskNode> canBeScheduled = new ArrayList<TaskNode>(_rootNodes);
             canBeScheduled.remove(rootNode);
 
-            PartialSchedule rootSchedule = new PartialSchedule(_numProcessors, rootNode, canBeScheduled);
+            PartialSchedule rootSchedule = new PartialSchedule(_numProcessors, rootNode, canBeScheduled, _topologicalOrderedTasks);
             searchTree.push(rootSchedule);
         }
 
@@ -43,7 +45,7 @@ public class SequentialOptimalScheduler {
         // While we have unexplored nodes, continue DFS with bound
         while (!searchTree.empty()) {
             PartialSchedule nodeToExplore = searchTree.pop();
-            PartialSchedule[] foundChildren = nodeToExplore.createChildren();
+            PartialSchedule[] foundChildren = nodeToExplore.createChildren(_topologicalOrderedTasks);
 
             for (PartialSchedule child: foundChildren) {
                 double childLength = child.getScheduleLength();
@@ -53,7 +55,7 @@ public class SequentialOptimalScheduler {
                     currentBest = child;
                 }
                 // Branch by pushing child into search tree or bound
-                if (childLength < boundValue) {
+                if (childLength < boundValue && child.getEstimatedFinish() < boundValue) {
                     searchTree.push(child);
                 }
             }
@@ -100,6 +102,7 @@ public class SequentialOptimalScheduler {
             // Creating the TaskNode, and adding it to the set
             TaskNode taskNode = new TaskNode(task.getId(), taskNodeDependencies, (double)((Integer)task.getAttribute("Weight")), dependencyWeights);
             taskNodes.put(task.getId(), taskNode);
+            _topologicalOrderedTasks.add(taskNode);
 
             // Adding this TaskNode as a dependent where necessary
             for (Edge dependency: dependencies) {

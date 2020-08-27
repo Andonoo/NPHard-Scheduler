@@ -4,8 +4,6 @@ import domain.PartialSchedule;
 import domain.TaskNode;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
-import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSinkDOT;
 
