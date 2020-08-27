@@ -33,6 +33,7 @@ public class Main extends Application{
         new Thread(Main::executeAlgorithm).start();
         primaryStage.setTitle("Scheduler visualisation");
         primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
         
         primaryStage.setOnCloseRequest(event -> System.exit(0));
         primaryStage.show();

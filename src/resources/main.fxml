@@ -131,16 +131,16 @@
             </VBox>
          </children>
       </HBox>
-      <VBox alignment="CENTER" layoutX="770.0" layoutY="433.0" prefHeight="70.0">
+      <VBox alignment="CENTER" layoutX="747.0" layoutY="430.0" prefHeight="109.0" prefWidth="144.0">
          <children>
             <Label text="CURRENT BEST" textFill="WHITE">
                <font>
                   <Font name="Segoe UI Symbol" size="14.0" />
                </font>
             </Label>
-            <Text fx:id="_currentBest" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="450">
+            <Text fx:id="_currentBest" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
                <font>
-                  <Font name="Segoe UI Symbol" size="61.0" />
+                  <Font name="Segoe UI Symbol" size="40.0" />
                </font>
             </Text>
          </children>
