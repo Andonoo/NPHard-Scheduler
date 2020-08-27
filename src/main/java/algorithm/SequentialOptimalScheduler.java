@@ -40,8 +40,6 @@ public class SequentialOptimalScheduler {
             searchTree.push(rootSchedule);
         }
 
-        int count = 0;
-
         double boundValue = initialBoundValue;
         PartialSchedule currentBest = null;
         // While we have unexplored nodes, continue DFS with bound
@@ -61,7 +59,6 @@ public class SequentialOptimalScheduler {
                     searchTree.push(child);
                 }
             }
-            count++;
         }
 
         _solution = currentBest;

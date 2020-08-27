@@ -9,7 +9,6 @@ import org.graphstream.graph.implementations.AdjacencyListGraph;
 public class Main {
 
     public static void main(String[] args) {
-        long startTime = System.nanoTime();
         InputHandler inputParser = null;
         try {
             inputParser = new InputHandler(args);
@@ -25,7 +24,6 @@ public class Main {
         AdjacencyListGraph g = inputParser.getGraph();
         GreedyScheduler greedyScheduler = new GreedyScheduler(g, inputParser.getProcessors());
         greedyScheduler.executeAlgorithm();
-        System.out.println("Greedy length: " + greedyScheduler.getSolutionLength());
 
         if (inputParser.getCores() == 1) {
             System.out.println("Sequential");
@@ -49,14 +47,9 @@ public class Main {
             OutputHandler outputHandler = new OutputHandler();
             if (moreOptimalFound) {
                 outputHandler.createOutputFile(optimalScheduler.getSolution(), g);
-                System.out.println("Length: " + optimalScheduler.getSolution().getScheduleLength());
             } else {
                 outputHandler.createOutputFile(greedyScheduler.getSolution());
-                System.out.println("Length: " + greedyScheduler.getSolutionLength());
             }
         }
-
-        long endTime = System.nanoTime();
-        System.out.println("Time taken (ms): " + (endTime-startTime)/1000000);
     }
 }
