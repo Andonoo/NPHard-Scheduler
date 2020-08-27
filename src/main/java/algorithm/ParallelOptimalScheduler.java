@@ -21,7 +21,7 @@ public class ParallelOptimalScheduler {
     private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution = null;
-    private double globalBound;
+    private double _globalBound;
 
     public ParallelOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors) {
         _numProcessors = numProcessors;
@@ -37,7 +37,7 @@ public class ParallelOptimalScheduler {
     public boolean executeBranchAndBoundAlgorithm(double initialBoundValue) {
         // Initializing the search tree with a partial schedule for each root node
         LinkedList<PartialSchedule> searchTree = new LinkedList<PartialSchedule>();
-        globalBound = initialBoundValue;
+        _globalBound = initialBoundValue;
 
         for (TaskNode rootNode: _rootNodes) {
             List<TaskNode> canBeScheduled = new ArrayList<TaskNode>(_rootNodes);
@@ -114,7 +114,7 @@ public class ParallelOptimalScheduler {
     private class BranchAndBoundTask extends RecursiveAction {
 
         LinkedList<PartialSchedule> searchTree;
-        private double localBound = globalBound;
+        private double localBound = _globalBound;
 
         private BranchAndBoundTask(LinkedList<PartialSchedule> searchTree) {
             this.searchTree = searchTree;
@@ -163,9 +163,9 @@ public class ParallelOptimalScheduler {
      */
     private synchronized void updateGlobal(PartialSchedule localSchedule, double localBound) {
         // Double check in the case of asynchronicity
-        if (localSchedule.getScheduleLength() < globalBound) {
+        if (localSchedule.getScheduleLength() < _globalBound) {
             _solution = localSchedule;
-            globalBound = localBound;
+            _globalBound = localBound;
         }
     }
 }
