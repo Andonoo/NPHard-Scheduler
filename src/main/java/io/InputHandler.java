@@ -18,6 +18,7 @@ public class InputHandler {
     private String _outputFileName;
 
     public InputHandler(String[] input) {
+        input = new String[]{"./example-dot-files/Outtree21.dot", "4"};
         _fileName = input[0];
         _numProcessors = Integer.parseInt(input[1]);
         if (input.length > 2) {
