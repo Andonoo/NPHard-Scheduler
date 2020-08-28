@@ -7,7 +7,6 @@ public class InfoTracker {
     int _currentBest = -1;
     PartialSchedule _scheduledToBeDisplayed;
     int searchesMade;
-    long completeSchedules;
     boolean isFinished = false;
     String _fileName;
     int _processors;
@@ -56,14 +55,6 @@ public class InfoTracker {
         this.searchesMade = searchesMade;
     }
 
-    public long getCompleteSchedules() {
-        return completeSchedules;
-    }
-
-    public void setCompleteSchedules(long completeSchedules) {
-        this.completeSchedules = completeSchedules;
-    }
-
     public boolean isFinished() {
         return isFinished;
     }
@@ -76,24 +67,12 @@ public class InfoTracker {
         return _fileName;
     }
 
-    public void set_fileName(String _fileName) {
-        this._fileName = _fileName;
-    }
-
     public int get_processors() {
         return _processors;
     }
 
-    public void set_processors(int _processors) {
-        this._processors = _processors;
-    }
-
     public int get_cores() {
         return _cores;
-    }
-
-    public void set_cores(int _cores) {
-        this._cores = _cores;
     }
 
     public AdjacencyListGraph getGraph() {
