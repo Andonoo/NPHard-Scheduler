@@ -1,10 +1,10 @@
-import javafx.Controller;
 import algorithm.GreedyScheduler;
 import algorithm.ParallelOptimalScheduler;
 import algorithm.SequentialOptimalScheduler;
 import io.CommandLineException;
 import io.InputHandler;
 import io.OutputHandler;
+import javafx.Controller;
 import javafx.InfoTracker;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
