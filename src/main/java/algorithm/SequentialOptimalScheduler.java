@@ -1,5 +1,6 @@
 package algorithm;
 
+import domain.DomainHandler;
 import domain.PartialSchedule;
 import domain.TaskNode;
 import javafx.InfoTracker;
@@ -19,13 +20,11 @@ public class SequentialOptimalScheduler extends Scheduler {
     private final InfoTracker _infoTracker;
     private final List<TaskNode> _topologicalOrderedTasks;
 
-    public SequentialOptimalScheduler(Node[] topologicalOrderedTasks, InfoTracker infoTracker) {
-        super();
+    public SequentialOptimalScheduler(List<TaskNode> topologicalOrderedTasks, int numProcessors) {
         _topologicalOrderedTasks = new ArrayList<TaskNode>();
-        _infoTracker = infoTracker;
-        _numProcessors = infoTracker.getProcessors();
-        _rootNodes = new ArrayList<TaskNode>();
-        _rootNodes = populateTaskNodes(topologicalOrderedTasks);
+        _numProcessors = numProcessors;
+        _topologicalOrderedTasks = topologicalOrderedTasks;
+        _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
     }
 
     /**
@@ -86,5 +85,4 @@ public class SequentialOptimalScheduler extends Scheduler {
     public PartialSchedule getSolution() {
         return _solution;
     }
-
 }

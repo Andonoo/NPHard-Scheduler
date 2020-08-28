@@ -1,5 +1,6 @@
 package algorithm;
 
+import domain.DomainHandler;
 import domain.PartialSchedule;
 import domain.TaskNode;
 import org.graphstream.graph.Edge;
@@ -24,12 +25,12 @@ public class ParallelOptimalScheduler extends Scheduler {
     private List<TaskNode> _topologicalOrderedTasks;
     private double _globalBound;
 
-    public ParallelOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors, int numCores) {
+    public ParallelOptimalScheduler(List<TaskNode> topologicalOrderedTasks, int numProcessors, int numCores) {
         _topologicalOrderedTasks = new ArrayList<TaskNode>();
         _numCores = numCores;
         _numProcessors = numProcessors;
-        _rootNodes = new ArrayList<TaskNode>();
-        _rootNodes = populateTaskNodes(topologicalOrderedTasks);
+        _topologicalOrderedTasks = topologicalOrderedTasks;
+        _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
     }
 
     /**
