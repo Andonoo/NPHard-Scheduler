@@ -48,7 +48,9 @@ public class Main extends Application {
                     new SequentialOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), _inputHandler.getProcessors(), _infoTracker) :
                     new SequentialOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), _inputHandler.getProcessors());
         } else {
-            optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), _infoTracker.getProcessors(), _infoTracker.getCores());
+            optimalScheduler = _inputHandler.produceGUI() ?
+                    new ParallelOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), _inputHandler.getProcessors(), _inputHandler.getCores(), _infoTracker) :
+                    new ParallelOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), _inputHandler.getProcessors(), _inputHandler.getCores());
         }
 
         boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
