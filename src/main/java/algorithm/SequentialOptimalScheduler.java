@@ -45,7 +45,7 @@ public class SequentialOptimalScheduler implements Scheduler {
         }
 
         // We maintain a set of PartialSchedule hashes, so we can detect and avoid duplicates
-        Set<Integer> exploredScheduleHashes = new HashSet<Integer>();
+        Set<String> exploredScheduleIds = new HashSet<String>();
 
         double boundValue = initialBoundValue;
         PartialSchedule currentBest = null;
@@ -62,6 +62,9 @@ public class SequentialOptimalScheduler implements Scheduler {
 
                 // Check if we've found our new most optimal
                 if (child.isComplete() && childLength < boundValue) {
+                    if (childLength == 501) {
+                        System.out.println("Good");
+                    }
                     boundValue = childLength;
                     currentBest = child;
                     _infoTracker.setCurrentBestHasChanged(true);
@@ -69,9 +72,9 @@ public class SequentialOptimalScheduler implements Scheduler {
                     _infoTracker.setScheduledToBeDisplayed(child);
                 }
                 // Branch by pushing child into search tree or bound
-                if (!exploredScheduleHashes.contains(child.getHash()) && childLength < boundValue && child.getEstimatedFinish() < boundValue) {
+                if (!exploredScheduleIds.contains(child.getScheduledId()) && childLength < boundValue && child.getEstimatedFinish() < boundValue) {
                     searchTree.push(child);
-                    exploredScheduleHashes.add(child.getHash());
+                    exploredScheduleIds.add(child.getScheduledId());
                 }
             }
         }
