@@ -43,10 +43,8 @@ public class Main extends Application {
         Scheduler optimalScheduler;
 
         if (_infoTracker.getCores() == 1) {
-            System.out.println("Sequential");
             optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), _infoTracker);
         } else {
-            System.out.println("Parallel");
             optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), _infoTracker.getProcessors(), _infoTracker.getCores());
         }
 
