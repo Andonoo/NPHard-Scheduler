@@ -2,3 +2,5 @@
 *.iml
 target/
 *-output.dot
+out/
+*graph.png
