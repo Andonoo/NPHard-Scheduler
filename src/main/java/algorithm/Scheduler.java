@@ -1,5 +1,6 @@
 package algorithm;
 
+import domain.PartialSchedule;
 import domain.TaskNode;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
@@ -49,5 +50,7 @@ public abstract class Scheduler {
         return rootNodes;
     }
 
+    public abstract boolean executeBranchAndBoundAlgorithm(double initialBoundValue);
 
+    public abstract PartialSchedule getSolution();
 }

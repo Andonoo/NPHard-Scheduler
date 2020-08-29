@@ -1,5 +1,6 @@
 import algorithm.GreedyScheduler;
 import algorithm.ParallelOptimalScheduler;
+import algorithm.Scheduler;
 import algorithm.SequentialOptimalScheduler;
 import io.CommandLineException;
 import io.InputHandler;
@@ -39,29 +40,25 @@ public class Main extends Application {
         GreedyScheduler greedyScheduler = new GreedyScheduler(_infoTracker.getGraph(), _infoTracker.getProcessors());
         greedyScheduler.executeAlgorithm();
 
+        Scheduler optimalScheduler;
+
         if (_infoTracker.getCores() == 1) {
             System.out.println("Sequential");
-            SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), _infoTracker);
-            boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
-            _infoTracker.setIsFinished(true);
-            OutputHandler outputHandler = new OutputHandler();
-            if (moreOptimalFound) {
-                outputHandler.createOutputFile(optimalScheduler.getSolution(), _infoTracker.getGraph());
-            } else {
-                outputHandler.createOutputFile(greedyScheduler.getSolution());
-            }
-
+            optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), _infoTracker);
         } else {
             System.out.println("Parallel");
-            ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), _infoTracker.getProcessors(), _infoTracker.getCores());
-            boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
-            _infoTracker.setIsFinished(true);
-            OutputHandler outputHandler = new OutputHandler();
-            if (moreOptimalFound) {
-                outputHandler.createOutputFile(optimalScheduler.getSolution(), _infoTracker.getGraph());
-            } else {
-                outputHandler.createOutputFile(greedyScheduler.getSolution());
-            }
+            optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), _infoTracker.getProcessors(), _infoTracker.getCores());
+        }
+
+        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
+
+        _infoTracker.setIsFinished(true);
+
+        OutputHandler outputHandler = new OutputHandler();
+        if (moreOptimalFound) {
+            outputHandler.createOutputFile(optimalScheduler.getSolution(), _infoTracker.getGraph());
+        } else {
+            outputHandler.createOutputFile(greedyScheduler.getSolution());
         }
     }
 
