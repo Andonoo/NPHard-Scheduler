@@ -286,7 +286,7 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
     /**
      * @return Returns a unique ID of this PartialSchedule, based on its processor schedulings.
      */
-    public String getScheduledId() {
+    public String getScheduleId() {
         String [] scheduleIdArray = Arrays.copyOf(_processorIds, _processorIds.length);
         /* We sort to ensure that equal PartialSchedules with different orderings of the arrays
            have the same IDs */
