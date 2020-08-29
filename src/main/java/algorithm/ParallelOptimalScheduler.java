@@ -16,16 +16,17 @@ import java.util.concurrent.RecursiveAction;
 public class ParallelOptimalScheduler {
 
     private static final int THREAD_DEPTH = 10;
-    private static final int NUM_RUNTIME_PROCESSORS = 4;
 
+    private final int _numCores;
     private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution = null;
     private List<TaskNode> _topologicalOrderedTasks;
     private double _globalBound;
 
-    public ParallelOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors) {
+    public ParallelOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors, int numCores) {
         _topologicalOrderedTasks = new ArrayList<TaskNode>();
+        _numCores = numCores
         _numProcessors = numProcessors;
         _rootNodes = new ArrayList<TaskNode>();
         populateTaskNodes(topologicalOrderedTasks);
@@ -51,7 +52,7 @@ public class ParallelOptimalScheduler {
 
         // Declare task to be run concurrently on a pool of worker threads
         BranchAndBoundTask task = new BranchAndBoundTask(searchTree);
-        ForkJoinPool workers = new ForkJoinPool(NUM_RUNTIME_PROCESSORS);
+        ForkJoinPool workers = new ForkJoinPool(_numCores);
         workers.invoke(task);
 
         if (_solution == null) {

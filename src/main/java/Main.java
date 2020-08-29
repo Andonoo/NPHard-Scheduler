@@ -53,7 +53,7 @@ public class Main extends Application {
 
         } else {
             System.out.println("Parallel");
-            ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), _infoTracker.getProcessors());
+            ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), _infoTracker.getProcessors(), _infoTracker.getCores());
             boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
             _infoTracker.setIsFinished(true);
             OutputHandler outputHandler = new OutputHandler();
