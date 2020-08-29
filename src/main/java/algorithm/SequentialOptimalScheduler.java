@@ -62,9 +62,6 @@ public class SequentialOptimalScheduler implements Scheduler {
 
                 // Check if we've found our new most optimal
                 if (child.isComplete() && childLength < boundValue) {
-                    if (childLength == 501) {
-                        System.out.println("Good");
-                    }
                     boundValue = childLength;
                     currentBest = child;
                     _infoTracker.setCurrentBestHasChanged(true);

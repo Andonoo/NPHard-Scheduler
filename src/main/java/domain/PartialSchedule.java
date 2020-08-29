@@ -294,7 +294,7 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
 
         String scheduleId = "";
         for (String processorId: scheduleIdArray) {
-            scheduleId = scheduleId + processorId;
+            scheduleId = scheduleId + processorId + "|";
         }
         return scheduleId;
     }
