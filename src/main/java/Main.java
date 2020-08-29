@@ -2,6 +2,9 @@ import algorithm.GreedyScheduler;
 import algorithm.ParallelOptimalScheduler;
 import algorithm.Scheduler;
 import algorithm.SequentialOptimalScheduler;
+import domain.DomainHandler;
+import domain.PartialSchedule;
+import domain.TaskNode;
 import io.CommandLineException;
 import io.InputHandler;
 import io.OutputHandler;
@@ -14,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.List;
 
 public class Main extends Application {
 
@@ -38,8 +42,13 @@ public class Main extends Application {
     }
 
     public static void executeAlgorithm() {
-        GreedyScheduler greedyScheduler = new GreedyScheduler(_infoTracker.getGraph(), _infoTracker.getProcessors());
-        greedyScheduler.executeAlgorithm();
+        GreedyScheduler greedyScheduler = new GreedyScheduler(_infoTracker.getGraph(), _infoTracker.getProcessors());;
+        while (greedyScheduler.getSolutionLength() != 227) {
+            greedyScheduler = new GreedyScheduler(_infoTracker.getGraph(), _infoTracker.getProcessors());
+            greedyScheduler.executeAlgorithm();
+            System.out.println(greedyScheduler.getSolutionLength());
+        }
+//        greedyScheduler.executeAlgorithm();
 
         Scheduler optimalScheduler;
 

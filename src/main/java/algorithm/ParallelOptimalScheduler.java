@@ -48,6 +48,7 @@ public class ParallelOptimalScheduler implements Scheduler {
      * @return Returns true if a schedule was found which is shorter than the provided bound value
      */
     public boolean executeBranchAndBoundAlgorithm(double initialBoundValue) {
+
         // Initializing the search tree with a partial schedule for each root node
         LinkedList<PartialSchedule> searchTree = new LinkedList<PartialSchedule>();
         _globalBound = initialBoundValue;
@@ -100,6 +101,7 @@ public class ParallelOptimalScheduler implements Scheduler {
 
         @Override
         protected void compute() {
+
             // While we have unexplored nodes, continue DFS with bound
             while (!searchTree.isEmpty()) {
 
@@ -111,6 +113,12 @@ public class ParallelOptimalScheduler implements Scheduler {
                     double childLength = child.getScheduleLength();
 
                     updateSearchCount();
+
+                    // If the greedy schedule is the optimal solution, assign currentBest to it
+                    if (child.isComplete() && childLength == _globalBound) {
+                        localBound = child.getScheduleLength();
+                        updateGlobal(child, localBound);
+                    }
 
                     if (child.isComplete()) {
                         // Update the solution if this child is more optimal

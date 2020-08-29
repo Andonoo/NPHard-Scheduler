@@ -67,14 +67,25 @@ public class SequentialOptimalScheduler implements Scheduler {
                     _infoTracker.setSearchesMade(_infoTracker.getSearchesMade() + 1);
                 }
 
+                if (childLength == initialBoundValue && child.isComplete()){
+                    System.out.println("yeet");
+                }
+                // If the greedy schedule is the optimal solution, assign currentBest to it
+                if (child.isComplete() && childLength == initialBoundValue) {
+                    boundValue = childLength;
+                    System.out.println("Justin our lord and saviour");
+                    currentBest = child;
+                    if(_infoTracker != null) {
+                        updateGUI(child.getScheduleLength(), child);
+                    }
+                }
+
                 // Check if we've found our new most optimal
                 if (child.isComplete() && childLength < boundValue) {
                     boundValue = childLength;
                     currentBest = child;
                     if (_infoTracker != null) {
-                        _infoTracker.setCurrentBestHasChanged(true);
-                        _infoTracker.setCurrentBest((int) childLength);
-                        _infoTracker.setScheduledToBeDisplayed(child);
+                        updateGUI(child.getScheduleLength(), child);
                     }
                 }
                 // Branch by pushing child into search tree or bound
@@ -97,5 +108,11 @@ public class SequentialOptimalScheduler implements Scheduler {
      */
     public PartialSchedule getSolution() {
         return _solution;
+    }
+
+    private void updateGUI(double scheduleLength, PartialSchedule child) {
+        _infoTracker.setCurrentBestHasChanged(true);
+        _infoTracker.setCurrentBest((int) scheduleLength);
+        _infoTracker.setScheduledToBeDisplayed(child);
     }
 }
