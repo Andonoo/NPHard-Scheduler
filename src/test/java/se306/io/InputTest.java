@@ -5,6 +5,7 @@ import io.InputHandler;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static se306.io.InputTestConstants.*;
 
 
@@ -14,6 +15,7 @@ public class InputTest {
     public void testNoInput() {
         try {
             InputHandler inputParser = new InputHandler(NO_INPUT);
+            fail(INVALID_INPUT_FAIL);
         } catch (CommandLineException e) {
             assertEquals(INVALID_INPUT_MESSAGE, e.getMessage());
         }
@@ -23,6 +25,7 @@ public class InputTest {
     public void testOneInput() {
         try {
             InputHandler inputParser = new InputHandler(ONE_INPUT);
+            fail(INVALID_INPUT_FAIL);
         } catch (CommandLineException e) {
             assertEquals(INVALID_INPUT_MESSAGE, e.getMessage());
         }
@@ -32,6 +35,7 @@ public class InputTest {
     public void testInvalidDotFile() {
         try {
             InputHandler inputParser = new InputHandler(INVALID_FILE_INPUT);
+            fail(INVALID_FILE_FAIL);
         } catch (CommandLineException e) {
             assertEquals(INVALID_FILE_MESSAGE, e.getMessage());
         }
@@ -41,6 +45,7 @@ public class InputTest {
     public void testNonExistentFile() {
         try {
             InputHandler inputParser = new InputHandler(NON_EXISTENT_FILE_INPUT);
+            fail(NON_EXISTENT_FILE_FAIL);
         } catch (CommandLineException e) {
             assertEquals(NON_EXISTENT_FILE_MESSAGE, e.getMessage());
         }
@@ -50,6 +55,7 @@ public class InputTest {
     public void testNonInteger() {
         try {
             InputHandler inputParser = new InputHandler(NON_INTEGER_INPUT);
+            fail(NON_INTEGER_FAIL);
         } catch (CommandLineException e) {
             assertEquals(NON_INTEGER_MESSAGE, e.getMessage());
         }
@@ -59,6 +65,7 @@ public class InputTest {
     public void testNegativeInteger() {
         try {
             InputHandler inputParser = new InputHandler(NEGATIVE_INTEGER_INPUT);
+            fail(NEGATIVE_INTEGER_FAIL);
         } catch (CommandLineException e) {
             assertEquals(NEGATIVE_INTEGER_MESSAGE, e.getMessage());
         }
