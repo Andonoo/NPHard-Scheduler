@@ -13,22 +13,23 @@ import java.util.concurrent.RecursiveAction;
 /**
  * Class implementing an optimal scheduling algorithm based on an exhaustive branch and bound search.
  */
-public class ParallelOptimalScheduler {
+public class ParallelOptimalScheduler extends Scheduler {
 
     private static final int THREAD_DEPTH = 10;
-    private static final int NUM_RUNTIME_PROCESSORS = 4;
 
-    private final List<TaskNode> _rootNodes;
+    private final int _numCores;
+    private List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution = null;
     private List<TaskNode> _topologicalOrderedTasks;
     private double _globalBound;
 
-    public ParallelOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors) {
+    public ParallelOptimalScheduler(Node[] topologicalOrderedTasks, int numProcessors, int numCores) {
         _topologicalOrderedTasks = new ArrayList<TaskNode>();
+        _numCores = numCores;
         _numProcessors = numProcessors;
         _rootNodes = new ArrayList<TaskNode>();
-        populateTaskNodes(topologicalOrderedTasks);
+        _rootNodes = populateTaskNodes(topologicalOrderedTasks);
     }
 
     /**
@@ -51,7 +52,7 @@ public class ParallelOptimalScheduler {
 
         // Declare task to be run concurrently on a pool of worker threads
         BranchAndBoundTask task = new BranchAndBoundTask(searchTree);
-        ForkJoinPool workers = new ForkJoinPool(NUM_RUNTIME_PROCESSORS);
+        ForkJoinPool workers = new ForkJoinPool(_numCores);
         workers.invoke(task);
 
         if (_solution == null) {
@@ -69,45 +70,6 @@ public class ParallelOptimalScheduler {
      */
     public PartialSchedule getSolution() {
         return _solution;
-    }
-
-    /**
-     * Populates the TaskNode data structures which are used in the algorithm execution. Also finds the root nodes which
-     * will be used to start the algorithm.
-     * @param topologicalOrder
-     * @return
-     */
-    private void populateTaskNodes(Node[] topologicalOrder) {
-        Map<String, TaskNode> taskNodes = new HashMap<String, TaskNode>();
-
-        for (Node task: topologicalOrder) {
-            // Populating this TaskNodes set of dependencies, as well as the Map containing the dependency weights
-            Collection<Edge> dependencies = task.getEnteringEdgeSet();
-            TaskNode[] taskNodeDependencies = new TaskNode[dependencies.size()];
-            Map<TaskNode, Double> dependencyWeights = new HashMap<TaskNode, Double>();
-            int i = 0;
-            for (Edge dependency: dependencies) {
-                TaskNode dependencyTaskNode = taskNodes.get(dependency.getSourceNode().getId());
-                dependencyWeights.put(dependencyTaskNode, (double)((Integer)dependency.getAttribute("Weight")));
-                taskNodeDependencies[i] = dependencyTaskNode;
-                i++;
-            }
-
-            // Creating the TaskNode, and adding it to the set
-            TaskNode taskNode = new TaskNode(task.getId(), taskNodeDependencies, (double)((Integer)task.getAttribute("Weight")), dependencyWeights);
-            taskNodes.put(task.getId(), taskNode);
-
-            // Adding this TaskNode as a dependent where necessary
-            for (Edge dependency: dependencies) {
-                TaskNode dependencyTaskNode = taskNodes.get(dependency.getSourceNode().getId());
-                dependencyTaskNode.addDependent(taskNode);
-            }
-
-            // Checking to see if this task is a root
-            if (task.getInDegree() == 0) {
-                _rootNodes.add(taskNode);
-            }
-        }
     }
 
     /**

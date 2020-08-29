@@ -113,45 +113,14 @@ public class InputHandler {
         return _numCores;
     }
 
-    public int setCores() throws CommandLineException {
+    public int setCores() {
         int coresIndex = _options.indexOf("-p");
 
         if (coresIndex != -1) {
-            try {
-                if (_options.get(coresIndex + 1).startsWith("-")) {
-                    // e.g. -p -v or -p -o, what about -p -
-                    return 1;
-                }
-            } catch (Exception e) {
-                // -p is the last argument
-                return 1;
-            }
-
-            if (isNumeric(_options.get(coresIndex + 1))) {
-                int number = Integer.parseInt(_options.get(coresIndex + 1));
-                if (number >= 1 && number <= 4) {
-                    // valid number
-                    return number;
-                }
-                throw new CommandLineException("Please enter an integer between 1 to 4 for the number of cores to be used");
-            } else {
-                throw new CommandLineException("Please enter a valid integer for the number of cores to be used");
-            }
+            return Integer.parseInt(_options.get(coresIndex + 1));
         } else {
             return 1;
         }
-    }
-
-    public boolean isNumeric(String input) {
-        if (input == null) {
-            return false;
-        }
-        try {
-            int numCores = Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
     }
 
     private void setOutputFileName() {

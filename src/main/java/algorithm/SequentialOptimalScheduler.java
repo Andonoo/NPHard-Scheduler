@@ -11,20 +11,21 @@ import java.util.*;
 /**
  * Class implementing an optimal scheduling algorithm based on an exhaustive branch and bound search.
  */
-public class SequentialOptimalScheduler {
+public class SequentialOptimalScheduler extends Scheduler {
 
-    private final List<TaskNode> _rootNodes;
+    private List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution;
     private final InfoTracker _infoTracker;
     private final List<TaskNode> _topologicalOrderedTasks;
 
     public SequentialOptimalScheduler(Node[] topologicalOrderedTasks, InfoTracker infoTracker) {
+        super();
         _topologicalOrderedTasks = new ArrayList<TaskNode>();
         _infoTracker = infoTracker;
         _numProcessors = infoTracker.getProcessors();
         _rootNodes = new ArrayList<TaskNode>();
-        populateTaskNodes(topologicalOrderedTasks);
+        _rootNodes = populateTaskNodes(topologicalOrderedTasks);
     }
 
     /**
@@ -86,44 +87,4 @@ public class SequentialOptimalScheduler {
         return _solution;
     }
 
-    /**
-     * Populates the TaskNode data structures which are used in the algorithm execution. Also finds the root nodes which
-     * will be used to start the algorithm.
-     *
-     * @param topologicalOrder
-     * @return
-     */
-    private void populateTaskNodes(Node[] topologicalOrder) {
-        Map<String, TaskNode> taskNodes = new HashMap<String, TaskNode>();
-
-        for (Node task : topologicalOrder) {
-            // Populating this TaskNodes set of dependencies, as well as the Map containing the dependency weights
-            Collection<Edge> dependencies = task.getEnteringEdgeSet();
-            TaskNode[] taskNodeDependencies = new TaskNode[dependencies.size()];
-            Map<TaskNode, Double> dependencyWeights = new HashMap<TaskNode, Double>();
-            int i = 0;
-            for (Edge dependency : dependencies) {
-                TaskNode dependencyTaskNode = taskNodes.get(dependency.getSourceNode().getId());
-                dependencyWeights.put(dependencyTaskNode, (double) ((Integer) dependency.getAttribute("Weight")));
-                taskNodeDependencies[i] = dependencyTaskNode;
-                i++;
-            }
-
-            // Creating the TaskNode, and adding it to the set
-            TaskNode taskNode = new TaskNode(task.getId(), taskNodeDependencies, (double) ((Integer) task.getAttribute("Weight")), dependencyWeights);
-            taskNodes.put(task.getId(), taskNode);
-            _topologicalOrderedTasks.add(taskNode);
-
-            // Adding this TaskNode as a dependent where necessary
-            for (Edge dependency : dependencies) {
-                TaskNode dependencyTaskNode = taskNodes.get(dependency.getSourceNode().getId());
-                dependencyTaskNode.addDependent(taskNode);
-            }
-
-            // Checking to see if this task is a root
-            if (task.getInDegree() == 0) {
-                _rootNodes.add(taskNode);
-            }
-        }
-    }
 }
