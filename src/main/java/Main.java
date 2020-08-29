@@ -14,30 +14,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class Main extends Application{
+public class Main extends Application {
 
     static InfoTracker _infoTracker;
-
-    @Override
-    public void start(Stage primaryStage) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("main.fxml"));
-        Controller controller = new Controller();
-        loader.setController(controller);
-        Parent root = loader.load();
-
-        Scene scene = new Scene(root);
-        controller.setInputHandler(_infoTracker);
-        controller.init();
-
-        new Thread(Main::executeAlgorithm).start();
-        primaryStage.setTitle("Scheduler visualisation");
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
-        
-        primaryStage.setOnCloseRequest(event -> System.exit(0));
-        primaryStage.show();
-    }
 
     public static void main(String[] args) {
         InputHandler inputHandler = null;
@@ -57,15 +36,14 @@ public class Main extends Application{
     }
 
     public static void executeAlgorithm() {
-        System.out.println("Start executing algorithm");
-        GreedyScheduler greedyScheduler = new GreedyScheduler(_infoTracker.getGraph(), _infoTracker.get_processors());
+        GreedyScheduler greedyScheduler = new GreedyScheduler(_infoTracker.getGraph(), _infoTracker.getProcessors());
         greedyScheduler.executeAlgorithm();
 
-        if (_infoTracker.get_cores() == 1) {
+        if (_infoTracker.getCores() == 1) {
             System.out.println("Sequential");
             SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicalOrder(), _infoTracker);
             boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
-            _infoTracker.setFinished(true);
+            _infoTracker.setIsFinished(true);
             OutputHandler outputHandler = new OutputHandler();
             if (moreOptimalFound) {
                 outputHandler.createOutputFile(optimalScheduler.getSolution(), _infoTracker.getGraph());
@@ -75,9 +53,9 @@ public class Main extends Application{
 
         } else {
             System.out.println("Parallel");
-            ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), _infoTracker.get_processors());
+            ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicalOrder(), _infoTracker.getProcessors());
             boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
-            _infoTracker.setFinished(true);
+            _infoTracker.setIsFinished(true);
             OutputHandler outputHandler = new OutputHandler();
             if (moreOptimalFound) {
                 outputHandler.createOutputFile(optimalScheduler.getSolution(), _infoTracker.getGraph());
@@ -85,5 +63,26 @@ public class Main extends Application{
                 outputHandler.createOutputFile(greedyScheduler.getSolution());
             }
         }
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("main.fxml"));
+        Controller controller = new Controller();
+        loader.setController(controller);
+        Parent root = loader.load();
+
+        Scene scene = new Scene(root);
+        controller.setInputHandler(_infoTracker);
+        controller.init();
+
+        new Thread(Main::executeAlgorithm).start();
+        primaryStage.setTitle("Scheduler visualisation");
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+
+        primaryStage.setOnCloseRequest(event -> System.exit(0));
+        primaryStage.show();
     }
 }

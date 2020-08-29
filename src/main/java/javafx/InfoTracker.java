@@ -4,16 +4,15 @@ import domain.PartialSchedule;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 
 public class InfoTracker {
-    int _currentBest = -1;
-    PartialSchedule _scheduledToBeDisplayed;
-    int searchesMade;
-    boolean isFinished = false;
-    String _fileName;
-    int _processors;
-    int _cores;
-    boolean _currentBestHasChanged = false;
-    AdjacencyListGraph _graph;
-
+    private int _currentBest = -1;
+    private PartialSchedule _scheduledToBeDisplayed;
+    private int _searchesMade;
+    private boolean _isFinished = false;
+    private String _fileName;
+    private final int _processors;
+    private final int _cores;
+    private boolean _currentBestHasChanged = false;
+    private final AdjacencyListGraph _graph;
 
 
     public InfoTracker(String fileName, int processors, int cores, AdjacencyListGraph graph) {
@@ -23,55 +22,55 @@ public class InfoTracker {
         _graph = graph;
     }
 
-    public int get_currentBest() {
+    public int getCurrentBest() {
         return _currentBest;
     }
 
-    public void set_currentBest(int _currentBest) {
+    public void setCurrentBest(int _currentBest) {
         this._currentBest = _currentBest;
     }
 
-    public boolean get_currentBestHasChanged() {
+    public boolean getCurrentBestHasChanged() {
         return _currentBestHasChanged;
     }
 
-    public void set_currentBestHasChanged(boolean currentBestHasChanged) {
+    public void setCurrentBestHasChanged(boolean currentBestHasChanged) {
         this._currentBestHasChanged = currentBestHasChanged;
     }
 
-    public PartialSchedule get_scheduledToBeDisplayed() {
+    public PartialSchedule getScheduledToBeDisplayed() {
         return _scheduledToBeDisplayed;
     }
 
-    public void set_scheduledToBeDisplayed(PartialSchedule _scheduledToBeDisplayed) {
+    public void setScheduledToBeDisplayed(PartialSchedule _scheduledToBeDisplayed) {
         this._scheduledToBeDisplayed = _scheduledToBeDisplayed;
     }
 
     public int getSearchesMade() {
-        return searchesMade;
+        return _searchesMade;
     }
 
-    public void setSearchesMade(int searchesMade) {
-        this.searchesMade = searchesMade;
+    public void setSearchesMade(int _searchesMade) {
+        this._searchesMade = _searchesMade;
     }
 
-    public boolean isFinished() {
-        return isFinished;
+    public boolean getIsFinished() {
+        return _isFinished;
     }
 
-    public void setFinished(boolean finished) {
-        isFinished = finished;
+    public void setIsFinished(boolean _isFinished) {
+        this._isFinished = _isFinished;
     }
 
-    public String get_fileName() {
+    public String getFileName() {
         return _fileName;
     }
 
-    public int get_processors() {
+    public int getProcessors() {
         return _processors;
     }
 
-    public int get_cores() {
+    public int getCores() {
         return _cores;
     }
 

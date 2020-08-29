@@ -16,26 +16,27 @@ public class SequentialOptimalScheduler {
     private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution;
-    private InfoTracker _infoTracker;
-    private List<TaskNode> _topologicalOrderedTasks;
+    private final InfoTracker _infoTracker;
+    private final List<TaskNode> _topologicalOrderedTasks;
 
     public SequentialOptimalScheduler(Node[] topologicalOrderedTasks, InfoTracker infoTracker) {
         _topologicalOrderedTasks = new ArrayList<TaskNode>();
         _infoTracker = infoTracker;
-        _numProcessors = infoTracker.get_processors();
+        _numProcessors = infoTracker.getProcessors();
         _rootNodes = new ArrayList<TaskNode>();
         populateTaskNodes(topologicalOrderedTasks);
     }
 
     /**
      * Executes the branch and bound scheduling algorithm on the provided input graph.
+     *
      * @param initialBoundValue Value used to bound search for schedules
      * @return Returns true if a schedule was found which is shorter than the provided bound value
      */
     public boolean executeBranchAndBoundAlgorithm(double initialBoundValue) {
         // Initializing the search tree with a partial schedule for each root node
         Stack<PartialSchedule> searchTree = new Stack<PartialSchedule>();
-        for (TaskNode rootNode: _rootNodes) {
+        for (TaskNode rootNode : _rootNodes) {
             List<TaskNode> canBeScheduled = new ArrayList<TaskNode>(_rootNodes);
             canBeScheduled.remove(rootNode);
 
@@ -50,17 +51,19 @@ public class SequentialOptimalScheduler {
             PartialSchedule nodeToExplore = searchTree.pop();
             PartialSchedule[] foundChildren = nodeToExplore.createChildren(_topologicalOrderedTasks);
 
-            for (PartialSchedule child: foundChildren) {
+            for (PartialSchedule child : foundChildren) {
                 double childLength = child.getScheduleLength();
+
+                // Increment searches made to update GUI
                 _infoTracker.setSearchesMade(_infoTracker.getSearchesMade() + 1);
 
                 // Check if we've found our new most optimal
                 if (child.isComplete() && childLength < boundValue) {
                     boundValue = childLength;
                     currentBest = child;
-                    _infoTracker.set_currentBestHasChanged(true);
-                    _infoTracker.set_currentBest((int)childLength);
-                    _infoTracker.set_scheduledToBeDisplayed(child);
+                    _infoTracker.setCurrentBestHasChanged(true);
+                    _infoTracker.setCurrentBest((int) childLength);
+                    _infoTracker.setScheduledToBeDisplayed(child);
                 }
                 // Branch by pushing child into search tree or bound
                 if (childLength < boundValue && child.getEstimatedFinish() < boundValue) {
@@ -70,15 +73,13 @@ public class SequentialOptimalScheduler {
         }
 
         _solution = currentBest;
-        if (_solution == null) {
-            return false;
-        }
-        return true;
+        return _solution != null;
     }
 
     /**
      * Gets the schedule which was computed by the branch and bound algorithm. Will return null if no schedule was found
      * with a shorter length than the provided initialBoundValue
+     *
      * @return
      */
     public PartialSchedule getSolution() {
@@ -88,32 +89,33 @@ public class SequentialOptimalScheduler {
     /**
      * Populates the TaskNode data structures which are used in the algorithm execution. Also finds the root nodes which
      * will be used to start the algorithm.
+     *
      * @param topologicalOrder
      * @return
      */
     private void populateTaskNodes(Node[] topologicalOrder) {
         Map<String, TaskNode> taskNodes = new HashMap<String, TaskNode>();
 
-        for (Node task: topologicalOrder) {
+        for (Node task : topologicalOrder) {
             // Populating this TaskNodes set of dependencies, as well as the Map containing the dependency weights
             Collection<Edge> dependencies = task.getEnteringEdgeSet();
             TaskNode[] taskNodeDependencies = new TaskNode[dependencies.size()];
             Map<TaskNode, Double> dependencyWeights = new HashMap<TaskNode, Double>();
             int i = 0;
-            for (Edge dependency: dependencies) {
+            for (Edge dependency : dependencies) {
                 TaskNode dependencyTaskNode = taskNodes.get(dependency.getSourceNode().getId());
-                dependencyWeights.put(dependencyTaskNode, (double)((Integer)dependency.getAttribute("Weight")));
+                dependencyWeights.put(dependencyTaskNode, (double) ((Integer) dependency.getAttribute("Weight")));
                 taskNodeDependencies[i] = dependencyTaskNode;
                 i++;
             }
 
             // Creating the TaskNode, and adding it to the set
-            TaskNode taskNode = new TaskNode(task.getId(), taskNodeDependencies, (double)((Integer)task.getAttribute("Weight")), dependencyWeights);
+            TaskNode taskNode = new TaskNode(task.getId(), taskNodeDependencies, (double) ((Integer) task.getAttribute("Weight")), dependencyWeights);
             taskNodes.put(task.getId(), taskNode);
             _topologicalOrderedTasks.add(taskNode);
 
             // Adding this TaskNode as a dependent where necessary
-            for (Edge dependency: dependencies) {
+            for (Edge dependency : dependencies) {
                 TaskNode dependencyTaskNode = taskNodes.get(dependency.getSourceNode().getId());
                 dependencyTaskNode.addDependent(taskNode);
             }
