@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * Class implementing an optimal scheduling algorithm based on an exhaustive branch and bound search.
  */
-public class SequentialOptimalScheduler extends Scheduler {
+public class SequentialOptimalScheduler implements Scheduler {
 
     private List<TaskNode> _rootNodes;
     private final int _numProcessors;
@@ -20,9 +20,9 @@ public class SequentialOptimalScheduler extends Scheduler {
     private final InfoTracker _infoTracker;
     private final List<TaskNode> _topologicalOrderedTasks;
 
-    public SequentialOptimalScheduler(List<TaskNode> topologicalOrderedTasks, int numProcessors) {
-        _topologicalOrderedTasks = new ArrayList<TaskNode>();
-        _numProcessors = numProcessors;
+    public SequentialOptimalScheduler(List<TaskNode> topologicalOrderedTasks, InfoTracker infoTracker) {
+        _numProcessors = infoTracker.getProcessors();
+        _infoTracker = infoTracker;
         _topologicalOrderedTasks = topologicalOrderedTasks;
         _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
     }

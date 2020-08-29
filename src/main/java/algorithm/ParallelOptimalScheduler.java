@@ -14,7 +14,7 @@ import java.util.concurrent.RecursiveAction;
 /**
  * Class implementing an optimal scheduling algorithm based on an exhaustive branch and bound search.
  */
-public class ParallelOptimalScheduler extends Scheduler {
+public class ParallelOptimalScheduler implements Scheduler {
 
     private static final int THREAD_DEPTH = 10;
 
@@ -26,7 +26,6 @@ public class ParallelOptimalScheduler extends Scheduler {
     private double _globalBound;
 
     public ParallelOptimalScheduler(List<TaskNode> topologicalOrderedTasks, int numProcessors, int numCores) {
-        _topologicalOrderedTasks = new ArrayList<TaskNode>();
         _numCores = numCores;
         _numProcessors = numProcessors;
         _topologicalOrderedTasks = topologicalOrderedTasks;
