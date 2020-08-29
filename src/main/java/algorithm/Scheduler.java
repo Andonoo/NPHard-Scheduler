@@ -15,7 +15,7 @@ public abstract class Scheduler {
      * @param topologicalOrder
      * @return
      */
-    List<TaskNode> populateTaskNodes(Node[] topologicalOrder) {
+    public List<TaskNode> populateTaskNodes(Node[] topologicalOrder) {
         Map<String, TaskNode> taskNodes = new HashMap<String, TaskNode>();
         List<TaskNode> rootNodes = new ArrayList<TaskNode>();
 
