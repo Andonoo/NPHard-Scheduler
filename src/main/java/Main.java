@@ -18,17 +18,18 @@ import java.io.IOException;
 public class Main extends Application {
 
     static InfoTracker _infoTracker;
+    static InputHandler _inputHandler = null;
 
     public static void main(String[] args) {
-        InputHandler inputHandler = null;
+
         try {
-            inputHandler = new InputHandler(args);
+            _inputHandler = new InputHandler(args);
         } catch (CommandLineException e) {
             e.printStackTrace();
         }
 
-        _infoTracker = new InfoTracker(inputHandler.getFileName(), inputHandler.getProcessors(), inputHandler.getCores(), inputHandler.getGraph());
-        if (inputHandler.produceGUI()) {
+        _infoTracker = new InfoTracker(_inputHandler.getFileName(), _inputHandler.getProcessors(), _inputHandler.getCores(), _inputHandler.getGraph());
+        if (_inputHandler.produceGUI()) {
             launch(args);
         } else {
             executeAlgorithm();
@@ -43,7 +44,9 @@ public class Main extends Application {
         Scheduler optimalScheduler;
 
         if (_infoTracker.getCores() == 1) {
-            optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), _infoTracker);
+            optimalScheduler = _inputHandler.produceGUI() ?
+                    new SequentialOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), _inputHandler.getProcessors(), _infoTracker) :
+                    new SequentialOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), _inputHandler.getProcessors());
         } else {
             optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), _infoTracker.getProcessors(), _infoTracker.getCores());
         }
