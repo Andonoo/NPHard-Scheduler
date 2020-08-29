@@ -17,6 +17,7 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
     private final double _scheduleLength;
     private int _firstAvailableProcessor;
     private final double _estimatedFinish;
+    private int _hashCode;
 
     // State relating to the scheduling, which created this PartialSchedule
     private final Map<TaskNode, PartialSchedule> _schedulings; // Maps the scheduling of a task to the PartialOrder in which it was added
@@ -35,6 +36,7 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
         for (int i = 1; i < numProcessors; i++) {
             _processorSchedules[i] = new TaskNode[0];
         }
+        _hashCode = _processorSchedules[0].hashCode();
 
         _processorEndTimes = new double[numProcessors];
         _processorEndTimes[0] = scheduledNode.getWeight();
@@ -92,6 +94,7 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
      */
     private void generateProcessorSchedules(TaskNode[][] parentProcessorSchedules, TaskNode scheduledTask, int scheduledProcessorIndex) {
         _processorSchedules = new TaskNode[parentProcessorSchedules.length][];
+        int hashCode = 0;
 
         for (int i = 0; i < parentProcessorSchedules.length; i++) {
             if (i == scheduledProcessorIndex) {
@@ -108,7 +111,11 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
             } else {
                 _processorSchedules[i] = parentProcessorSchedules[i];
             }
+
+            hashCode = hashCode + Arrays.hashCode(_processorSchedules[i]);
         }
+
+        _hashCode = hashCode;
     }
 
     /**
@@ -272,6 +279,13 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return Returns a hash of this PartialSchedule, based on its processor schedulings.
+     */
+    public int getHash() {
+        return _hashCode;
     }
 
     /**

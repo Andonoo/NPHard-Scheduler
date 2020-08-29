@@ -44,6 +44,9 @@ public class SequentialOptimalScheduler implements Scheduler {
             searchTree.push(rootSchedule);
         }
 
+        // We maintain a set of PartialSchedule hashes, so we can detect and avoid duplicates
+        Set<Integer> exploredScheduleHashes = new HashSet<Integer>();
+
         double boundValue = initialBoundValue;
         PartialSchedule currentBest = null;
         // While we have unexplored nodes, continue DFS with bound
@@ -66,8 +69,9 @@ public class SequentialOptimalScheduler implements Scheduler {
                     _infoTracker.setScheduledToBeDisplayed(child);
                 }
                 // Branch by pushing child into search tree or bound
-                if (childLength < boundValue && child.getEstimatedFinish() < boundValue) {
+                if (!exploredScheduleHashes.contains(child.getHash()) && childLength < boundValue && child.getEstimatedFinish() < boundValue) {
                     searchTree.push(child);
+                    exploredScheduleHashes.add(child.getHash());
                 }
             }
         }
