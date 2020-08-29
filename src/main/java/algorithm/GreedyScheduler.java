@@ -1,6 +1,11 @@
 package algorithm;
 
+import domain.DomainHandler;
+import domain.PartialSchedule;
+import domain.TaskNode;
+import javafx.concurrent.Task;
 import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.Graphs;
@@ -13,11 +18,11 @@ import java.util.*;
  */
 public class GreedyScheduler {
 
-    private List<Node>[] _processorSchedules;
+    private List<TaskNode>[] _processorSchedules;
     private final AdjacencyListGraph _graph;
     private final int _numProcessors;
     private double _solutionLength;
-    private Node[] _topologicalOrder;
+    private List<TaskNode> _topologicalOrderedTasks;
 
     public GreedyScheduler(AdjacencyListGraph graph, int processors) {
         _graph = graph;
@@ -29,73 +34,46 @@ public class GreedyScheduler {
      * executeAlgorithm() will return a valid schedule
      */
     public void executeAlgorithm() {
-        sortTopologically();
-        scheduleByGreedy(_topologicalOrder);
-        prepForOutput();
-    }
-
-    /**
-     * Updates the graphs attributes to meet the expected output format.
-     */
-    private void prepForOutput() {
-        for (Node n : _graph) {
-            n.changeAttribute("Processor", Arrays.asList(_processorSchedules).indexOf(n.getAttribute("Processor")) + 1);
-            n.removeAttribute("endTime");
-            n.changeAttribute("Start", ((Double) n.getAttribute("Start")).intValue());
-            n.changeAttribute("Weight", ((Double) n.getAttribute("Weight")).intValue());
-        }
-
-        for (Edge e : _graph.getEdgeSet()) {
-            e.changeAttribute("Weight", ((Double) e.getAttribute("Weight")).intValue());
-        }
-    }
-
-    /**
-     * @return Returns the graph representation of a valid scheduling. Each node is annotated with it's processor, start time and
-     * end time.
-     */
-    public AdjacencyListGraph getSolution() {
-        return _graph;
-    }
-
-    /**
-     * @return Returns length of computed solution, or 0 if the solution has not been computed.
-     */
-    public double getSolutionLength() {
-        return _solutionLength;
+        Node[] topologicalOrderedNodes = getTopologicalOrdering(_graph);
+        _topologicalOrderedTasks = DomainHandler.populateTaskNodes(topologicalOrderedNodes);
+        scheduleByGreedy(_topologicalOrderedTasks);
     }
 
     /**
      * scheduleByGreedy will schedule a task based on the greedy heuristic: Earliest Start Time.
      * This depends on the input nodes being on a valid topological order
      */
-    public void scheduleByGreedy(Node[] tasks) {
+    private void scheduleByGreedy(List<TaskNode> tasks) {
         // Initializing a schedule for each processor
-        _processorSchedules = new ArrayList[_numProcessors];
+        _processorSchedules = new List[_numProcessors];
         for (int i = 0; i < _numProcessors; i++) {
-            _processorSchedules[i] = new ArrayList<Node>();
+            _processorSchedules[i] = new ArrayList<TaskNode>();
         }
 
+        /* Initializing Task end times and schedulings. This data is not held within the TaskNode
+         class as it is designed to be as minimal as possible (for efficiency) */
+        Map<TaskNode, Double> endTimes = new HashMap<TaskNode, Double>();
+        Map<TaskNode, List<TaskNode>> taskSchedulings = new LinkedHashMap<TaskNode, List<TaskNode>>();
+
         // Scheduling each task on earliest available processor heuristic
-        List<Node> currentEarliestFreeProcessor;
+        List<TaskNode> currentEarliestFreeProcessor;
         double earliestStartTime;
-        for (Node node : tasks) {
-            Node task = _graph.getNode(node.getId());
+        for (TaskNode task : tasks) {
             currentEarliestFreeProcessor = _processorSchedules[0];
-            earliestStartTime = startTime(_processorSchedules[0], task);
+            earliestStartTime = startTime(taskSchedulings, endTimes, _processorSchedules[0], task);
 
             boolean foundFreeProcessor = false;
             int i = 0;
             // Checking each processor to determine earliest availability
             while (!foundFreeProcessor && i < _processorSchedules.length) {
-                List<Node> p = _processorSchedules[i];
+                List<TaskNode> p = _processorSchedules[i];
                 i++;
                 // Set to break after finding free processor
                 if (p.size() == 0) {
                     foundFreeProcessor = true;
                 }
                 // Determine if this processor can schedule the task earlier
-                double startTimeOfferedByP = startTime(p, task);
+                double startTimeOfferedByP = startTime(taskSchedulings, endTimes, p, task);
                 if (startTimeOfferedByP < earliestStartTime) {
                     currentEarliestFreeProcessor = p;
                     earliestStartTime = startTimeOfferedByP;
@@ -103,33 +81,33 @@ public class GreedyScheduler {
             }
 
             // Scheduling task to the earliest available processor
-            task.addAttribute("Processor", currentEarliestFreeProcessor);
-            task.addAttribute("Start", earliestStartTime);
-            task.addAttribute("endTime", earliestStartTime + (Double) task.getAttribute("Weight"));
-            if (earliestStartTime + (Double) task.getAttribute("Weight") > _solutionLength) {
-                _solutionLength = earliestStartTime + (Double) task.getAttribute("Weight");
+            taskSchedulings.put(task, currentEarliestFreeProcessor);
+            endTimes.put(task, earliestStartTime + task.getWeight());
+
+            if (earliestStartTime + task.getWeight() > _solutionLength) {
+                _solutionLength = earliestStartTime + task.getWeight();
             }
             currentEarliestFreeProcessor.add(task);
         }
+
+        prepGraphForOutput(taskSchedulings, endTimes);
     }
 
     /**
      * startTime() will return the earliest possible scheduling of task in a specified processor
      */
-    public double startTime(List<Node> processor, Node task) {
-        Collection<Edge> dependencies = task.getEnteringEdgeSet();
+    private double startTime(Map<TaskNode, List<TaskNode>> taskSchedulings, Map<TaskNode, Double> endTimes, List<TaskNode> processor, TaskNode task) {
+        TaskNode[] dependencies = task.getDependencies();
 
         // Determining the time at which this processor will be free
-        Double currentProcFinishTime = processor.size() > 0 ? (Double) processor.get(processor.size() - 1).getAttribute("endTime") : 0;
-        double earliestStartOnP = currentProcFinishTime == null ? 0 : currentProcFinishTime;
+        double earliestStartOnP = processor.size() > 0 ? endTimes.get(processor.get(processor.size() - 1)) : 0;
 
         /* For each dependency task, check whether this processor will have to wait for data to arrive - in which case the earliest
         potential scheduling on this processor may increase */
-        for (Edge d : dependencies) {
-            Node dependencyTask = d.getSourceNode();
+        for (TaskNode d : dependencies) {
             // Checking if dependency is scheduled on another processor
-            if (!dependencyTask.getAttribute("Processor").equals(processor)) {
-                earliestStartOnP = Math.max(earliestStartOnP, (Double)dependencyTask.getAttribute("endTime") + d.<Double>getAttribute("Weight"));
+            if (!taskSchedulings.get(d).equals(processor)) {
+                earliestStartOnP = Math.max(earliestStartOnP, endTimes.get(d) + task.getDependencyEdgeWeight(d));
             }
         }
 
@@ -139,7 +117,7 @@ public class GreedyScheduler {
     /**
      * sortTopologically() will return a topological ordering of the vertices in Graph G using Kahn's algorithm
      */
-    public void sortTopologically() {
+    private Node[] getTopologicalOrdering(Graph inputGraph) {
         AdjacencyListGraph graphToDestruct = (AdjacencyListGraph) Graphs.clone(_graph);
 
         String[] topOrder = new String[graphToDestruct.getNodeCount()];
@@ -183,14 +161,48 @@ public class GreedyScheduler {
             i++;
         }
 
-        _topologicalOrder = topOrderedNodes;
+        return topOrderedNodes;
     }
 
     /**
-     * Returns the topological order which was used to compute the schedule.
-     * @return
+     * Preps the IO graph with necessary attributes to meet the correct output format.
      */
-    public Node[] getTopologicalOrder() {
-        return _topologicalOrder;
+    private void prepGraphForOutput(Map<TaskNode, List<TaskNode>> taskSchedulings, Map<TaskNode, Double> endTimes) {
+        for (TaskNode task: taskSchedulings.keySet()) {
+            Node node = _graph.getNode(task.getId());
+
+            List<TaskNode> processor = taskSchedulings.get(task);
+            int processorIndex = 0;
+            for (int i = 0; i < _processorSchedules.length; i++) {
+                if (_processorSchedules[i].contains(task)) {
+                    processorIndex = i;
+                }
+            }
+            node.setAttribute("Processor", processorIndex + 1);
+            node.setAttribute("Start", endTimes.get(task) - task.getWeight());
+            node.setAttribute("Weight", task.getWeight());
+        }
+    }
+
+    /**
+     * @return Returns the input tasks, ordered topologically.
+     */
+    public List<TaskNode> getTopologicallyOrderedTaskNodes() {
+        return _topologicalOrderedTasks;
+    }
+
+    /**
+     * @return Returns the graph representation of a valid scheduling. Each node is annotated with it's processor, start time and
+     * end time.
+     */
+    public AdjacencyListGraph getSolution() {
+        return _graph;
+    }
+
+    /**
+     * @return Returns length of computed solution, or 0 if the solution has not been computed.
+     */
+    public double getSolutionLength() {
+        return _solutionLength;
     }
 }

@@ -1,5 +1,6 @@
 package algorithm;
 
+import domain.DomainHandler;
 import domain.PartialSchedule;
 import domain.TaskNode;
 import javafx.InfoTracker;
@@ -11,7 +12,7 @@ import java.util.*;
 /**
  * Class implementing an optimal scheduling algorithm based on an exhaustive branch and bound search.
  */
-public class SequentialOptimalScheduler extends Scheduler {
+public class SequentialOptimalScheduler implements Scheduler {
 
     private List<TaskNode> _rootNodes;
     private final int _numProcessors;
@@ -19,13 +20,11 @@ public class SequentialOptimalScheduler extends Scheduler {
     private final InfoTracker _infoTracker;
     private final List<TaskNode> _topologicalOrderedTasks;
 
-    public SequentialOptimalScheduler(Node[] topologicalOrderedTasks, InfoTracker infoTracker) {
-        super();
-        _topologicalOrderedTasks = new ArrayList<TaskNode>();
-        _infoTracker = infoTracker;
+    public SequentialOptimalScheduler(List<TaskNode> topologicalOrderedTasks, InfoTracker infoTracker) {
         _numProcessors = infoTracker.getProcessors();
-        _rootNodes = new ArrayList<TaskNode>();
-        _rootNodes = populateTaskNodes(topologicalOrderedTasks);
+        _infoTracker = infoTracker;
+        _topologicalOrderedTasks = topologicalOrderedTasks;
+        _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
     }
 
     /**
@@ -86,5 +85,4 @@ public class SequentialOptimalScheduler extends Scheduler {
     public PartialSchedule getSolution() {
         return _solution;
     }
-
 }
