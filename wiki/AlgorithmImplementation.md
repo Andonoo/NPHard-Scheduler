@@ -49,7 +49,7 @@ return startTime
 }
 ```
 The general approach was to first find a topological order of the input tasks using Kahn's algorithm. The algorithm then iterates over these tasks one by one, scheduling 
-them on the earliest availible processor. Although there were a few changes made to the algorihm during code implementation, the logic remained the same.
+them on the earliest availible processor. Although there were a few changes made to the algorithm during code implementation, the logic remained the same.
 
 This produced valid schedulings on all given inputs.
 
@@ -114,5 +114,10 @@ In order to avoid exploring duplicate PartialSchedules a check was implemented w
 The above checks were implemented as a simple if statement check, prior to pushing a child into the search tree in the DFS algorithm.
 
 #### Pruning Based on Bottom Level Estimates
+
+##### Initial Attempt 
 In order to further improve efficiency, a check was used to determine if a PartialSchedule was worth expanding into it's children. This was acheived by using a brute force assignment of remaining task weights to the earliest finishing processor, from largest weight to smallest (ignoring dependencies). This allows the algorithm to eliminate some PartialSchedules which are very obviously not worth expanding. This was implemented in PartialSchedules estimateFinish() method which is called upon creation of a PartialSchedule. The DFS algorithm then checks this estimate prior to pushing a child into the search tree, and if it is greater than our currently found best the child
 is discarded.
+
+##### Improved version
+Upon revisiting the earlier lectures given by Oliver, another attempt was made using bottom levelling, where each node had an underestimate/lower bound of the schedule length. Should this value be greater than the current bound value, we do not add this partial schedule into the search tree.
