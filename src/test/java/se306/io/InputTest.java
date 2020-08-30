@@ -72,11 +72,11 @@ public class InputTest {
     }
 
     @Test
-    public void testValidInput(){
+    public void testValidInput() {
         try {
             InputHandler inputHandler = new InputHandler(VALID_TEST_INPUT);
-            assertEquals(VALID_TEST_PROCESSORS,inputHandler.getProcessors());
-            assertEquals(VALID_TEST_FILE,inputHandler.getFileName());
+            assertEquals(VALID_TEST_PROCESSORS, inputHandler.getProcessors());
+            assertEquals(VALID_TEST_FILE, inputHandler.getFileName());
         } catch (CommandLineException e) {
             e.printStackTrace();
         }

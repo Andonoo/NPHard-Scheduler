@@ -134,14 +134,11 @@ public class ScheduleDisplayer<X, Y> extends XYChart<X, Y> {
     }
 
     private Node createContainer(Series<X, Y> series, int seriesIndex, final Data<X, Y> item, int itemIndex) {
-
         Node container = item.getNode();
-
         if (container == null) {
             container = new StackPane();
             item.setNode(container);
         }
-
         container.getStyleClass().add(getStyleClass(item.getExtraValue()));
 
         return container;
@@ -184,9 +181,8 @@ public class ScheduleDisplayer<X, Y> extends XYChart<X, Y> {
      * The length of each 'bar' or task will be derived from the weight of the respective TaskNode.
      */
     public static class ExtraData {
-
-        private int _length;
-        private String _styleClass;
+        private final int _length;
+        private final String _styleClass;
 
         public ExtraData(TaskNode task, String styleClass) {
             _length = (int) task.getWeight();
@@ -201,5 +197,4 @@ public class ScheduleDisplayer<X, Y> extends XYChart<X, Y> {
             return _styleClass;
         }
     }
-
 }

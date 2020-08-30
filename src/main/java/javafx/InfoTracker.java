@@ -16,7 +16,7 @@ public class InfoTracker {
     private XYChart.Series[] _greedyData;
     private int _searchesMade;
     private boolean _isFinished = false;
-    private String _fileName;
+    private final String _fileName;
     private final int _processors;
     private final int _cores;
     private boolean _currentBestHasChanged = false;

@@ -73,15 +73,16 @@ public class Controller {
     /**
      * This function is called from polling and updates the number of searches made. Once the number of searches
      * reaches a million, it will shorten it down to 3sf using 'M'.
+     *
      * @param numSearches the number of searches made
      */
     public void setSearchesMade(double numSearches) {
         String searchesMade;
         if (numSearches > 1000000) {
             DecimalFormat df = new DecimalFormat("0.00");
-            searchesMade =  df.format(numSearches / 1000000) + "M";
+            searchesMade = df.format(numSearches / 1000000) + "M";
         } else {
-            searchesMade =  String.valueOf((int)numSearches);
+            searchesMade = String.valueOf((int) numSearches);
         }
         _searchesMade.setText(searchesMade);
     }
@@ -187,6 +188,7 @@ public class Controller {
     /**
      * Parses a partial schedule so that it can be visualised by ScheduleDisplayer. This will allow tasks to be
      * seen as blocks (based on time scheduled).
+     *
      * @param scheduledToBeDisplayed the new schedule that should be visualised as the current best
      */
     private void parsePartialSchedule(PartialSchedule scheduledToBeDisplayed) {
@@ -224,7 +226,7 @@ public class Controller {
             @Override
             public void handle(ActionEvent event) {
                 currentTime = System.currentTimeMillis();
-                DateFormat timeFormat = new SimpleDateFormat( "mm:ss:SSS" );
+                DateFormat timeFormat = new SimpleDateFormat("mm:ss:SSS");
                 timeElapsed = timeFormat.format((currentTime - startTime));
                 _timeElapsed.setText(timeElapsed);
             }

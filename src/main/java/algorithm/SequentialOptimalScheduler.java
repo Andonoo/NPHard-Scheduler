@@ -4,9 +4,6 @@ import domain.DomainHandler;
 import domain.PartialSchedule;
 import domain.TaskNode;
 import javafx.InfoTracker;
-import javafx.scene.chart.XYChart;
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Node;
 
 import java.util.*;
 
@@ -17,19 +14,17 @@ public class SequentialOptimalScheduler implements Scheduler {
 
     private static final int FREE_MEMORY_LIMIT = 100000000;
 
-    private List<TaskNode> _rootNodes;
+    private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution;
     private final InfoTracker _infoTracker;
     private final List<TaskNode> _topologicalOrderedTasks;
-    private XYChart.Series[] _seriesArray;
 
     public SequentialOptimalScheduler(List<TaskNode> topologicallyOrderedTaskNodes, int numProcessors, InfoTracker infoTracker) {
         _numProcessors = numProcessors;
         _infoTracker = infoTracker;
         _topologicalOrderedTasks = topologicallyOrderedTaskNodes;
         _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
-        _seriesArray = new XYChart.Series[_numProcessors];
     }
 
     public SequentialOptimalScheduler(List<TaskNode> topologicallyOrderedTaskNodes, int numProcessors) {
@@ -37,7 +32,6 @@ public class SequentialOptimalScheduler implements Scheduler {
         _infoTracker = null;
         _topologicalOrderedTasks = topologicallyOrderedTaskNodes;
         _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
-        _seriesArray = null;
     }
 
     /**
