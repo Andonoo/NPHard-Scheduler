@@ -9,15 +9,31 @@ ___
 + [Milestone 1](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Milestone1.md)
 + [Milestone 2](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Milestone2.md)
 
+**IO**
++ [Input and Output handling](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/IO.md)
+
+
+**Algorithm**
++ [Algorithm research](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Research.md)
++ [Algorithm Implementation](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/AlgorithmImplementation.md)
++ [Parallelisation](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Parallelisation.md)
+
+**Visualisation**
++ [Visualisation research](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/VisualitationResearch.md)
++ [Visualisation Design](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/VisualisationDesign.md)
+
+**Testing**
++ [Testing](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Test.md)
+
+
 ___
 **Sinnen 11 Team Members**  
 
-<p align="center"> 
-🌜
-  Charlie <a href="https://github.com/Chuppay">Chuppay</a> • 
-  Francis <a href="https://github.com/M-Stable">M-Stable</a> • 
-  Steven <a href="https://github.com/kcho9906">kcho9906</a> • 
-  Andrew <a href="https://github.com/Andonoo">Andonoo</a> • 
-  Justin <a href="https://github.com/justinkrojos">justinkrojos</a>
-🌛
-</p>
+| Name    | Github                                                     | UPI     |
+|---------|:-----------------------------------------------------------|:--------|
+| Andrew  | <a href="https://github.com/Andonoo">Andonoo</a>           | adon946 |
+| Francis | <a href="https://github.com/M-Stable">M-Stable</a>         | clee383 |
+| Justin  | <a href="https://github.com/justinkrojos">justinkrojos</a> | jroj928 |
+| Steven  | <a href="https://github.com/kcho9906">kcho9906</a>         | kcho103 |
+| XinMing | <a href="https://github.com/Chuppay">Chuppay</a>           | xyan765 |
+
