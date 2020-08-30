@@ -14,7 +14,7 @@ public class InputTest {
     @Test
     public void testNoInput() {
         try {
-            InputHandler inputParser = new InputHandler(NO_INPUT);
+            InputHandler inputHandler = new InputHandler(NO_INPUT);
             fail(INVALID_INPUT_FAIL);
         } catch (CommandLineException e) {
             assertEquals(INVALID_INPUT_MESSAGE, e.getMessage());
@@ -24,7 +24,7 @@ public class InputTest {
     @Test
     public void testOneInput() {
         try {
-            InputHandler inputParser = new InputHandler(ONE_INPUT);
+            InputHandler inputHandler = new InputHandler(ONE_INPUT);
             fail(INVALID_INPUT_FAIL);
         } catch (CommandLineException e) {
             assertEquals(INVALID_INPUT_MESSAGE, e.getMessage());
@@ -34,7 +34,7 @@ public class InputTest {
     @Test
     public void testInvalidDotFile() {
         try {
-            InputHandler inputParser = new InputHandler(INVALID_FILE_INPUT);
+            InputHandler inputHandler = new InputHandler(INVALID_FILE_INPUT);
             fail(INVALID_FILE_FAIL);
         } catch (CommandLineException e) {
             assertEquals(INVALID_FILE_MESSAGE, e.getMessage());
@@ -44,7 +44,7 @@ public class InputTest {
     @Test
     public void testNonExistentFile() {
         try {
-            InputHandler inputParser = new InputHandler(NON_EXISTENT_FILE_INPUT);
+            InputHandler inputHandler = new InputHandler(NON_EXISTENT_FILE_INPUT);
             fail(NON_EXISTENT_FILE_FAIL);
         } catch (CommandLineException e) {
             assertEquals(NON_EXISTENT_FILE_MESSAGE, e.getMessage());
@@ -54,7 +54,7 @@ public class InputTest {
     @Test
     public void testNonInteger() {
         try {
-            InputHandler inputParser = new InputHandler(NON_INTEGER_INPUT);
+            InputHandler inputHandler = new InputHandler(NON_INTEGER_INPUT);
             fail(NON_INTEGER_FAIL);
         } catch (CommandLineException e) {
             assertEquals(NON_INTEGER_MESSAGE, e.getMessage());
@@ -64,10 +64,21 @@ public class InputTest {
     @Test
     public void testNegativeInteger() {
         try {
-            InputHandler inputParser = new InputHandler(NEGATIVE_INTEGER_INPUT);
+            InputHandler inputHandler = new InputHandler(NEGATIVE_INTEGER_INPUT);
             fail(NEGATIVE_INTEGER_FAIL);
         } catch (CommandLineException e) {
             assertEquals(NEGATIVE_INTEGER_MESSAGE, e.getMessage());
+        }
+    }
+
+    @Test
+    public void testValidInput(){
+        try {
+            InputHandler inputHandler = new InputHandler(VALID_TEST_INPUT);
+            assertEquals(VALID_TEST_PROCESSORS,inputHandler.getProcessors());
+            assertEquals(VALID_TEST_FILE,inputHandler.getFileName());
+        } catch (CommandLineException e) {
+            e.printStackTrace();
         }
     }
 }

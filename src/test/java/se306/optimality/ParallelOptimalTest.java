@@ -107,13 +107,4 @@ public class ParallelOptimalTest {
     }
 
     //endregion
-
-    @Test
-    public void testRandom() throws CommandLineException{
-        InputHandler inputParser = new InputHandler(new String[]{TEST_GRAPH_INPUT, "2", "-p","4"});
-
-        Double optimalFinishTime = findParallelOptimalFinishTime(inputParser.getGraph(),inputParser.getProcessors(),inputParser.getCores());
-
-        assertEquals(TEST_GRAPH_FINISH_TIME,optimalFinishTime,DELTA);
-    }
 }

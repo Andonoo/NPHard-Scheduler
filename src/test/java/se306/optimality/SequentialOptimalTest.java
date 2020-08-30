@@ -309,14 +309,4 @@ public class SequentialOptimalTest {
     }
 
     //endregion
-
-    @Test
-    public void testRandom() throws CommandLineException{
-        InputHandler inputHandler = new InputHandler(new String[]{TEST_GRAPH_INPUT, "2"});
-
-        Double optimalFinishTime = findOptimalFinishTime(inputHandler);
-
-        assertEquals(TEST_GRAPH_FINISH_TIME,optimalFinishTime,DELTA);
-    }
-
 }

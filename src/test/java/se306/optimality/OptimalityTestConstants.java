@@ -67,7 +67,4 @@ public class OptimalityTestConstants {
     public static final double GRAPH13_10NODES_2P_FINISH_TIME = 515;
     public static final double GRAPH14_10NODES_2P_FINISH_TIME = 579;
     public static final double GRAPH15_10NODES_2P_FINISH_TIME = 450;
-
-    public static final double TEST_GRAPH_FINISH_TIME = 501;
-    public static final String TEST_GRAPH_INPUT = "./src/test/resources/20.dot";
 }

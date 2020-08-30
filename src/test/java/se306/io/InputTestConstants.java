@@ -3,11 +3,15 @@ package se306.io;
 public class InputTestConstants {
 
     public static final String[] NO_INPUT = {};
-    public static final String[] ONE_INPUT = {"./src/test/resources/T2.dot"};
-    public static final String[] INVALID_FILE_INPUT = {"./src/test/resources/T2", "2"};
+    public static final String[] ONE_INPUT = {"./src/test/resources/inputTestFile.dot"};
+    public static final String[] INVALID_FILE_INPUT = {"./src/test/resources/inputTestFile", "2"};
     public static final String[] NON_EXISTENT_FILE_INPUT = {"./src/test/resources/T15.dot", "2"};
-    public static final String[] NON_INTEGER_INPUT = {"./src/test/resources/T2.dot", "a"};
-    public static final String[] NEGATIVE_INTEGER_INPUT = {"./src/test/resources/T2.dot", "-2"};
+    public static final String[] NON_INTEGER_INPUT = {"./src/test/resources/inputTestFile.dot", "a"};
+    public static final String[] NEGATIVE_INTEGER_INPUT = {"./src/test/resources/inputTestFile.dot", "-2"};
+    public static final String[] VALID_TEST_INPUT = {"./src/test/resources/inputTestFile.dot", "4"};
+
+    public static final String VALID_TEST_FILE = "./src/test/resources/inputTestFile.dot";
+    public static final int VALID_TEST_PROCESSORS = 4;
 
     public static final String INVALID_INPUT_MESSAGE = "Please enter a valid input file and number of processors";
     public static final String INVALID_FILE_MESSAGE = "Please enter a valid input file (.dot file)";
@@ -21,4 +25,5 @@ public class InputTestConstants {
     public static final String NON_INTEGER_FAIL = "Test should have thrown a CommandLineException asking for an integer for the number of processors";
     public static final String NEGATIVE_INTEGER_FAIL = "Test should have thrown a CommandLineException asking for a valid number of processors";
 
+    public static final String[] OUTPUT_TEST_INPUT = {"././src/test/resources/outputFileTest1.dot", "2"};
 }
