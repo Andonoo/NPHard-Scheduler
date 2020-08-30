@@ -1,6 +1,9 @@
 package algorithm;
 
 import domain.PartialSchedule;
+import domain.TaskNode;
+
+import java.util.Map;
 
 /**
  * Interface to which the two schedulers (ParallelOptimalScheduler and SequentialOptimalScheduler) will implement.
@@ -14,7 +17,7 @@ public interface Scheduler {
      * @param initialBoundValue
      * @return Returns true if a schedule was found that is shorter than the provided bound value
      */
-    boolean executeBranchAndBoundAlgorithm(double initialBoundValue);
+    boolean executeBranchAndBoundAlgorithm(double initialBoundValue, Map<TaskNode, Double> bottomLevelValues);
 
     /**
      * Gets the schedule which was computed by the branch and bound algorithm. Will return null if no schedule was found
