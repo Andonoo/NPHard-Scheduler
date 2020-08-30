@@ -10,6 +10,7 @@ import org.graphstream.stream.file.FileSourceDOT;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class InputHandler {
@@ -54,9 +55,7 @@ public class InputHandler {
         }
 
         if (input.length > 2) {
-            for (int i = 2; i < input.length; i++) {
-                _options.add(input[i]);
-            }
+            _options.addAll(Arrays.asList(input).subList(2, input.length));
         }
 
         setOutputFileName();
@@ -71,6 +70,11 @@ public class InputHandler {
         createGraph();
     }
 
+    /**
+     * Creates a GraphStream graph object based on a valid .dot file as input. Simultaneously, a snapshot of the graph
+     * is also taken and included in the GUI for visualisation as a png. The visual attributes are then removed
+     * from the graph.
+     */
     private void createGraph() {
         _graph = new DefaultGraph(_outputFileName);
 
@@ -138,7 +142,6 @@ public class InputHandler {
     }
 
     public String getFileName() {
-        String displayedName = _fileName.substring(_fileName.lastIndexOf(File.separator) + 1);
-        return displayedName;
+        return _fileName.substring(_fileName.lastIndexOf(File.separator) + 1);
     }
 }

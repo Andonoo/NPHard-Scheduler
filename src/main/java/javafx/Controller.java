@@ -70,6 +70,11 @@ public class Controller {
         _status.setText(status);
     }
 
+    /**
+     * This function is called from polling and updates the number of searches made. Once the number of searches
+     * reaches a million, it will shorten it down to 3sf using 'M'.
+     * @param numSearches the number of searches made
+     */
     public void setSearchesMade(double numSearches) {
         String searchesMade;
         if (numSearches > 1000000) {
@@ -89,6 +94,11 @@ public class Controller {
         _infoTracker = infoTracker;
     }
 
+    /**
+     * Initialise all the GUI. Starts the timer as soon as it opens.
+     * Sets input file name, processor count, CPU count, input graph, and the current best output graph.
+     * Once all that is set, polling will start to continuously update the GUI
+     */
     public void init() {
         startTimer();
         _inputGraph.setText(_infoTracker.getFileName());
@@ -100,6 +110,10 @@ public class Controller {
         startPolling();
     }
 
+    /**
+     * Function to initialise the schedule visualisation. It will set the y axis based on the number
+     * of processors the user has chosen and initialise the x axis as the duration.
+     */
     private void initialiseOutputGraph() {
 
         String[] processors = new String[_infoTracker.getProcessors()];
@@ -124,6 +138,13 @@ public class Controller {
         scheduleBox.getChildren().add(scheduleDisplayer);
     }
 
+    /**
+     * Every 50 milliseconds, the GUI will be updated based on the algorithm state.
+     * Only update the Gantt Chart if there is a new current best is found. This is to help performance.
+     * If no partial schedule is found, set the schedule to the schedule found by the greedy algorithm. This prevents
+     * the GUI from ever being empty.
+     * Once the algorithm is done, set the status to DONE.
+     */
     private void startPolling() {
         Timeline poller = new Timeline(new KeyFrame(Duration.millis(50), event -> {
             if (_infoTracker.getIsFinished()) {
@@ -140,7 +161,6 @@ public class Controller {
                 PartialSchedule partialSchedule = _infoTracker.getScheduledToBeDisplayed();
 
                 if (partialSchedule == null) {
-                    System.out.println("No partial schedule found... showing greedy data");
                     updateScheduleDisplayer(greedyData);
                 } else {
                     parsePartialSchedule(partialSchedule);
@@ -164,6 +184,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Parses a partial schedule so that it can be visualised by ScheduleDisplayer. This will allow tasks to be
+     * seen as blocks (based on time scheduled).
+     * @param scheduledToBeDisplayed the new schedule that should be visualised as the current best
+     */
     private void parsePartialSchedule(PartialSchedule scheduledToBeDisplayed) {
         // New array of series to write onto
         Series[] seriesArray = new Series[_infoTracker.getProcessors()];
@@ -188,6 +213,10 @@ public class Controller {
         updateScheduleDisplayer(seriesArray);
     }
 
+    /**
+     * Timer to show the elapsed time. This is called as soon as the algorithm starts and is updated
+     * every 0.05 seconds.
+     */
     public void startTimer() {
         startTime = System.currentTimeMillis();
         timerHandler = new Timeline(new KeyFrame(Duration.seconds(0.05), new EventHandler<ActionEvent>() {

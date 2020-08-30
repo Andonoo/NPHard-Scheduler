@@ -33,10 +33,6 @@ public class ScheduleDisplayer<X, Y> extends XYChart<X, Y> {
         setData(data);
     }
 
-    private static TaskNode getScheduledTask(Object obj) {
-        return ((ExtraData) obj).getScheduledTask();
-    }
-
     private static String getStyleClass(Object obj) {
         return ((ExtraData) obj).getDataStyleClass();
     }
@@ -52,6 +48,7 @@ public class ScheduleDisplayer<X, Y> extends XYChart<X, Y> {
 
             Series<X, Y> series = getData().get(seriesIndex);
 
+            //Iterate through all the data given
             Iterator<Data<X, Y>> iter = getDisplayedDataIterator(series);
             while (iter.hasNext()) {
                 Data<X, Y> item = iter.next();
@@ -72,13 +69,12 @@ public class ScheduleDisplayer<X, Y> extends XYChart<X, Y> {
                         } else {
                             return;
                         }
+
+                        //Set up the dimensions of each block of data (in our case tasks) based on the scale of our chart
                         ellipse.setWidth(getLength(item.getExtraValue()) * Math.abs(((NumberAxis) getXAxis()).getScale()));
                         ellipse.setHeight(getBlockHeight());
                         y -= getBlockHeight() / 2.0;
 
-                        // Note: workaround for RT-7689 - saw this in ProgressControlSkin
-                        // The region doesn't update itself when the shape is mutated in place, so we
-                        // null out and then restore the shape in order to force invalidation.
                         region.setShape(null);
                         region.setShape(ellipse);
                         region.setScaleShape(false);
@@ -151,7 +147,9 @@ public class ScheduleDisplayer<X, Y> extends XYChart<X, Y> {
         return container;
     }
 
-    // This is called when the range has been invalidated and we need to update it.
+    /**
+     * This is called when the range has been invalidated and we need to update it.
+     */
     @Override
     protected void updateAxisRange() {
         final Axis<X> xa = getXAxis();
@@ -181,20 +179,18 @@ public class ScheduleDisplayer<X, Y> extends XYChart<X, Y> {
         }
     }
 
+    /**
+     * Inner class that determines the structure of the data to be displayed in the GUI application.
+     * The length of each 'bar' or task will be derived from the weight of the respective TaskNode.
+     */
     public static class ExtraData {
 
-        private final TaskNode _task;
         private int _length;
         private String _styleClass;
 
         public ExtraData(TaskNode task, String styleClass) {
             _length = (int) task.getWeight();
-            _task = task;
             _styleClass = styleClass;
-        }
-
-        public TaskNode getScheduledTask() {
-            return _task;
         }
 
         public int getTaskLength() {

@@ -29,6 +29,12 @@ public class ParallelOptimalScheduler implements Scheduler {
     private InfoTracker _infoTracker = null;
     private volatile int _searchesMade = 0;
 
+    /**
+     * Constructor for which to create the parallel scheduler
+     * @param topologicallyOrderedTaskNodes
+     * @param numProcessors
+     * @param numCores
+     */
     public ParallelOptimalScheduler(List<TaskNode> topologicallyOrderedTaskNodes, int numProcessors, int numCores) {
         _numCores = numCores;
         _numProcessors = numProcessors;
@@ -36,6 +42,13 @@ public class ParallelOptimalScheduler implements Scheduler {
         _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
     }
 
+    /**
+     * Constructor for which an info tracker is implemented to the class (to concurrently update the GUI)
+     * @param topologicallyOrderedTaskNodes
+     * @param numProcessors
+     * @param numCores
+     * @param infoTracker
+     */
     public ParallelOptimalScheduler(List<TaskNode> topologicallyOrderedTaskNodes, int numProcessors, int numCores, InfoTracker infoTracker) {
         _numCores = numCores;
         _numProcessors = numProcessors;
@@ -72,12 +85,7 @@ public class ParallelOptimalScheduler implements Scheduler {
         ForkJoinPool workers = new ForkJoinPool(_numCores);
         workers.invoke(task);
 
-        if (_solution == null) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return _solution != null;
     }
 
     /**
@@ -101,6 +109,10 @@ public class ParallelOptimalScheduler implements Scheduler {
             this.searchTree = searchTree;
         }
 
+        /**
+         * Main computation that will be recursively called. It continuously performs a DFS search on a list of partial schedules,
+         * thereby adding and removing to the list. When the list gets too long, a new task/thread is invoked.
+         */
         @Override
         protected void compute() {
 
@@ -110,6 +122,7 @@ public class ParallelOptimalScheduler implements Scheduler {
                 PartialSchedule nodeToExplore = searchTree.pop();
                 PartialSchedule[] foundChildren = nodeToExplore.createChildren(_bottomLevels);
 
+                // Ensure that localBound is always updated in the while loop to lower search space.
                 localBound = Math.min(localBound, _globalBound);
                 for (PartialSchedule child: foundChildren) {
                     double childLength = child.getScheduleLength();
@@ -124,6 +137,7 @@ public class ParallelOptimalScheduler implements Scheduler {
                             localBound = child.getScheduleLength();
                             updateGlobal(child, localBound);
                         }
+                        // Go to next child
                         continue;
                     }
 
@@ -160,6 +174,7 @@ public class ParallelOptimalScheduler implements Scheduler {
         if (localSchedule.getScheduleLength() < _globalBound) {
             _solution = localSchedule;
             _globalBound = localBound;
+            // Update GUI to show current best schedule
             if (_infoTracker != null) {
                 _infoTracker.setCurrentBestHasChanged(true);
                 _infoTracker.setCurrentBest((int) localSchedule.getScheduleLength());
@@ -168,6 +183,9 @@ public class ParallelOptimalScheduler implements Scheduler {
         }
     }
 
+    /**
+     * Updates the search count synchronously for the GUI to visualise
+     */
     private synchronized void updateSearchCount() {
         _searchesMade++;
         _infoTracker.setSearchesMade(_searchesMade);

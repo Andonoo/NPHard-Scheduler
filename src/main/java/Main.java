@@ -41,11 +41,17 @@ public class Main extends Application {
         System.exit(0);
     }
 
+    /**
+     * This method is called to start executing the required algorithms to produce the optimal schedule.
+     */
     public static void executeAlgorithm() {
+
+        // Find an OK schedule using the greedy algorithm
         GreedyScheduler greedyScheduler = _inputHandler.produceGUI() ? new GreedyScheduler(_inputHandler.getGraph(), _inputHandler.getProcessors(), _infoTracker) :
                 new GreedyScheduler(_inputHandler.getGraph(), _inputHandler.getProcessors());
         greedyScheduler.executeAlgorithm();
 
+        // Use this 'ok' schedule to bound to the optimal scheduler
         Scheduler optimalScheduler;
 
         if (_infoTracker.getCores() == 1) {
@@ -61,8 +67,9 @@ public class Main extends Application {
         Map<TaskNode, Double> bottomLevels = DomainHandler.getBottomLevels(greedyScheduler.getTopologicallyOrderedTaskNodes());
         boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength(), bottomLevels);
 
-        _infoTracker.setIsFinished(true);
+        _infoTracker.setIsFinished(true); // Stop the polling for info tracker
 
+        // Create the output file with optimal solution
         OutputHandler outputHandler = new OutputHandler();
         if (moreOptimalFound) {
             outputHandler.createOutputFile(optimalScheduler.getSolution(), _infoTracker.getGraph());
@@ -71,18 +78,21 @@ public class Main extends Application {
         }
     }
 
+
     @Override
     public void start(Stage primaryStage) throws IOException {
+
+        // Set up for javafx GUI
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("main.fxml"));
         Controller controller = new Controller();
         loader.setController(controller);
         Parent root = loader.load();
-
         Scene scene = new Scene(root);
         controller.setInputHandler(_infoTracker);
         controller.init();
 
+        // Create new thread to run the algorithm while javafx application runs
         new Thread(Main::executeAlgorithm).start();
         primaryStage.setTitle("Scheduler visualisation");
         primaryStage.setScene(scene);
