@@ -71,6 +71,11 @@ public class InputHandler {
         createGraph();
     }
 
+    /**
+     * Creates a GraphStream graph object based on a valid .dot file as input. Simultaneously, a snapshot of the graph
+     * is also taken and included in the GUI for visualisation as a png. The visual attributes are then removed
+     * from the graph.
+     */
     private void createGraph() {
         _graph = new DefaultGraph(_outputFileName);
 
