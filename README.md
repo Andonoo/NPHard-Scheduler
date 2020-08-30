@@ -54,15 +54,14 @@ To clone, you'll need [Git](https://git-scm.com)
 $ git clone https://github.com/SoftEng306-2020/project-1-project-1-team-11.git
 ```
 Next build the package with Maven. Please ensure that your machine is configured to use an Oracle release of the Java 8 JDK (1.8.0_221), as this is required for JavaFX. 
-```
-# Build project with maven
-mvn package
-```
 
 Navigate to the target folder
 ```
 # Go into the repository
 $ cd project-1-project-1-team-11
+
+# Build project with maven
+mvn clean package
 
 # Go into target folder
 $ cd target/
