@@ -3,6 +3,7 @@ package algorithm;
 import domain.DomainHandler;
 import domain.PartialSchedule;
 import domain.TaskNode;
+import javafx.InfoTracker;
 
 import java.util.*;
 
@@ -24,12 +25,22 @@ public class ParallelOptimalScheduler implements Scheduler {
     private List<TaskNode> _topologicalOrderedTasks;
     private double _globalBound;
     private Set<String> _syncExploredScheduleIds;
+    private InfoTracker _infoTracker = null;
+    private volatile int _searchesMade = 0;
 
-    public ParallelOptimalScheduler(List<TaskNode> topologicalOrderedTasks, int numProcessors, int numCores) {
+    public ParallelOptimalScheduler(List<TaskNode> topologicallyOrderedTaskNodes, int numProcessors, int numCores) {
         _numCores = numCores;
         _numProcessors = numProcessors;
-        _topologicalOrderedTasks = topologicalOrderedTasks;
+        _topologicalOrderedTasks = topologicallyOrderedTaskNodes;
         _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
+    }
+
+    public ParallelOptimalScheduler(List<TaskNode> topologicallyOrderedTaskNodes, int numProcessors, int numCores, InfoTracker infoTracker) {
+        _numCores = numCores;
+        _numProcessors = numProcessors;
+        _topologicalOrderedTasks = topologicallyOrderedTaskNodes;
+        _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
+        _infoTracker = infoTracker;
     }
 
     /**
@@ -38,6 +49,7 @@ public class ParallelOptimalScheduler implements Scheduler {
      * @return Returns true if a schedule was found which is shorter than the provided bound value
      */
     public boolean executeBranchAndBoundAlgorithm(double initialBoundValue) {
+
         // Initializing the search tree with a partial schedule for each root node
         LinkedList<PartialSchedule> searchTree = new LinkedList<PartialSchedule>();
         _globalBound = initialBoundValue;
@@ -89,14 +101,20 @@ public class ParallelOptimalScheduler implements Scheduler {
 
         @Override
         protected void compute() {
+
             // While we have unexplored nodes, continue DFS with bound
             while (!searchTree.isEmpty()) {
 
                 PartialSchedule nodeToExplore = searchTree.pop();
                 PartialSchedule[] foundChildren = nodeToExplore.createChildren(_topologicalOrderedTasks);
 
+                localBound = Math.min(localBound, _globalBound);
                 for (PartialSchedule child: foundChildren) {
                     double childLength = child.getScheduleLength();
+
+                    if (_infoTracker != null) {
+                        updateSearchCount();
+                    }
 
                     if (child.isComplete()) {
                         // Update the solution if this child is more optimal
@@ -140,6 +158,16 @@ public class ParallelOptimalScheduler implements Scheduler {
         if (localSchedule.getScheduleLength() < _globalBound) {
             _solution = localSchedule;
             _globalBound = localBound;
+            if (_infoTracker != null) {
+                _infoTracker.setCurrentBestHasChanged(true);
+                _infoTracker.setCurrentBest((int) localSchedule.getScheduleLength());
+                _infoTracker.setScheduledToBeDisplayed(localSchedule);
+            }
         }
+    }
+
+    private synchronized void updateSearchCount() {
+        _searchesMade++;
+        _infoTracker.setSearchesMade(_searchesMade);
     }
 }

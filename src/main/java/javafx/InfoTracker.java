@@ -1,11 +1,13 @@
 package javafx;
 
 import domain.PartialSchedule;
+import javafx.scene.chart.XYChart;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 
 public class InfoTracker {
     private int _currentBest = -1;
-    private PartialSchedule _scheduledToBeDisplayed;
+    private PartialSchedule _scheduledToBeDisplayed = null;
+    private XYChart.Series[] _greedyData;
     private int _searchesMade;
     private boolean _isFinished = false;
     private String _fileName;
@@ -76,5 +78,13 @@ public class InfoTracker {
 
     public AdjacencyListGraph getGraph() {
         return _graph;
+    }
+
+    public void setGreedyData(XYChart.Series[] seriesArray) {
+        _greedyData = seriesArray;
+    }
+
+    public XYChart.Series[] getGreedyData() {
+        return _greedyData;
     }
 }

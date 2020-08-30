@@ -4,6 +4,9 @@ import domain.DomainHandler;
 import domain.PartialSchedule;
 import domain.TaskNode;
 import javafx.InfoTracker;
+import javafx.scene.chart.XYChart;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Node;
 
 import java.util.*;
 
@@ -19,12 +22,22 @@ public class SequentialOptimalScheduler implements Scheduler {
     private PartialSchedule _solution;
     private final InfoTracker _infoTracker;
     private final List<TaskNode> _topologicalOrderedTasks;
+    private XYChart.Series[] _seriesArray;
 
-    public SequentialOptimalScheduler(List<TaskNode> topologicalOrderedTasks, InfoTracker infoTracker) {
-        _numProcessors = infoTracker.getProcessors();
+    public SequentialOptimalScheduler(List<TaskNode> topologicallyOrderedTaskNodes, int numProcessors, InfoTracker infoTracker) {
+        _numProcessors = numProcessors;
         _infoTracker = infoTracker;
-        _topologicalOrderedTasks = topologicalOrderedTasks;
+        _topologicalOrderedTasks = topologicallyOrderedTaskNodes;
         _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
+        _seriesArray = new XYChart.Series[_numProcessors];
+    }
+
+    public SequentialOptimalScheduler(List<TaskNode> topologicallyOrderedTaskNodes, int numProcessors) {
+        _numProcessors = numProcessors;
+        _infoTracker = null;
+        _topologicalOrderedTasks = topologicallyOrderedTaskNodes;
+        _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
+        _seriesArray = null;
     }
 
     /**
@@ -57,16 +70,18 @@ public class SequentialOptimalScheduler implements Scheduler {
             for (PartialSchedule child : foundChildren) {
                 double childLength = child.getScheduleLength();
 
-                // Increment searches made to update GUI
-                _infoTracker.setSearchesMade(_infoTracker.getSearchesMade() + 1);
+                if (_infoTracker != null) {
+                    // Increment searches made to update GUI
+                    _infoTracker.setSearchesMade(_infoTracker.getSearchesMade() + 1);
+                }
 
                 // Check if we've found our new most optimal
                 if (child.isComplete() && childLength < boundValue) {
                     boundValue = childLength;
                     currentBest = child;
-                    _infoTracker.setCurrentBestHasChanged(true);
-                    _infoTracker.setCurrentBest((int) childLength);
-                    _infoTracker.setScheduledToBeDisplayed(child);
+                    if (_infoTracker != null) {
+                        updateGUI(child.getScheduleLength(), child);
+                    }
                 }
 
                 // Branch by pushing child into search tree or bound
@@ -95,5 +110,11 @@ public class SequentialOptimalScheduler implements Scheduler {
      */
     public PartialSchedule getSolution() {
         return _solution;
+    }
+
+    private void updateGUI(double scheduleLength, PartialSchedule child) {
+        _infoTracker.setCurrentBestHasChanged(true);
+        _infoTracker.setCurrentBest((int) scheduleLength);
+        _infoTracker.setScheduledToBeDisplayed(child);
     }
 }
