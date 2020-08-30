@@ -8,12 +8,21 @@ ___
 + [Project Management](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/ProjectManagement.md)
 + [Milestone 1](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Milestone1.md)
 + [Milestone 2](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Milestone2.md)
+
+**IO**
 + [Input and Output handling](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/IO.md)
+
+
+**Algorithm**
 + [Algorithm research](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Research.md)
 + [Algorithm Implementation](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/AlgorithmImplementation.md)
 + [Parallelisation](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Parallelisation.md)
+
+**Visualisation**
 + [Visualisation research](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/VisualitationResearch.md)
 + [Visualisation Design](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/VisualisationDesign.md)
+
+**Testing**
 + [Testing](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Test.md)
 
 

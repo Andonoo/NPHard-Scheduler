@@ -1,7 +1,7 @@
-# Research
+# Research 🧪
 This section of the wiki outlines the research conducted by the team prior to working on implementation.
 
-## Concept of Branch and Bound
+## Concept of Branch and Bound 🌴
 
 ![Three main sections of branch and bound](../img/Branch%20and%20bound%20concept.png "Three main sections of branch and bound")
 
@@ -10,7 +10,7 @@ This section of the wiki outlines the research conducted by the team prior to wo
 2. Branching strategy
 3. Pruning strategy
 
-## 1. Searching strategy 
+## 1. Searching strategy  🔍
 As this is the core of the algorithm, the team determined that we should first research and select an ideal searching strategy.
 Possible implementations are as follows: 
 
@@ -50,7 +50,7 @@ This might have the potential to gain some of the speed benefits of A* without r
 From these options, we decided to go ahead with a DFS searching strategy and avoided A* due to the potential memory issues we could run into on larger inputs.
 Given the client's timeframe, this was decided the safer option. If the team were to run into memory issues, there may not be enough time to resolve this. 
 
-## 2. Branching Strategy
+## 2. Branching Strategy 🌲
 Every node in the search space can be represented as a partial scheduling of tasks to processors. Therefore the natural branching strategy is to exhaustively allocate each 'available task' to every processor, where available tasks are those which have all of their dependency tasks already scheduled. The allocation of a single task to a single processor represents one child node of the previous partial schedule. This is demonstrated below.
 
 ![](https://i.imgur.com/Fl42HTz.png)

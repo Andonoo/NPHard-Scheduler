@@ -1,4 +1,4 @@
-# Input parsing
+# Input parsing 📥
 
 ### Reading from the command line
 
@@ -29,6 +29,6 @@ implementation ourselves.
 + No need to use complex regex to parse the input. GraphStream provides an elegant solution
 to read files using FileSource 
 
-# Creating an output file
+# Creating an output file 📤
 
 [GraphStream](http://graphstream-project.org/) is also used to handle the output file. After executing the algorithm, the graph provided by Graphstream is updated with the optimal schedule information then converted into a .dot file. The `OutputHandler` formats the output file into the desired format.

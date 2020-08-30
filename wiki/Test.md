@@ -1,4 +1,4 @@
-# Testing
+# Testing 🔬
 Testing is an important phase in the waterfall development process. Initially, we had planned for unit tests, 
 integration tests, smoke tests, and speed tests. However, as the implementation changed over this process, the tests
 also need to change to as a result. 

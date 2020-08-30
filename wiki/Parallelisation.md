@@ -1,4 +1,4 @@
-# Parallelisation of Search
+# Parallelisation of Search 🔐
 
 The scheduler is implemented so that whilst performing the branch-and-bound search, multiple cores and multiple threads can be working concurrently.
 

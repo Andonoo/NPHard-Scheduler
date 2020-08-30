@@ -1,4 +1,4 @@
-# Algorithm Implementation
+# Algorithm Implementation 🧮
 
 ## Data Structures
 Originially, GraphStream data structures were used in storing the edges and nodes of the input. However, it soon became clear that having an own implementation of a Node class would be more efficient, as we wanted a minimal representation for a task. 
