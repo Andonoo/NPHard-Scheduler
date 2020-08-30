@@ -70,12 +70,7 @@ public class ParallelOptimalScheduler implements Scheduler {
         ForkJoinPool workers = new ForkJoinPool(_numCores);
         workers.invoke(task);
 
-        if (_solution == null) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return _solution != null;
     }
 
     /**
