@@ -70,15 +70,4 @@ public class InputTest {
             assertEquals(NEGATIVE_INTEGER_MESSAGE, e.getMessage());
         }
     }
-
-    @Test
-    public void testValidInput() {
-        try {
-            InputHandler inputHandler = new InputHandler(VALID_TEST_INPUT);
-            assertEquals(VALID_TEST_PROCESSORS, inputHandler.getProcessors());
-            assertEquals(VALID_TEST_FILE, inputHandler.getFileName());
-        } catch (CommandLineException e) {
-            e.printStackTrace();
-        }
-    }
 }

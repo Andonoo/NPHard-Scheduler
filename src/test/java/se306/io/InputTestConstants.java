@@ -8,10 +8,6 @@ public class InputTestConstants {
     public static final String[] NON_EXISTENT_FILE_INPUT = {"./src/test/resources/T15.dot", "2"};
     public static final String[] NON_INTEGER_INPUT = {"./src/test/resources/inputTestFile.dot", "a"};
     public static final String[] NEGATIVE_INTEGER_INPUT = {"./src/test/resources/inputTestFile.dot", "-2"};
-    public static final String[] VALID_TEST_INPUT = {"./src/test/resources/inputTestFile.dot", "4"};
-
-    public static final String VALID_TEST_FILE = "./src/test/resources/inputTestFile.dot";
-    public static final int VALID_TEST_PROCESSORS = 4;
 
     public static final String INVALID_INPUT_MESSAGE = "Please enter a valid input file and number of processors";
     public static final String INVALID_FILE_MESSAGE = "Please enter a valid input file (.dot file)";
