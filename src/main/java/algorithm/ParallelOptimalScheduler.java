@@ -99,6 +99,10 @@ public class ParallelOptimalScheduler implements Scheduler {
             this.searchTree = searchTree;
         }
 
+        /**
+         * Main computation that will be recursively called. It continuously performs a DFS search on a list of partial schedules,
+         * thereby adding and removing to the list. When the list gets too long, a new task/thread is invoked.
+         */
         @Override
         protected void compute() {
 
@@ -108,6 +112,7 @@ public class ParallelOptimalScheduler implements Scheduler {
                 PartialSchedule nodeToExplore = searchTree.pop();
                 PartialSchedule[] foundChildren = nodeToExplore.createChildren(_topologicalOrderedTasks);
 
+                // Ensure that localBound is always updated in the while loop to lower search space.
                 localBound = Math.min(localBound, _globalBound);
                 for (PartialSchedule child: foundChildren) {
                     double childLength = child.getScheduleLength();
@@ -122,6 +127,7 @@ public class ParallelOptimalScheduler implements Scheduler {
                             localBound = child.getScheduleLength();
                             updateGlobal(child, localBound);
                         }
+                        // Go to next child
                         continue;
                     }
 
@@ -158,6 +164,7 @@ public class ParallelOptimalScheduler implements Scheduler {
         if (localSchedule.getScheduleLength() < _globalBound) {
             _solution = localSchedule;
             _globalBound = localBound;
+            // Update GUI to show current best schedule
             if (_infoTracker != null) {
                 _infoTracker.setCurrentBestHasChanged(true);
                 _infoTracker.setCurrentBest((int) localSchedule.getScheduleLength());
@@ -166,6 +173,9 @@ public class ParallelOptimalScheduler implements Scheduler {
         }
     }
 
+    /**
+     * Updates the search count synchronously for the GUI to visualise
+     */
     private synchronized void updateSearchCount() {
         _searchesMade++;
         _infoTracker.setSearchesMade(_searchesMade);
