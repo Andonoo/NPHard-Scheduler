@@ -1,9 +1,10 @@
 package algorithm;
 
 import domain.DomainHandler;
-import domain.PartialSchedule;
 import domain.TaskNode;
-import javafx.concurrent.Task;
+import javafx.InfoTracker;
+import javafx.ScheduleDisplayer;
+import javafx.scene.chart.XYChart;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -23,11 +24,25 @@ public class GreedyScheduler {
     private final int _numProcessors;
     private double _solutionLength;
     private List<TaskNode> _topologicalOrderedTasks;
+    private final InfoTracker _infoTracker;
+    private XYChart.Series[] _seriesArray;
+
 
     public GreedyScheduler(AdjacencyListGraph graph, int processors) {
         _graph = graph;
         _numProcessors = processors;
         _solutionLength = 0;
+        _infoTracker = null;
+        _seriesArray = null;
+
+    }
+
+    public GreedyScheduler(AdjacencyListGraph graph, int processors, InfoTracker infoTracker) {
+        _graph = graph;
+        _numProcessors = processors;
+        _solutionLength = 0;
+        _infoTracker = infoTracker;
+        _seriesArray = new XYChart.Series[_numProcessors];
     }
 
     /**
@@ -168,19 +183,38 @@ public class GreedyScheduler {
      * Preps the IO graph with necessary attributes to meet the correct output format.
      */
     private void prepGraphForOutput(Map<TaskNode, List<TaskNode>> taskSchedulings, Map<TaskNode, Double> endTimes) {
+        if (_seriesArray != null) {
+            // Initializing series obj
+            for (int i = 0; i < _numProcessors; i++) {
+                _seriesArray[i] = new XYChart.Series();
+            }
+        }
+
         for (TaskNode task: taskSchedulings.keySet()) {
             Node node = _graph.getNode(task.getId());
 
-            List<TaskNode> processor = taskSchedulings.get(task);
             int processorIndex = 0;
             for (int i = 0; i < _processorSchedules.length; i++) {
                 if (_processorSchedules[i].contains(task)) {
                     processorIndex = i;
                 }
             }
+            double startTime = endTimes.get(task) - task.getWeight();
             node.setAttribute("Processor", processorIndex + 1);
-            node.setAttribute("Start", endTimes.get(task) - task.getWeight());
+            node.setAttribute("Start", startTime);
             node.setAttribute("Weight", task.getWeight());
+
+            if (_infoTracker != null && _seriesArray != null) {
+                XYChart.Data newData = new XYChart.Data(startTime, String.valueOf(processorIndex + 1),
+                        new ScheduleDisplayer.ExtraData(task, "task"));
+
+                _seriesArray[processorIndex].getData().add(newData);
+            }
+        }
+        if (_infoTracker != null) {
+            _infoTracker.setCurrentBestHasChanged(true);
+            _infoTracker.setGreedyData(_seriesArray);
+            _infoTracker.setCurrentBest((int)_solutionLength);
         }
     }
 

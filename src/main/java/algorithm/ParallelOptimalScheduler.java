@@ -112,12 +112,8 @@ public class ParallelOptimalScheduler implements Scheduler {
                 for (PartialSchedule child: foundChildren) {
                     double childLength = child.getScheduleLength();
 
-                    updateSearchCount();
-
-                    // If the greedy schedule is the optimal solution, assign currentBest to it
-                    if (child.isComplete() && childLength == _globalBound) {
-                        localBound = child.getScheduleLength();
-                        updateGlobal(child, localBound);
+                    if (_infoTracker != null) {
+                        updateSearchCount();
                     }
 
                     if (child.isComplete()) {

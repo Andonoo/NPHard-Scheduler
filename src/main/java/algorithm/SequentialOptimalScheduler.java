@@ -4,6 +4,9 @@ import domain.DomainHandler;
 import domain.PartialSchedule;
 import domain.TaskNode;
 import javafx.InfoTracker;
+import javafx.scene.chart.XYChart;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Node;
 
 import java.util.*;
 
@@ -17,12 +20,14 @@ public class SequentialOptimalScheduler implements Scheduler {
     private PartialSchedule _solution;
     private final InfoTracker _infoTracker;
     private final List<TaskNode> _topologicalOrderedTasks;
+    private XYChart.Series[] _seriesArray;
 
     public SequentialOptimalScheduler(List<TaskNode> topologicallyOrderedTaskNodes, int numProcessors, InfoTracker infoTracker) {
         _numProcessors = numProcessors;
         _infoTracker = infoTracker;
         _topologicalOrderedTasks = topologicallyOrderedTaskNodes;
         _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
+        _seriesArray = new XYChart.Series[_numProcessors];
     }
 
     public SequentialOptimalScheduler(List<TaskNode> topologicallyOrderedTaskNodes, int numProcessors) {
@@ -30,6 +35,7 @@ public class SequentialOptimalScheduler implements Scheduler {
         _infoTracker = null;
         _topologicalOrderedTasks = topologicallyOrderedTaskNodes;
         _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
+        _seriesArray = null;
     }
 
     /**
@@ -65,19 +71,6 @@ public class SequentialOptimalScheduler implements Scheduler {
                 if (_infoTracker != null) {
                     // Increment searches made to update GUI
                     _infoTracker.setSearchesMade(_infoTracker.getSearchesMade() + 1);
-                }
-
-                if (childLength == initialBoundValue && child.isComplete()){
-                    System.out.println("yeet");
-                }
-                // If the greedy schedule is the optimal solution, assign currentBest to it
-                if (child.isComplete() && childLength == initialBoundValue) {
-                    boundValue = childLength;
-                    System.out.println("Justin our lord and saviour");
-                    currentBest = child;
-                    if(_infoTracker != null) {
-                        updateGUI(child.getScheduleLength(), child);
-                    }
                 }
 
                 // Check if we've found our new most optimal

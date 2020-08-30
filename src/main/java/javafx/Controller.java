@@ -11,6 +11,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
@@ -21,7 +22,9 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -67,7 +70,14 @@ public class Controller {
         _status.setText(status);
     }
 
-    public void setSearchesMade(String searchesMade) {
+    public void setSearchesMade(double numSearches) {
+        String searchesMade;
+        if (numSearches > 1000000) {
+            DecimalFormat df = new DecimalFormat("0.00");
+            searchesMade =  df.format(numSearches / 1000000) + "M";
+        } else {
+            searchesMade =  String.valueOf((int)numSearches);
+        }
         _searchesMade.setText(searchesMade);
     }
 
@@ -126,11 +136,19 @@ public class Controller {
 
             if (_infoTracker.getCurrentBestHasChanged()) {
                 setCurrentBest(_infoTracker.getCurrentBest());
-                updateScheduleDisplayer(_infoTracker.getScheduledToBeDisplayed());
+                XYChart.Series[] greedyData = _infoTracker.getGreedyData();
+                PartialSchedule partialSchedule = _infoTracker.getScheduledToBeDisplayed();
+
+                if (partialSchedule == null) {
+                    System.out.println("No partial schedule found... showing greedy data");
+                    updateScheduleDisplayer(greedyData);
+                } else {
+                    parsePartialSchedule(partialSchedule);
+                }
                 _infoTracker.setCurrentBestHasChanged(false);
             }
             int numSearches = _infoTracker.getSearchesMade();
-            setSearchesMade(numSearches > 1000 ? numSearches / 1000 + "k" : String.valueOf(numSearches));
+            setSearchesMade(numSearches);
 
             pollingRanOnce = true;
         }));
@@ -138,7 +156,15 @@ public class Controller {
         poller.play();
     }
 
-    private void updateScheduleDisplayer(PartialSchedule scheduledToBeDisplayed) {
+    private void updateScheduleDisplayer(Series[] scheduleData) {
+        // Clear and rewrite series onto the chart
+        scheduleDisplayer.getData().clear();
+        for (Series series : scheduleData) {
+            scheduleDisplayer.getData().add(series);
+        }
+    }
+
+    private void parsePartialSchedule(PartialSchedule scheduledToBeDisplayed) {
         // New array of series to write onto
         Series[] seriesArray = new Series[_infoTracker.getProcessors()];
 
@@ -155,15 +181,11 @@ public class Controller {
             int startTime = (int) (nodeScheduling.getScheduledTaskEndTime() - task.getWeight());
             int processorNumber = nodeScheduling.getProcessorIndex();
             Data newData = new Data(startTime, String.valueOf(processorNumber + 1),
-                    new ScheduleDisplayer.ExtraData(task, "task-style"));
+                    new ScheduleDisplayer.ExtraData(task, "task"));
 
             seriesArray[processorNumber].getData().add(newData);
         }
-        // Clear and rewrite series onto the chart
-        scheduleDisplayer.getData().clear();
-        for (Series series : seriesArray) {
-            scheduleDisplayer.getData().add(series);
-        }
+        updateScheduleDisplayer(seriesArray);
     }
 
     public void startTimer() {
@@ -173,8 +195,8 @@ public class Controller {
             @Override
             public void handle(ActionEvent event) {
                 currentTime = System.currentTimeMillis();
-                DecimalFormat df = new DecimalFormat("0.00");
-                timeElapsed = df.format((currentTime - startTime) / 1000);
+                DateFormat timeFormat = new SimpleDateFormat( "mm:ss:SSS" );
+                timeElapsed = timeFormat.format((currentTime - startTime));
                 _timeElapsed.setText(timeElapsed);
             }
         }));
