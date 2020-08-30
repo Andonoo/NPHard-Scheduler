@@ -8,6 +8,9 @@ different processors whilst minimising the execution time of the program.
 **Programming language 🌏🛬**  
 This project is implemented in **Java** (compatible with Java 1.8)
 
+**Dependencies**  
+This project is built with **Maven** - please ensure Maven is installed in the local machine in order to build the project.
+
 **OS 🐧🔍**  
 The targeted OS is Linux but also works under Windows.  
 
@@ -50,7 +53,13 @@ To clone, you'll need [Git](https://git-scm.com)
 # Clone this repository
 $ git clone https://github.com/SoftEng306-2020/project-1-project-1-team-11.git
 ```
-Next build the package with Maven and navigate to the target folder
+Next build the package with Maven
+```
+# Build project with maven
+mvn package
+```
+
+Navigate to the target folder
 ```
 # Go into the repository
 $ cd project-1-project-1-team-11
@@ -65,7 +74,7 @@ You will see the following file:
 Finally, use the following line to run:
 
 ```
-java -jar scheduler.jar INPUT.dot P [OPTION]
+java -jar project1-1.0-jar-with-dependencies.jar INPUT.dot P [OPTION]
 ```
 Adjust command with the following:
 
@@ -82,5 +91,6 @@ Optional:
 ```
 An example would be:
 ```
-java -jar scheduler.jar example-dot-files/example1.dot 2 -v
+java -jar project1-1.0-jar-with-dependencies.jar example.dot 2 -v
 ```
+This would create an output file in the same directory as where the example.dot file is located.
