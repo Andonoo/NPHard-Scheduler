@@ -9,7 +9,14 @@ ___
 + [Milestone 1](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Milestone1.md)
 + [Milestone 2](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Milestone2.md)
 + [Input and Output handling](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/IO.md)
-     
++ [Algorithm research](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Research.md)
++ [Algorithm Implementation](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/AlgorithmImplementation.md)
++ [Parallelisation](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Parallelisation.md)
++ [Visualisation research](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/VisualitationResearch.md)
++ [Visualisation Design](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/VisualisationDesign.md)
++ [Testing](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/wiki-readme/wiki/Test.md)
+
+
 ___
 **Sinnen 11 Team Members**  
 

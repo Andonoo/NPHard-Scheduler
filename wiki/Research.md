@@ -3,7 +3,7 @@ This section of the wiki outlines the research conducted by the team prior to wo
 
 ## Concept of Branch and Bound
 
-![Three main sections of branch and bound](https://github.com/SoftEng306-2020/project-1-project-1-team-11/blob/milestone2-wiki/wiki/Branch%20and%20bound%20concept.png "Three main sections of branch and bound")
+![Three main sections of branch and bound](../img/Branch%20and%20bound%20concept.png "Three main sections of branch and bound")
 
 *Note:* From this diagram and initial research, the team determined three necessary steps in order to determine an optimal solution for scheduling tasks: 
 1. Searching strategy 
