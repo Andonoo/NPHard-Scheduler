@@ -28,6 +28,12 @@ public class ParallelOptimalScheduler implements Scheduler {
     private InfoTracker _infoTracker = null;
     private volatile int _searchesMade = 0;
 
+    /**
+     * Constructor for which to create the parallel scheduler
+     * @param topologicallyOrderedTaskNodes
+     * @param numProcessors
+     * @param numCores
+     */
     public ParallelOptimalScheduler(List<TaskNode> topologicallyOrderedTaskNodes, int numProcessors, int numCores) {
         _numCores = numCores;
         _numProcessors = numProcessors;
@@ -35,6 +41,13 @@ public class ParallelOptimalScheduler implements Scheduler {
         _rootNodes = DomainHandler.findRootNodes(_topologicalOrderedTasks);
     }
 
+    /**
+     * Constructor for which an info tracker is implemented to the class (to concurrently update the GUI)
+     * @param topologicallyOrderedTaskNodes
+     * @param numProcessors
+     * @param numCores
+     * @param infoTracker
+     */
     public ParallelOptimalScheduler(List<TaskNode> topologicallyOrderedTaskNodes, int numProcessors, int numCores, InfoTracker infoTracker) {
         _numCores = numCores;
         _numProcessors = numProcessors;
