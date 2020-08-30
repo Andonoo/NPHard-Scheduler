@@ -102,3 +102,14 @@ a task will never be assigned to two empty processors within the createChild() m
 the efficiency of the algorithm.
 
 #### Pruning Task Search Space
+In order to avoid exploring duplicate PartialSchedules a check was implemented which tests if a PartialSchedule has been explored already before pushing it into the search stack. This took 4 attempts to get working correctly, which are described as follows:
+* Storing explored PartialSchedules in a set - This very quickly led to memory issues and so was discarded.
+* Storing hashes of PartialSchedules in a set - This initially seemed promising as it significantly reduced runtime but it was eventually discovered that this caused issues due to the colliding nature of hashes. i.e multiple PartialSchedules had the same hash code.
+* Storing PartialSchedule unique IDs in a set - Again, this seemed promising and was even committed to master. However it was later found that on very memory intensive input graphs this led to overflow. The IDs used are described below.
+* The above, with the addition of the set resetting occasionally - In order to address the memory overflow issue mentioned above, a check was added which reset the set if free memory reduced to under 100mb. This allowed the algorithm to maintain the benefit of reduced search space on most input graphs, without causing memory issues on very large inputs. It is predicted that this will also lead to performance increases on very large inputs, as it will reduce duplicate PartialSchedules within localized parts of the search space. 
+
+The above checks were implemented as a simple if statement check, prior to pushing a child into the search tree in the DFS algorithm.
+
+#### Pruning Based on Bottom Level Estimates
+In order to further improve efficiency, a check was used to determine if a PartialSchedule was worth expanding into it's children. This was acheived by using a brute force assignment of remaining task weights to the earliest finishing processor, from largest weight to smallest (ignoring dependencies). This allows the algorithm to eliminate some PartialSchedules which are very obviously not worth expanding. This was implemented in PartialSchedules estimateFinish() method which is called upon creation of a PartialSchedule. The DFS algorithm then checks this estimate prior to pushing a child into the search tree, and if it is greater than our currently found best the child
+is discarded.
