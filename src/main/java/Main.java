@@ -24,6 +24,7 @@ public class Main extends Application {
     static InputHandler _inputHandler = null;
 
     public static void main(String[] args) {
+
         try {
             _inputHandler = new InputHandler(args);
         } catch (CommandLineException e) {
@@ -37,7 +38,6 @@ public class Main extends Application {
             executeAlgorithm();
         }
 
-        long endTime = System.nanoTime();
         System.exit(0);
     }
 
