@@ -8,7 +8,7 @@ import java.util.*;
  * the schedule itself, as well as the scheduling which led to the creation of this schedule (the addition of one
  * task to a processor).
  */
-public class PartialSchedule implements Comparable<PartialSchedule> {
+public class PartialSchedule {
 
     // State relating to the schedule
     private TaskNode[][] _processorSchedules;
@@ -290,10 +290,5 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
      */
     public Map<TaskNode, PartialSchedule> getSchedulings() {
         return _schedulings;
-    }
-
-    @Override
-    public int compareTo(PartialSchedule o) {
-        return Double.compare(_scheduleLength, o._scheduleLength);
     }
 }
