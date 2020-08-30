@@ -2,10 +2,14 @@ package se306.optimality;
 
 import algorithm.GreedyScheduler;
 import algorithm.ParallelOptimalScheduler;
+import domain.DomainHandler;
+import domain.TaskNode;
 import io.CommandLineException;
 import io.InputHandler;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.junit.Test;
+
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static se306.optimality.OptimalityTestConstants.*;
@@ -21,7 +25,9 @@ public class ParallelOptimalTest {
         double scheduleFinishTime = greedyScheduler.getSolutionLength();
 
         ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), processors, cores);
-        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength(), null);
+
+        Map<TaskNode, Double> bottomLevels = DomainHandler.getBottomLevels(greedyScheduler.getTopologicallyOrderedTaskNodes());
+        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength(), bottomLevels);
 
         if (moreOptimalFound){
             scheduleFinishTime = optimalScheduler.getSolution().getScheduleLength();
@@ -29,7 +35,6 @@ public class ParallelOptimalTest {
 
         return scheduleFinishTime;
     }
-
 
     //region Tests for 10 nodes with 4 processors
 

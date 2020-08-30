@@ -28,33 +28,33 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
      * Initializes a PartialSchedule consisting of only one node, scheduled on the first processor. This
      * represents a root in the search tree.
      * @param numProcessors
-     * @param scheduledNode
+     * @param scheduledTask
      */
-    public PartialSchedule(int numProcessors, TaskNode scheduledNode, List<TaskNode> otherRoots, Map<TaskNode, Double> bottomLevels) {
+    public PartialSchedule(int numProcessors, TaskNode scheduledTask, List<TaskNode> otherRoots, Map<TaskNode, Double> bottomLevels) {
         _processorSchedules = new TaskNode[numProcessors][];
         _processorIds = new String[numProcessors];
-        _processorSchedules[0] = new TaskNode[] {scheduledNode};
+        _processorSchedules[0] = new TaskNode[] {scheduledTask};
         for (int i = 1; i < numProcessors; i++) {
             _processorSchedules[i] = new TaskNode[0];
             _processorIds[i] = "";
         }
-        _processorIds[0] = scheduledNode.getId() + "-";
+        _processorIds[0] = scheduledTask.getId() + "-";
 
         _processorEndTimes = new double[numProcessors];
-        _processorEndTimes[0] = scheduledNode.getWeight();
+        _processorEndTimes[0] = scheduledTask.getWeight();
         _processorUsedIndex = 0;
         _firstAvailableProcessor = Math.min(_processorSchedules.length-1, 1);
 
         _schedulings = new HashMap<TaskNode, PartialSchedule>();
-        _schedulings.put(scheduledNode, this);
+        _schedulings.put(scheduledTask, this);
 
         _canBeScheduled = new HashSet<TaskNode>(otherRoots);
-        _canBeScheduled.addAll(getNewlySchedulable(scheduledNode));
+        _canBeScheduled.addAll(getNewlySchedulable(scheduledTask));
 
-        _scheduledTaskEndTime = scheduledNode.getWeight();
-        _scheduleLength = scheduledNode.getWeight();
+        _scheduledTaskEndTime = scheduledTask.getWeight();
+        _scheduleLength = scheduledTask.getWeight();
 
-        _estimatedFinish = estimateFinish(bottomLevels, scheduledNode);
+        _estimatedFinish = _scheduledTaskEndTime + bottomLevels.get(scheduledTask);
     }
 
     /**
@@ -88,7 +88,8 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
         _processorEndTimes[scheduledProcessorIndex] = _scheduledTaskEndTime;
         _scheduleLength = computeScheduleLength();
 
-        _estimatedFinish = estimateFinish(bottomLevels, scheduledTask);
+        // Estimate the finish based on the addition of the bottom level
+        _estimatedFinish = _scheduledTaskEndTime + bottomLevels.get(scheduledTask);
     }
 
     /**
@@ -122,8 +123,8 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
     /**
      * Creates every potential child of this PartialSchedule, by scheduling every available task on every
      * available processor. This represents the exploration of this node in the search tree.
+     * @param bottomLevels
      * @return child schedules
-     * @param allTasks
      */
     public PartialSchedule[] createChildren(Map<TaskNode, Double> bottomLevels) {
         PartialSchedule[] children = new PartialSchedule[_canBeScheduled.size() * (_firstAvailableProcessor +1)];
@@ -223,34 +224,6 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
         }
 
         return newlySchedulableTasks;
-    }
-
-    /**
-     * Estimates the end time of this PartialSchedule if it were a full schedule. It does this by using an
-     * earliest available processor heuristic assignment, ignoring dependencies.
-     * @param topologicalOrderedTasks
-     * @return
-     */
-    private double estimateFinish(Map<TaskNode, Double> bottomLevels, TaskNode scheduledTask) {
-//        double[] processorEndTimes = Arrays.copyOf(_processorEndTimes, _processorEndTimes.length) ;
-//
-//        List<TaskNode> remainingTasks = new ArrayList<TaskNode>();
-//        Set<TaskNode> scheduledTasks = _schedulings.keySet();
-//        for (TaskNode task: topologicalOrderedTasks) {
-//            if (!scheduledTasks.contains(task)) {
-//                remainingTasks.add(task);
-//            }
-//        }
-//        Collections.sort(remainingTasks);
-//
-//        for (TaskNode task: remainingTasks) {
-//            Arrays.sort(processorEndTimes);
-//            processorEndTimes[0] = processorEndTimes[0] + task.getWeight();
-//        }
-//
-//        Arrays.sort(processorEndTimes);
-//        return processorEndTimes[processorEndTimes.length-1];
-        return _scheduledTaskEndTime + bottomLevels.get(scheduledTask);
     }
 
     /**

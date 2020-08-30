@@ -2,6 +2,7 @@ package se306.optimality;
 
 import algorithm.GreedyScheduler;
 import algorithm.SequentialOptimalScheduler;
+import domain.DomainHandler;
 import domain.TaskNode;
 import io.CommandLineException;
 import io.InputHandler;
@@ -26,42 +27,15 @@ public class SequentialOptimalTest {
         double scheduleFinishTime = greedyScheduler.getSolutionLength();
 
         SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(),inputHandler.getProcessors());
-        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength(), getBottomLevels(greedyScheduler.getTopologicallyOrderedTaskNodes()));
+
+        Map<TaskNode, Double> bottomLevels = DomainHandler.getBottomLevels(greedyScheduler.getTopologicallyOrderedTaskNodes());
+        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength(), bottomLevels);
 
         if (moreOptimalFound) {
             scheduleFinishTime = optimalScheduler.getSolution().getScheduleLength();
         }
 
         return scheduleFinishTime;
-    }
-
-    private static Map<TaskNode, Double> getBottomLevels(List<TaskNode> tasks) {
-        Map<TaskNode, Double> minBottomLevels = new HashMap<TaskNode, Double>();
-
-        for (TaskNode task: tasks) {
-            if (task.getDependencies().length == 0) {
-                bottomLevelRecurse(task, minBottomLevels);
-            }
-        }
-
-        return minBottomLevels;
-    }
-
-    private static double bottomLevelRecurse(TaskNode t, Map<TaskNode, Double> bottomLevels) {
-        if (t.getDependents().size() == 0) {
-            bottomLevels.put(t, 0.0);
-            return 0.0;
-        }
-
-        List<TaskNode> dependents = t.getDependents();
-        //TaskNode firstDependent = dependents.get(0);
-        double minBottomLevel = 0; //bottomLevelRecurse(firstDependent, bottomLevels) + firstDependent.getWeight();
-        for (int i = 0; i < dependents.size(); i++) {
-            minBottomLevel = Math.max(minBottomLevel, bottomLevelRecurse(dependents.get(i), bottomLevels) + dependents.get(i).getWeight());
-        }
-
-        bottomLevels.put(t, minBottomLevel);
-        return minBottomLevel;
     }
 
     //region Tests for 10 nodes with 2 processors
