@@ -73,7 +73,7 @@ public class Controller {
     /**
      * This function is called from polling and updates the number of searches made. Once the number of searches
      * reaches a million, it will shorten it down to 3sf using 'M'.
-     * @param numSearches
+     * @param numSearches the number of searches made
      */
     public void setSearchesMade(double numSearches) {
         String searchesMade;
