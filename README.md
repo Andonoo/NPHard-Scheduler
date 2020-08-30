@@ -89,8 +89,12 @@ Optional:
 -v          visualise the search
 -o OUTPUT   output file is named OUTPUT (default is INPUT-output.dot)
 ```
+
+**NOTE**  
+This project was designed for a memory allocation of 2GB. Please ensure the correct parameters are used during the jar execution 
+
 An example would be:
 ```
-java -jar project1-1.0-jar-with-dependencies.jar example.dot 2 -v
+java -jar -Xms2024M -Xmx2024M project1-1.0-jar-with-dependencies.jar example.dot 2 -v
 ```
 This would create an output file in the same directory as where the example.dot file is located.
