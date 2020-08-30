@@ -1,7 +1,10 @@
 # Algorithm Implementation
 
 ## Data Structures
+Originially, GraphStream data structures were used in storing the edges and nodes of the input. However, it soon became clear that having an own implementation of a Node class would be more efficient, as we wanted a minimal representation for a task. 
 
+GraphStream nodes and edges simply had attributes that were associable to itself in the form of a key value pair - this was unclear and difficult to use. 
+As we create a large number of task nodes during our search for the optimal schedule, information required from GraphStream's graph form was extracted and parsed into our own TaskNode class. This was done through the DomainHandler.
 ## Pseudo Code
 
 ## Milestone 1 Algorithm Implementation
