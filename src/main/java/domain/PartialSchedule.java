@@ -30,7 +30,7 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
      * @param numProcessors
      * @param scheduledNode
      */
-    public PartialSchedule(int numProcessors, TaskNode scheduledNode, List<TaskNode> otherRoots, List<TaskNode> allTasks) {
+    public PartialSchedule(int numProcessors, TaskNode scheduledNode, List<TaskNode> otherRoots, Map<TaskNode, Double> bottomLevels) {
         _processorSchedules = new TaskNode[numProcessors][];
         _processorIds = new String[numProcessors];
         _processorSchedules[0] = new TaskNode[] {scheduledNode};
@@ -54,7 +54,7 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
         _scheduledTaskEndTime = scheduledNode.getWeight();
         _scheduleLength = scheduledNode.getWeight();
 
-        _estimatedFinish = estimateFinish(allTasks);
+        _estimatedFinish = estimateFinish(bottomLevels, scheduledNode);
     }
 
     /**
@@ -66,7 +66,7 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
      */
     private PartialSchedule(Map<TaskNode, PartialSchedule> schedulings, TaskNode[][] parentProcessorSchedules, Set<TaskNode> canBeScheduled,
                            int scheduledProcessorIndex, TaskNode scheduledTask, int firstAvailableProcessor, double[] processorEndTimes,
-                            List<TaskNode> allTasks, String[] parentProcessorIds) {
+                            Map<TaskNode, Double> bottomLevels, String[] parentProcessorIds) {
         generateProcessorSchedules(parentProcessorSchedules, scheduledTask, scheduledProcessorIndex);
 
         _processorIds = Arrays.copyOf(parentProcessorIds, parentProcessorIds.length);
@@ -88,7 +88,7 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
         _processorEndTimes[scheduledProcessorIndex] = _scheduledTaskEndTime;
         _scheduleLength = computeScheduleLength();
 
-        _estimatedFinish = estimateFinish(allTasks);
+        _estimatedFinish = estimateFinish(bottomLevels, scheduledTask);
     }
 
     /**
@@ -123,8 +123,9 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
      * Creates every potential child of this PartialSchedule, by scheduling every available task on every
      * available processor. This represents the exploration of this node in the search tree.
      * @return child schedules
+     * @param allTasks
      */
-    public PartialSchedule[] createChildren(List<TaskNode> allTasks) {
+    public PartialSchedule[] createChildren(Map<TaskNode, Double> bottomLevels) {
         PartialSchedule[] children = new PartialSchedule[_canBeScheduled.size() * (_firstAvailableProcessor +1)];
 
         int i = 0;
@@ -135,7 +136,7 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
             for (int processorIndex = 0; processorIndex <= _firstAvailableProcessor; processorIndex++) {
                 int firstAvailableProcessor = Math.min(processorIndex + 1, _processorSchedules.length-1);
                 children[i] = new PartialSchedule(_schedulings, _processorSchedules, _canBeScheduled, processorIndex,
-                        task, firstAvailableProcessor, _processorEndTimes, allTasks, _processorIds);
+                        task, firstAvailableProcessor, _processorEndTimes, bottomLevels, _processorIds);
                 i++;
             }
         }
@@ -230,25 +231,26 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
      * @param topologicalOrderedTasks
      * @return
      */
-    private double estimateFinish(List<TaskNode> topologicalOrderedTasks) {
-        double[] processorEndTimes = Arrays.copyOf(_processorEndTimes, _processorEndTimes.length) ;
-
-        List<TaskNode> remainingTasks = new ArrayList<TaskNode>();
-        Set<TaskNode> scheduledTasks = _schedulings.keySet();
-        for (TaskNode task: topologicalOrderedTasks) {
-            if (!scheduledTasks.contains(task)) {
-                remainingTasks.add(task);
-            }
-        }
-        Collections.sort(remainingTasks);
-
-        for (TaskNode task: remainingTasks) {
-            Arrays.sort(processorEndTimes);
-            processorEndTimes[0] = processorEndTimes[0] + task.getWeight();
-        }
-
-        Arrays.sort(processorEndTimes);
-        return processorEndTimes[processorEndTimes.length-1];
+    private double estimateFinish(Map<TaskNode, Double> bottomLevels, TaskNode scheduledTask) {
+//        double[] processorEndTimes = Arrays.copyOf(_processorEndTimes, _processorEndTimes.length) ;
+//
+//        List<TaskNode> remainingTasks = new ArrayList<TaskNode>();
+//        Set<TaskNode> scheduledTasks = _schedulings.keySet();
+//        for (TaskNode task: topologicalOrderedTasks) {
+//            if (!scheduledTasks.contains(task)) {
+//                remainingTasks.add(task);
+//            }
+//        }
+//        Collections.sort(remainingTasks);
+//
+//        for (TaskNode task: remainingTasks) {
+//            Arrays.sort(processorEndTimes);
+//            processorEndTimes[0] = processorEndTimes[0] + task.getWeight();
+//        }
+//
+//        Arrays.sort(processorEndTimes);
+//        return processorEndTimes[processorEndTimes.length-1];
+        return _scheduledTaskEndTime + bottomLevels.get(scheduledTask);
     }
 
     /**

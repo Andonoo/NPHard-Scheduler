@@ -2,6 +2,7 @@ import algorithm.GreedyScheduler;
 import algorithm.ParallelOptimalScheduler;
 import algorithm.Scheduler;
 import algorithm.SequentialOptimalScheduler;
+import domain.TaskNode;
 import io.CommandLineException;
 import io.InputHandler;
 import io.OutputHandler;
@@ -12,8 +13,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import scala.collection.mutable.SynchronizedSet;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Main extends Application {
 
@@ -21,6 +26,7 @@ public class Main extends Application {
     static InputHandler _inputHandler = null;
 
     public static void main(String[] args) {
+        long startTime = System.nanoTime();
 
         try {
             _inputHandler = new InputHandler(args);
@@ -34,6 +40,10 @@ public class Main extends Application {
         } else {
             executeAlgorithm();
         }
+
+        long endTime = System.nanoTime();
+
+        System.out.println("Time taken: " + (endTime-startTime)/1000000);
         System.exit(0);
     }
 
@@ -54,16 +64,50 @@ public class Main extends Application {
                     new ParallelOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), _inputHandler.getProcessors(), _inputHandler.getCores());
         }
 
-        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
+        Map<TaskNode, Double> bottomLevels = getBottomLevels(greedyScheduler.getTopologicallyOrderedTaskNodes());
+
+        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength(), bottomLevels);
 
         _infoTracker.setIsFinished(true);
 
         OutputHandler outputHandler = new OutputHandler();
         if (moreOptimalFound) {
             outputHandler.createOutputFile(optimalScheduler.getSolution(), _infoTracker.getGraph());
+            System.out.println("Length: " + optimalScheduler.getSolution().getScheduleLength());
         } else {
             outputHandler.createOutputFile(greedyScheduler.getSolution());
+            System.out.println("Length: " + greedyScheduler.getSolutionLength());
         }
+    }
+
+    private static Map<TaskNode, Double> getBottomLevels(List<TaskNode> tasks) {
+        Map<TaskNode, Double> minBottomLevels = new HashMap<TaskNode, Double>();
+
+        for (TaskNode task: tasks) {
+            if (task.getDependencies().length == 0) {
+                bottomLevelRecurse(task, minBottomLevels);
+            }
+        }
+
+        return minBottomLevels;
+    }
+
+    private static double bottomLevelRecurse(TaskNode t, Map<TaskNode, Double> bottomLevels) {
+        if (t.getDependents().size() == 0) {
+            bottomLevels.put(t, 0.0);
+            return 0.0;
+        }
+
+        List<TaskNode> dependents = t.getDependents();
+        TaskNode firstDependent = dependents.get(0);
+        double minBottomLevel = bottomLevelRecurse(firstDependent, bottomLevels) + firstDependent.getWeight() + firstDependent.getDependencyEdgeWeight(t);
+        for (int i = 1; i < dependents.size(); i++) {
+            minBottomLevel = Math.min(minBottomLevel, bottomLevelRecurse(dependents.get(i), bottomLevels) +
+                    dependents.get(i).getWeight() + dependents.get(i).getDependencyEdgeWeight(t));
+        }
+
+        bottomLevels.put(t, minBottomLevel);
+        return minBottomLevel;
     }
 
     @Override

@@ -46,14 +46,14 @@ public class SequentialOptimalScheduler implements Scheduler {
      * @param initialBoundValue Value used to bound search for schedules
      * @return Returns true if a schedule was found which is shorter than the provided bound value
      */
-    public boolean executeBranchAndBoundAlgorithm(double initialBoundValue) {
+    public boolean executeBranchAndBoundAlgorithm(double initialBoundValue, Map<TaskNode, Double> bottomLevels) {
         // Initializing the search tree with a partial schedule for each root node
         Stack<PartialSchedule> searchTree = new Stack<PartialSchedule>();
         for (TaskNode rootNode : _rootNodes) {
             List<TaskNode> canBeScheduled = new ArrayList<TaskNode>(_rootNodes);
             canBeScheduled.remove(rootNode);
 
-            PartialSchedule rootSchedule = new PartialSchedule(_numProcessors, rootNode, canBeScheduled, _topologicalOrderedTasks);
+            PartialSchedule rootSchedule = new PartialSchedule(_numProcessors, rootNode, canBeScheduled, bottomLevels);
             searchTree.push(rootSchedule);
         }
 
@@ -65,7 +65,7 @@ public class SequentialOptimalScheduler implements Scheduler {
         // While we have unexplored nodes, continue DFS with bound
         while (!searchTree.empty()) {
             PartialSchedule nodeToExplore = searchTree.pop();
-            PartialSchedule[] foundChildren = nodeToExplore.createChildren(_topologicalOrderedTasks);
+            PartialSchedule[] foundChildren = nodeToExplore.createChildren(bottomLevels);
 
             for (PartialSchedule child : foundChildren) {
                 double childLength = child.getScheduleLength();

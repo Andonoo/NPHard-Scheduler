@@ -21,7 +21,7 @@ public class ParallelOptimalTest {
         double scheduleFinishTime = greedyScheduler.getSolutionLength();
 
         ParallelOptimalScheduler optimalScheduler = new ParallelOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), processors, cores);
-        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
+        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength(), null);
 
         if (moreOptimalFound){
             scheduleFinishTime = optimalScheduler.getSolution().getScheduleLength();

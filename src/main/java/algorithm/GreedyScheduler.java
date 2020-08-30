@@ -27,7 +27,6 @@ public class GreedyScheduler {
     private final InfoTracker _infoTracker;
     private XYChart.Series[] _seriesArray;
 
-
     public GreedyScheduler(AdjacencyListGraph graph, int processors) {
         _graph = graph;
         _numProcessors = processors;
