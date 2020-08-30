@@ -51,8 +51,18 @@ From these options, we decided to go ahead with a DFS searching strategy and avo
 Given the client's timeframe, this was decided the safer option. If the team were to run into memory issues, there may not be enough time to resolve this. 
 
 ## 2. Branching Strategy
+Every node in the search space can be represented as a partial scheduling of tasks to processors. Therefore the natural branching strategy is to exhaustively allocate each 'available task' to every processor, where available tasks are those which have all of their dependency tasks already scheduled. The allocation of a single task to a single processor represents one child node of the previous partial schedule. This is demonstrated below.
 
-As a DFS searching strategy was decided, in addition for it being an exhaustive search, 
+![](https://i.imgur.com/Fl42HTz.png)
 
+## 3. Pruning Strategies
+In order to effectively bound the search space, the team researched a number of potential pruning strategies. These are summarized below.
 
+### Pruning the processor search space
+The first and most obvious way to prune the search space would be to reduce the potential allocations of tasks to processors. With the standard exhaustive allocation of tasks to processors, there will be many equivalent partial schedules generated. This is because the assignment of a task to 2 different empty processors would be considered 2 nodes in the search tree. If we are able to eliminate these duplicates, the search space of the tree would be decreased drastically. This could likely be acheived by only ever assigning a task to a single empty processor when branching.
 
+### Pruning the task allocation search space
+Even after pruning the processor search space it is likely that duplicate, equivalent, nodes will still be generated. In order to further reduce the size of the search tree, we will need to use some mechanism of tracking explored nodes. This could be acheived using some form of set which contains nodes which have already been explored. 
+
+### Bottom level estimations
+In order to avoid branching down paths which are definitely not going to yield a new most optimal schedule, some form of basic estimation should be used to determine if a partial schedule is worth branching into. This could be achieved by taking the remaining tasks to be scheduled, and using their weights to approximate an underestimate of a given partial schedules full length (the length which it will be once all tasks are scheduled). If this full length is greater than our currently found best, we can bound the search and again reduce the search space. 
