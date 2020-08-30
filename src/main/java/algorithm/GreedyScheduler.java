@@ -25,7 +25,7 @@ public class GreedyScheduler {
     private double _solutionLength;
     private List<TaskNode> _topologicalOrderedTasks;
     private final InfoTracker _infoTracker;
-    private XYChart.Series[] _seriesArray;
+    private final XYChart.Series[] _seriesArray;
 
     public GreedyScheduler(AdjacencyListGraph graph, int processors) {
         _graph = graph;
@@ -33,7 +33,6 @@ public class GreedyScheduler {
         _solutionLength = 0;
         _infoTracker = null;
         _seriesArray = null;
-
     }
 
     public GreedyScheduler(AdjacencyListGraph graph, int processors, InfoTracker infoTracker) {
@@ -103,7 +102,6 @@ public class GreedyScheduler {
             }
             currentEarliestFreeProcessor.add(task);
         }
-
         prepGraphForOutput(taskSchedulings, endTimes);
     }
 
@@ -189,7 +187,7 @@ public class GreedyScheduler {
             }
         }
 
-        for (TaskNode task: taskSchedulings.keySet()) {
+        for (TaskNode task : taskSchedulings.keySet()) {
             Node node = _graph.getNode(task.getId());
 
             int processorIndex = 0;
@@ -213,7 +211,7 @@ public class GreedyScheduler {
         if (_infoTracker != null) {
             _infoTracker.setCurrentBestHasChanged(true);
             _infoTracker.setGreedyData(_seriesArray);
-            _infoTracker.setCurrentBest((int)_solutionLength);
+            _infoTracker.setCurrentBest((int) _solutionLength);
         }
     }
 

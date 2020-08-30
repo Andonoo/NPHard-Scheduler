@@ -14,6 +14,7 @@ public interface Scheduler {
     /**
      * Gets the schedule which was computed by the branch and bound algorithm. Will return null if no schedule was found
      * with a shorter length than the provided initialBoundValue
+     *
      * @param initialBoundValue
      * @return Returns true if a schedule was found that is shorter than the provided bound value
      */
@@ -22,6 +23,7 @@ public interface Scheduler {
     /**
      * Gets the schedule which was computed by the branch and bound algorithm. Will return null if no schedule was found
      * with a shorter length than the provided initialBoundValue
+     *
      * @return Returns the most optimal completed schedule
      */
     PartialSchedule getSolution();

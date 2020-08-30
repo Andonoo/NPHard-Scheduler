@@ -6,11 +6,8 @@ import domain.DomainHandler;
 import domain.TaskNode;
 import io.CommandLineException;
 import io.InputHandler;
-import javafx.InfoTracker;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -26,7 +23,7 @@ public class SequentialOptimalTest {
 
         double scheduleFinishTime = greedyScheduler.getSolutionLength();
 
-        SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(),inputHandler.getProcessors());
+        SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), inputHandler.getProcessors());
 
         Map<TaskNode, Double> bottomLevels = DomainHandler.getBottomLevels(greedyScheduler.getTopologicallyOrderedTaskNodes());
         boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength(), bottomLevels);
@@ -45,7 +42,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH1_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH1_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -54,7 +51,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH2_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH2_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -63,7 +60,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH3_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH3_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -72,7 +69,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH4_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH4_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -81,7 +78,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH5_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH5_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -90,7 +87,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH6_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH6_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -99,7 +96,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH7_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH7_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -108,7 +105,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH8_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH8_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -117,7 +114,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH9_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH9_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -126,7 +123,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH10_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH10_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -135,7 +132,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH11_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH11_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -144,7 +141,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH12_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH12_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -153,7 +150,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH13_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH13_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -162,7 +159,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH14_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH14_10NODES_2P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     //endregion
@@ -175,7 +172,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH1_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH1_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -184,7 +181,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH2_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH2_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -193,7 +190,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH3_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH3_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -202,7 +199,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH4_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH4_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -211,7 +208,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH5_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH5_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -220,7 +217,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH6_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH6_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -229,7 +226,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH7_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH7_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -238,7 +235,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH8_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH8_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -247,7 +244,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH9_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH9_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -256,7 +253,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH10_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH10_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -265,7 +262,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH11_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH11_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -274,7 +271,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH12_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH12_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -283,7 +280,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH13_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH13_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
     @Test
@@ -292,7 +289,7 @@ public class SequentialOptimalTest {
 
         Double optimalFinishTime = findOptimalFinishTime(inputHandler);
 
-        assertEquals(GRAPH14_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
+        assertEquals(GRAPH14_10NODES_4P_FINISH_TIME, optimalFinishTime, DELTA);
     }
 
 

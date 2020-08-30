@@ -19,12 +19,10 @@ import java.io.IOException;
 import java.util.Map;
 
 public class Main extends Application {
-
     static InfoTracker _infoTracker;
     static InputHandler _inputHandler = null;
 
     public static void main(String[] args) {
-
         try {
             _inputHandler = new InputHandler(args);
         } catch (CommandLineException e) {
@@ -45,7 +43,6 @@ public class Main extends Application {
      * This method is called to start executing the required algorithms to produce the optimal schedule.
      */
     public static void executeAlgorithm() {
-
         // Find an OK schedule using the greedy algorithm
         GreedyScheduler greedyScheduler = _inputHandler.produceGUI() ? new GreedyScheduler(_inputHandler.getGraph(), _inputHandler.getProcessors(), _infoTracker) :
                 new GreedyScheduler(_inputHandler.getGraph(), _inputHandler.getProcessors());
@@ -81,7 +78,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-
         // Set up for javafx GUI
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("main.fxml"));

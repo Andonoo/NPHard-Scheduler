@@ -1,8 +1,0 @@
-digraph example {
-	a 	[Weight = 2];
-	b 	[Weight = 3];
-    c 	[Weight = 3];
-    d 	[Weight = 3];
-    e 	[Weight = 7];
-    f 	[Weight = 3];
-}

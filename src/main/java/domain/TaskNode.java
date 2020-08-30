@@ -1,9 +1,6 @@
 package domain;
 
-import org.graphstream.graph.Edge;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +32,7 @@ public class TaskNode {
 
     /**
      * Adds a dependent task to this TaskNode
+     *
      * @param dependent
      */
     public void addDependent(TaskNode dependent) {
@@ -65,10 +63,7 @@ public class TaskNode {
         } catch (ClassCastException e) {
             return false;
         }
-        if (otherTask.getId().equals(_id)) {
-            return true;
-        }
-        return false;
+        return otherTask.getId().equals(_id);
     }
 
     @Override

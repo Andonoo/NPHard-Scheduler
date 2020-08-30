@@ -6,7 +6,6 @@ import domain.TaskNode;
 import javafx.InfoTracker;
 
 import java.util.*;
-
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
@@ -19,10 +18,10 @@ public class ParallelOptimalScheduler implements Scheduler {
     private static final int FREE_MEMORY_LIMIT = 100000000;
 
     private final int _numCores;
-    private List<TaskNode> _rootNodes;
+    private final List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution = null;
-    private List<TaskNode> _topologicalOrderedTasks;
+    private final List<TaskNode> _topologicalOrderedTasks;
     private Map<TaskNode, Double> _bottomLevels;
     private double _globalBound;
     private Set<String> _syncExploredScheduleIds;
@@ -31,6 +30,7 @@ public class ParallelOptimalScheduler implements Scheduler {
 
     /**
      * Constructor for which to create the parallel scheduler
+     *
      * @param topologicallyOrderedTaskNodes
      * @param numProcessors
      * @param numCores
@@ -44,6 +44,7 @@ public class ParallelOptimalScheduler implements Scheduler {
 
     /**
      * Constructor for which an info tracker is implemented to the class (to concurrently update the GUI)
+     *
      * @param topologicallyOrderedTaskNodes
      * @param numProcessors
      * @param numCores
@@ -59,10 +60,11 @@ public class ParallelOptimalScheduler implements Scheduler {
 
     /**
      * Executes the branch and bound scheduling algorithm on the provided input graph.
+     *
      * @param initialBoundValue Value used to bound search for schedules
      * @return Returns true if a schedule was found which is shorter than the provided bound value
      */
-    public boolean executeBranchAndBoundAlgorithm(double initialBoundValue, Map<TaskNode,Double> bottomLevels) {
+    public boolean executeBranchAndBoundAlgorithm(double initialBoundValue, Map<TaskNode, Double> bottomLevels) {
         _bottomLevels = bottomLevels;
 
         // Initializing the search tree with a partial schedule for each root node
@@ -72,7 +74,7 @@ public class ParallelOptimalScheduler implements Scheduler {
         // Instantiating a synchronized set to track explored PartialSchedules
         _syncExploredScheduleIds = Collections.synchronizedSet(new HashSet<String>());
 
-        for (TaskNode rootNode: _rootNodes) {
+        for (TaskNode rootNode : _rootNodes) {
             List<TaskNode> canBeScheduled = new ArrayList<TaskNode>(_rootNodes);
             canBeScheduled.remove(rootNode);
 
@@ -91,6 +93,7 @@ public class ParallelOptimalScheduler implements Scheduler {
     /**
      * Gets the schedule which was computed by the branch and bound algorithm. Will return null if no schedule was found
      * with a shorter length than the provided initialBoundValue
+     *
      * @return
      */
     public PartialSchedule getSolution() {
@@ -124,7 +127,7 @@ public class ParallelOptimalScheduler implements Scheduler {
 
                 // Ensure that localBound is always updated in the while loop to lower search space.
                 localBound = Math.min(localBound, _globalBound);
-                for (PartialSchedule child: foundChildren) {
+                for (PartialSchedule child : foundChildren) {
                     double childLength = child.getScheduleLength();
 
                     if (_infoTracker != null) {
@@ -165,6 +168,7 @@ public class ParallelOptimalScheduler implements Scheduler {
 
     /**
      * Updates the global shared solution synchronously
+     *
      * @param localSchedule
      * @param localBound
      * @return
