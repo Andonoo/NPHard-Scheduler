@@ -15,6 +15,7 @@ import java.util.concurrent.RecursiveAction;
 public class ParallelOptimalScheduler implements Scheduler {
 
     private static final int THREAD_DEPTH = 10;
+    private static final int FREE_MEMORY_LIMIT = 100000000;
 
     private final int _numCores;
     private List<TaskNode> _rootNodes;
@@ -42,8 +43,7 @@ public class ParallelOptimalScheduler implements Scheduler {
         _globalBound = initialBoundValue;
 
         // Instantiating a synchronized set to track explored PartialSchedules
-        Set<String> exploredScheduleIds = new HashSet<String>(); // DO NOT USE
-        _syncExploredScheduleIds = Collections.synchronizedSet(exploredScheduleIds);
+        _syncExploredScheduleIds = Collections.synchronizedSet(new HashSet<String>());
 
         for (TaskNode rootNode: _rootNodes) {
             List<TaskNode> canBeScheduled = new ArrayList<TaskNode>(_rootNodes);
@@ -108,9 +108,15 @@ public class ParallelOptimalScheduler implements Scheduler {
                     }
 
                     // Branch by pushing child into search tree or bound
-                    if (!_syncExploredScheduleIds.contains(child.getScheduleId()) && childLength < localBound && child.getEstimatedFinish() < localBound) {
+                    if (!_syncExploredScheduleIds.contains(child.getScheduleId()) &&  childLength < localBound && child.getEstimatedFinish() < localBound) {
                         searchTree.addFirst(child);
-                        _syncExploredScheduleIds.add(child.getScheduleId());
+
+                        // As storing the explored schedules may result in overflow, we must detect and avoid this
+                        if (Runtime.getRuntime().freeMemory() > FREE_MEMORY_LIMIT) {
+                            _syncExploredScheduleIds.add(child.getScheduleId());
+                        } else {
+                            _syncExploredScheduleIds.clear();
+                        }
                     }
                 }
 
