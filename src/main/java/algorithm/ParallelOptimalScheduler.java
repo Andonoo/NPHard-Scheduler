@@ -3,8 +3,6 @@ package algorithm;
 import domain.DomainHandler;
 import domain.PartialSchedule;
 import domain.TaskNode;
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Node;
 
 import java.util.*;
 
@@ -24,6 +22,7 @@ public class ParallelOptimalScheduler implements Scheduler {
     private PartialSchedule _solution = null;
     private List<TaskNode> _topologicalOrderedTasks;
     private double _globalBound;
+    private Set<String> _syncExploredScheduleIds;
 
     public ParallelOptimalScheduler(List<TaskNode> topologicalOrderedTasks, int numProcessors, int numCores) {
         _numCores = numCores;
@@ -41,6 +40,10 @@ public class ParallelOptimalScheduler implements Scheduler {
         // Initializing the search tree with a partial schedule for each root node
         LinkedList<PartialSchedule> searchTree = new LinkedList<PartialSchedule>();
         _globalBound = initialBoundValue;
+
+        // Instantiating a synchronized set to track explored PartialSchedules
+        Set<String> exploredScheduleIds = new HashSet<String>(); // DO NOT USE
+        _syncExploredScheduleIds = Collections.synchronizedSet(exploredScheduleIds);
 
         for (TaskNode rootNode: _rootNodes) {
             List<TaskNode> canBeScheduled = new ArrayList<TaskNode>(_rootNodes);
@@ -105,8 +108,9 @@ public class ParallelOptimalScheduler implements Scheduler {
                     }
 
                     // Branch by pushing child into search tree or bound
-                    if (childLength < localBound && child.getEstimatedFinish() < localBound) {
+                    if (!_syncExploredScheduleIds.contains(child.getScheduleId()) && childLength < localBound && child.getEstimatedFinish() < localBound) {
                         searchTree.addFirst(child);
+                        _syncExploredScheduleIds.add(child.getScheduleId());
                     }
                 }
 

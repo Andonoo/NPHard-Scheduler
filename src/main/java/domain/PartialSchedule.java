@@ -17,6 +17,7 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
     private final double _scheduleLength;
     private int _firstAvailableProcessor;
     private final double _estimatedFinish;
+    private String[] _processorIds; // Maintains unique IDs for the processor schedules
 
     // State relating to the scheduling, which created this PartialSchedule
     private final Map<TaskNode, PartialSchedule> _schedulings; // Maps the scheduling of a task to the PartialOrder in which it was added
@@ -31,10 +32,13 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
      */
     public PartialSchedule(int numProcessors, TaskNode scheduledNode, List<TaskNode> otherRoots, List<TaskNode> allTasks) {
         _processorSchedules = new TaskNode[numProcessors][];
+        _processorIds = new String[numProcessors];
         _processorSchedules[0] = new TaskNode[] {scheduledNode};
         for (int i = 1; i < numProcessors; i++) {
             _processorSchedules[i] = new TaskNode[0];
+            _processorIds[i] = "";
         }
+        _processorIds[0] = scheduledNode.getId() + "-";
 
         _processorEndTimes = new double[numProcessors];
         _processorEndTimes[0] = scheduledNode.getWeight();
@@ -61,8 +65,12 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
      * @param scheduledTask task to be scheduled
      */
     private PartialSchedule(Map<TaskNode, PartialSchedule> schedulings, TaskNode[][] parentProcessorSchedules, Set<TaskNode> canBeScheduled,
-                           int scheduledProcessorIndex, TaskNode scheduledTask, int firstAvailableProcessor, double[] processorEndTimes, List<TaskNode> allTasks) {
+                           int scheduledProcessorIndex, TaskNode scheduledTask, int firstAvailableProcessor, double[] processorEndTimes,
+                            List<TaskNode> allTasks, String[] parentProcessorIds) {
         generateProcessorSchedules(parentProcessorSchedules, scheduledTask, scheduledProcessorIndex);
+
+        _processorIds = Arrays.copyOf(parentProcessorIds, parentProcessorIds.length);
+        _processorIds[scheduledProcessorIndex] = _processorIds[scheduledProcessorIndex] + scheduledTask.getId() + "-";
 
         _processorUsedIndex = scheduledProcessorIndex;
         _firstAvailableProcessor = firstAvailableProcessor;
@@ -126,7 +134,8 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
             scheduled.add(task);
             for (int processorIndex = 0; processorIndex <= _firstAvailableProcessor; processorIndex++) {
                 int firstAvailableProcessor = Math.min(processorIndex + 1, _processorSchedules.length-1);
-                children[i] = new PartialSchedule(_schedulings, _processorSchedules, _canBeScheduled, processorIndex, task, firstAvailableProcessor, _processorEndTimes, allTasks);
+                children[i] = new PartialSchedule(_schedulings, _processorSchedules, _canBeScheduled, processorIndex,
+                        task, firstAvailableProcessor, _processorEndTimes, allTasks, _processorIds);
                 i++;
             }
         }
@@ -272,6 +281,22 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return Returns a unique ID of this PartialSchedule, based on its processor schedulings.
+     */
+    public String getScheduleId() {
+        String [] scheduleIdArray = Arrays.copyOf(_processorIds, _processorIds.length);
+        /* We sort to ensure that equal PartialSchedules with different orderings of the arrays
+           have the same IDs */
+        Arrays.sort(scheduleIdArray);
+
+        String scheduleId = "";
+        for (String processorId: scheduleIdArray) {
+            scheduleId = scheduleId + processorId + "|";
+        }
+        return scheduleId;
     }
 
     /**

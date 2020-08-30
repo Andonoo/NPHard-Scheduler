@@ -4,8 +4,6 @@ import domain.DomainHandler;
 import domain.PartialSchedule;
 import domain.TaskNode;
 import javafx.InfoTracker;
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Node;
 
 import java.util.*;
 
@@ -44,6 +42,9 @@ public class SequentialOptimalScheduler implements Scheduler {
             searchTree.push(rootSchedule);
         }
 
+        // We maintain a set of PartialSchedule hashes, so we can detect and avoid duplicates
+        Set<String> exploredScheduleIds = new HashSet<String>();
+
         double boundValue = initialBoundValue;
         PartialSchedule currentBest = null;
         // While we have unexplored nodes, continue DFS with bound
@@ -66,8 +67,9 @@ public class SequentialOptimalScheduler implements Scheduler {
                     _infoTracker.setScheduledToBeDisplayed(child);
                 }
                 // Branch by pushing child into search tree or bound
-                if (childLength < boundValue && child.getEstimatedFinish() < boundValue) {
+                if (!exploredScheduleIds.contains(child.getScheduleId()) && childLength < boundValue && child.getEstimatedFinish() < boundValue) {
                     searchTree.push(child);
+                    exploredScheduleIds.add(child.getScheduleId());
                 }
             }
         }
