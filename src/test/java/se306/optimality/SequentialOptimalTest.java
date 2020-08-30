@@ -54,11 +54,10 @@ public class SequentialOptimalTest {
         }
 
         List<TaskNode> dependents = t.getDependents();
-        TaskNode firstDependent = dependents.get(0);
-        double minBottomLevel = bottomLevelRecurse(firstDependent, bottomLevels) + firstDependent.getWeight() + firstDependent.getDependencyEdgeWeight(t);
-        for (int i = 1; i < dependents.size(); i++) {
-            minBottomLevel = Math.min(minBottomLevel, bottomLevelRecurse(dependents.get(i), bottomLevels) +
-                    dependents.get(i).getWeight() + dependents.get(i).getDependencyEdgeWeight(t));
+        //TaskNode firstDependent = dependents.get(0);
+        double minBottomLevel = 0; //bottomLevelRecurse(firstDependent, bottomLevels) + firstDependent.getWeight();
+        for (int i = 0; i < dependents.size(); i++) {
+            minBottomLevel = Math.max(minBottomLevel, bottomLevelRecurse(dependents.get(i), bottomLevels) + dependents.get(i).getWeight());
         }
 
         bottomLevels.put(t, minBottomLevel);

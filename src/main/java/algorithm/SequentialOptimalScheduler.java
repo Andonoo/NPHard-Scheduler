@@ -85,7 +85,7 @@ public class SequentialOptimalScheduler implements Scheduler {
                 }
 
                 // Branch by pushing child into search tree or bound
-                if (!exploredScheduleIds.contains(child.getScheduleId()) && childLength < boundValue && child.getEstimatedFinish() < boundValue) {
+                if (childLength < boundValue && child.getEstimatedFinish() < boundValue && !exploredScheduleIds.contains(child.getScheduleId())) {
                     searchTree.push(child);
 
                     // As storing the explored schedules may result in overflow, we must detect and avoid this

@@ -128,7 +128,7 @@ public class ParallelOptimalScheduler implements Scheduler {
                     }
 
                     // Branch by pushing child into search tree or bound
-                    if (!_syncExploredScheduleIds.contains(child.getScheduleId()) && childLength < localBound && child.getEstimatedFinish() < localBound) {
+                    if (childLength < localBound && !_syncExploredScheduleIds.contains(child.getScheduleId())) {
                         searchTree.addFirst(child);
 
                         // As storing the explored schedules may result in overflow, we must detect and avoid this
