@@ -4,9 +4,7 @@ import algorithm.GreedyScheduler;
 import algorithm.SequentialOptimalScheduler;
 import io.CommandLineException;
 import io.InputHandler;
-import io.OutputHandler;
 import javafx.InfoTracker;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -22,9 +20,7 @@ public class SequentialOptimalTest {
 
         double scheduleFinishTime = greedyScheduler.getSolutionLength();
 
-        InfoTracker it = new InfoTracker(inputHandler.getFileName(), inputHandler.getProcessors(), inputHandler.getCores(), inputHandler.getGraph());
-
-        SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), it);
+        SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(),inputHandler.getProcessors());
         boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
 
         if (moreOptimalFound) {
@@ -161,14 +157,6 @@ public class SequentialOptimalTest {
         assertEquals(GRAPH14_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
     }
 
-    @Test
-    public void test10Nodes2PGraph15() throws CommandLineException {
-        InputHandler inputHandler = new InputHandler(new String[]{GRAPH15_10NODES, "2"});
-
-        Double optimalFinishTime = findOptimalFinishTime(inputHandler);
-
-        assertEquals(GRAPH15_10NODES_2P_FINISH_TIME,optimalFinishTime,DELTA);
-    }
     //endregion
 
     //region Tests for 10 nodes with 4 processors
@@ -299,14 +287,7 @@ public class SequentialOptimalTest {
         assertEquals(GRAPH14_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
     }
 
-    @Test
-    public void test10Nodes4PGraph15() throws CommandLineException {
-        InputHandler inputHandler = new InputHandler(new String[]{GRAPH15_10NODES, "4"});
-
-        Double optimalFinishTime = findOptimalFinishTime(inputHandler);
-
-        assertEquals(GRAPH15_10NODES_4P_FINISH_TIME,optimalFinishTime,DELTA);
-    }
 
     //endregion
+
 }

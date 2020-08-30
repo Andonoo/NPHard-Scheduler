@@ -24,6 +24,4 @@ public class InputTestConstants {
     public static final String NON_EXISTENT_FILE_FAIL = "Test should have thrown a CommandLineException asking for an input file input file that exists";
     public static final String NON_INTEGER_FAIL = "Test should have thrown a CommandLineException asking for an integer for the number of processors";
     public static final String NEGATIVE_INTEGER_FAIL = "Test should have thrown a CommandLineException asking for a valid number of processors";
-
-    public static final String[] OUTPUT_TEST_INPUT = {"././src/test/resources/outputFileTest1.dot", "2"};
 }
