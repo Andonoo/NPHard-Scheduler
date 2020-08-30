@@ -12,6 +12,8 @@ import java.util.*;
  */
 public class SequentialOptimalScheduler implements Scheduler {
 
+    private static final int FREE_MEMORY_LIMIT = 100000000;
+
     private List<TaskNode> _rootNodes;
     private final int _numProcessors;
     private PartialSchedule _solution;
@@ -66,10 +68,17 @@ public class SequentialOptimalScheduler implements Scheduler {
                     _infoTracker.setCurrentBest((int) childLength);
                     _infoTracker.setScheduledToBeDisplayed(child);
                 }
+
                 // Branch by pushing child into search tree or bound
                 if (!exploredScheduleIds.contains(child.getScheduleId()) && childLength < boundValue && child.getEstimatedFinish() < boundValue) {
                     searchTree.push(child);
-                    exploredScheduleIds.add(child.getScheduleId());
+
+                    // As storing the explored schedules may result in overflow, we must detect and avoid this
+                    if (Runtime.getRuntime().freeMemory() > FREE_MEMORY_LIMIT) {
+                        exploredScheduleIds.add(child.getScheduleId());
+                    } else {
+                        exploredScheduleIds.clear();
+                    }
                 }
             }
         }
