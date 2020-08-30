@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class TaskNode implements Comparable<TaskNode> {
+public class TaskNode {
     private final String _id;
     private final TaskNode[] _dependencies;
     private final Map<TaskNode, Double> _dependencyWeights;
@@ -34,30 +34,11 @@ public class TaskNode implements Comparable<TaskNode> {
     }
 
     /**
-     * Adds a dependent to this TaskNode
+     * Adds a dependent task to this TaskNode
      * @param dependent
      */
     public void addDependent(TaskNode dependent) {
         _dependents.add(dependent);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        TaskNode otherTask;
-        try {
-            otherTask = (TaskNode) o;
-        } catch (ClassCastException e) {
-            return false;
-        }
-        if (otherTask.getId().equals(_id)) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return _id.hashCode();
     }
 
     public double getWeight() {
@@ -77,14 +58,21 @@ public class TaskNode implements Comparable<TaskNode> {
     }
 
     @Override
-    public int compareTo(TaskNode o) {
-        if (_dependencyWeights.keySet().contains(o)) {
-            return 1;
-        } else {
-            if (_weight > o._weight) {
-                return -1;
-            }
-            return 1;
+    public boolean equals(Object o) {
+        TaskNode otherTask;
+        try {
+            otherTask = (TaskNode) o;
+        } catch (ClassCastException e) {
+            return false;
         }
+        if (otherTask.getId().equals(_id)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return _id.hashCode();
     }
 }

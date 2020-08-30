@@ -58,4 +58,47 @@ public class DomainHandler {
 
         return rootNodes;
     }
+
+    /**
+     * Determines the max bottom levels of each node in the input. These represent the longest path from a given
+     * node to the a completed schedule state.
+     * @param tasks
+     * @return
+     */
+    public static Map<TaskNode, Double> getBottomLevels(List<TaskNode> tasks) {
+        Map<TaskNode, Double> minBottomLevels = new HashMap<TaskNode, Double>();
+
+        for (TaskNode task: tasks) {
+            if (task.getDependencies().length == 0) {
+                bottomLevelRecurse(task, minBottomLevels);
+            }
+        }
+
+        return minBottomLevels;
+    }
+
+    /**
+     * Recursive method used in the bottom levelling algorithm. This finds the bottom level for a single TaskNode based
+     * on recursive calls.
+     * @param task
+     * @param bottomLevels
+     * @return
+     */
+    private static double bottomLevelRecurse(TaskNode task, Map<TaskNode, Double> bottomLevels) {
+        // Base case - if a node has no dependents, it has 0 bottom level (no nodes need to be scheduled after it)
+        if (task.getDependents().size() == 0) {
+            bottomLevels.put(task, 0.0);
+            return 0.0;
+        }
+
+        // Finds the maximum path to an end node
+        List<TaskNode> dependents = task.getDependents();
+        double maxBottomLevel = 0;
+        for (int i = 0; i < dependents.size(); i++) {
+            maxBottomLevel = Math.max(maxBottomLevel, bottomLevelRecurse(dependents.get(i), bottomLevels) + dependents.get(i).getWeight());
+        }
+
+        bottomLevels.put(task, maxBottomLevel);
+        return maxBottomLevel;
+    }
 }

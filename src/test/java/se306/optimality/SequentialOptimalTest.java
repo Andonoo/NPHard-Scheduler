@@ -2,10 +2,16 @@ package se306.optimality;
 
 import algorithm.GreedyScheduler;
 import algorithm.SequentialOptimalScheduler;
+import domain.DomainHandler;
+import domain.TaskNode;
 import io.CommandLineException;
 import io.InputHandler;
 import javafx.InfoTracker;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static se306.optimality.OptimalityTestConstants.*;
@@ -21,7 +27,9 @@ public class SequentialOptimalTest {
         double scheduleFinishTime = greedyScheduler.getSolutionLength();
 
         SequentialOptimalScheduler optimalScheduler = new SequentialOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(),inputHandler.getProcessors());
-        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
+
+        Map<TaskNode, Double> bottomLevels = DomainHandler.getBottomLevels(greedyScheduler.getTopologicallyOrderedTaskNodes());
+        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength(), bottomLevels);
 
         if (moreOptimalFound) {
             scheduleFinishTime = optimalScheduler.getSolution().getScheduleLength();

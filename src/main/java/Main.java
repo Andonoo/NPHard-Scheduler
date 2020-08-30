@@ -2,6 +2,8 @@ import algorithm.GreedyScheduler;
 import algorithm.ParallelOptimalScheduler;
 import algorithm.Scheduler;
 import algorithm.SequentialOptimalScheduler;
+import domain.DomainHandler;
+import domain.TaskNode;
 import io.CommandLineException;
 import io.InputHandler;
 import io.OutputHandler;
@@ -14,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class Main extends Application {
 
@@ -34,6 +37,7 @@ public class Main extends Application {
         } else {
             executeAlgorithm();
         }
+
         System.exit(0);
     }
 
@@ -54,7 +58,8 @@ public class Main extends Application {
                     new ParallelOptimalScheduler(greedyScheduler.getTopologicallyOrderedTaskNodes(), _inputHandler.getProcessors(), _inputHandler.getCores());
         }
 
-        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength());
+        Map<TaskNode, Double> bottomLevels = DomainHandler.getBottomLevels(greedyScheduler.getTopologicallyOrderedTaskNodes());
+        boolean moreOptimalFound = optimalScheduler.executeBranchAndBoundAlgorithm(greedyScheduler.getSolutionLength(), bottomLevels);
 
         _infoTracker.setIsFinished(true);
 

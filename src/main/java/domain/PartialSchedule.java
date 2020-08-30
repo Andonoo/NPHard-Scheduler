@@ -8,7 +8,7 @@ import java.util.*;
  * the schedule itself, as well as the scheduling which led to the creation of this schedule (the addition of one
  * task to a processor).
  */
-public class PartialSchedule implements Comparable<PartialSchedule> {
+public class PartialSchedule {
 
     // State relating to the schedule
     private TaskNode[][] _processorSchedules;
@@ -28,67 +28,66 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
      * Initializes a PartialSchedule consisting of only one node, scheduled on the first processor. This
      * represents a root in the search tree.
      * @param numProcessors
-     * @param scheduledNode
+     * @param scheduledTask
      */
-    public PartialSchedule(int numProcessors, TaskNode scheduledNode, List<TaskNode> otherRoots, List<TaskNode> allTasks) {
+    public PartialSchedule(int numProcessors, TaskNode scheduledTask, List<TaskNode> otherRoots, Map<TaskNode, Double> bottomLevels) {
         _processorSchedules = new TaskNode[numProcessors][];
         _processorIds = new String[numProcessors];
-        _processorSchedules[0] = new TaskNode[] {scheduledNode};
+        _processorSchedules[0] = new TaskNode[] {scheduledTask};
         for (int i = 1; i < numProcessors; i++) {
             _processorSchedules[i] = new TaskNode[0];
             _processorIds[i] = "";
         }
-        _processorIds[0] = scheduledNode.getId() + "-";
+        _processorIds[0] = scheduledTask.getId() + "-";
 
         _processorEndTimes = new double[numProcessors];
-        _processorEndTimes[0] = scheduledNode.getWeight();
+        _processorEndTimes[0] = scheduledTask.getWeight();
         _processorUsedIndex = 0;
         _firstAvailableProcessor = Math.min(_processorSchedules.length-1, 1);
 
         _schedulings = new HashMap<TaskNode, PartialSchedule>();
-        _schedulings.put(scheduledNode, this);
+        _schedulings.put(scheduledTask, this);
 
         _canBeScheduled = new HashSet<TaskNode>(otherRoots);
-        _canBeScheduled.addAll(getNewlySchedulable(scheduledNode));
+        _canBeScheduled.addAll(getNewlySchedulable(scheduledTask));
 
-        _scheduledTaskEndTime = scheduledNode.getWeight();
-        _scheduleLength = scheduledNode.getWeight();
+        _scheduledTaskEndTime = scheduledTask.getWeight();
+        _scheduleLength = scheduledTask.getWeight();
 
-        _estimatedFinish = estimateFinish(allTasks);
+        _estimatedFinish = _scheduledTaskEndTime + bottomLevels.get(scheduledTask);
     }
 
     /**
      * Creates a new child PartialSchedule, by taking the processor schedules of its parent and scheduling the new
      * task on the specified processor. Used to create a PartialSchedules child schedules.
-     * @param parentProcessorSchedules
      * @param scheduledProcessorIndex
      * @param scheduledTask task to be scheduled
      */
-    private PartialSchedule(Map<TaskNode, PartialSchedule> schedulings, TaskNode[][] parentProcessorSchedules, Set<TaskNode> canBeScheduled,
-                           int scheduledProcessorIndex, TaskNode scheduledTask, int firstAvailableProcessor, double[] processorEndTimes,
-                            List<TaskNode> allTasks, String[] parentProcessorIds) {
-        generateProcessorSchedules(parentProcessorSchedules, scheduledTask, scheduledProcessorIndex);
+    private PartialSchedule(PartialSchedule parent, int scheduledProcessorIndex, TaskNode scheduledTask,
+                            int firstAvailableProcessor, Map<TaskNode, Double> bottomLevels) {
+        generateProcessorSchedules(parent._processorSchedules, scheduledTask, scheduledProcessorIndex);
 
-        _processorIds = Arrays.copyOf(parentProcessorIds, parentProcessorIds.length);
+        _processorIds = Arrays.copyOf(parent._processorIds, parent._processorIds.length);
         _processorIds[scheduledProcessorIndex] = _processorIds[scheduledProcessorIndex] + scheduledTask.getId() + "-";
 
         _processorUsedIndex = scheduledProcessorIndex;
         _firstAvailableProcessor = firstAvailableProcessor;
 
-        _schedulings = new HashMap<TaskNode, PartialSchedule>(schedulings);
+        _schedulings = new HashMap<TaskNode, PartialSchedule>(parent._schedulings);
         _schedulings.put(scheduledTask, this);
 
-        _canBeScheduled = new HashSet<TaskNode>(canBeScheduled);
+        _canBeScheduled = new HashSet<TaskNode>(parent._canBeScheduled);
         _canBeScheduled.remove(scheduledTask);
         _canBeScheduled.addAll(getNewlySchedulable(scheduledTask));
 
         _scheduledTaskEndTime = computeScheduledEndTime(scheduledTask);
 
-        _processorEndTimes = Arrays.copyOf(processorEndTimes, processorEndTimes.length);
+        _processorEndTimes = Arrays.copyOf(parent._processorEndTimes, parent._processorEndTimes.length);
         _processorEndTimes[scheduledProcessorIndex] = _scheduledTaskEndTime;
         _scheduleLength = computeScheduleLength();
 
-        _estimatedFinish = estimateFinish(allTasks);
+        // Estimate the finish based on the addition of the bottom level
+        _estimatedFinish = _scheduledTaskEndTime + bottomLevels.get(scheduledTask);
     }
 
     /**
@@ -122,9 +121,10 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
     /**
      * Creates every potential child of this PartialSchedule, by scheduling every available task on every
      * available processor. This represents the exploration of this node in the search tree.
+     * @param bottomLevels
      * @return child schedules
      */
-    public PartialSchedule[] createChildren(List<TaskNode> allTasks) {
+    public PartialSchedule[] createChildren(Map<TaskNode, Double> bottomLevels) {
         PartialSchedule[] children = new PartialSchedule[_canBeScheduled.size() * (_firstAvailableProcessor +1)];
 
         int i = 0;
@@ -134,8 +134,7 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
             scheduled.add(task);
             for (int processorIndex = 0; processorIndex <= _firstAvailableProcessor; processorIndex++) {
                 int firstAvailableProcessor = Math.min(processorIndex + 1, _processorSchedules.length-1);
-                children[i] = new PartialSchedule(_schedulings, _processorSchedules, _canBeScheduled, processorIndex,
-                        task, firstAvailableProcessor, _processorEndTimes, allTasks, _processorIds);
+                children[i] = new PartialSchedule(this, processorIndex, task, firstAvailableProcessor, bottomLevels);
                 i++;
             }
         }
@@ -225,33 +224,6 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
     }
 
     /**
-     * Estimates the end time of this PartialSchedule if it were a full schedule. It does this by using an
-     * earliest available processor heuristic assignment, ignoring dependencies.
-     * @param topologicalOrderedTasks
-     * @return
-     */
-    private double estimateFinish(List<TaskNode> topologicalOrderedTasks) {
-        double[] processorEndTimes = Arrays.copyOf(_processorEndTimes, _processorEndTimes.length) ;
-
-        List<TaskNode> remainingTasks = new ArrayList<TaskNode>();
-        Set<TaskNode> scheduledTasks = _schedulings.keySet();
-        for (TaskNode task: topologicalOrderedTasks) {
-            if (!scheduledTasks.contains(task)) {
-                remainingTasks.add(task);
-            }
-        }
-        Collections.sort(remainingTasks);
-
-        for (TaskNode task: remainingTasks) {
-            Arrays.sort(processorEndTimes);
-            processorEndTimes[0] = processorEndTimes[0] + task.getWeight();
-        }
-
-        Arrays.sort(processorEndTimes);
-        return processorEndTimes[processorEndTimes.length-1];
-    }
-
-    /**
      * @return Returns the end time of the task which was scheduled with the creation of this node (PartialSchedule)
      */
     public double getScheduledTaskEndTime() {
@@ -318,10 +290,5 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
      */
     public Map<TaskNode, PartialSchedule> getSchedulings() {
         return _schedulings;
-    }
-
-    @Override
-    public int compareTo(PartialSchedule o) {
-        return Double.compare(_scheduleLength, o._scheduleLength);
     }
 }

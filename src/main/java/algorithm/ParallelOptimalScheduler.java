@@ -23,6 +23,7 @@ public class ParallelOptimalScheduler implements Scheduler {
     private final int _numProcessors;
     private PartialSchedule _solution = null;
     private List<TaskNode> _topologicalOrderedTasks;
+    private Map<TaskNode, Double> _bottomLevels;
     private double _globalBound;
     private Set<String> _syncExploredScheduleIds;
     private InfoTracker _infoTracker = null;
@@ -48,7 +49,8 @@ public class ParallelOptimalScheduler implements Scheduler {
      * @param initialBoundValue Value used to bound search for schedules
      * @return Returns true if a schedule was found which is shorter than the provided bound value
      */
-    public boolean executeBranchAndBoundAlgorithm(double initialBoundValue) {
+    public boolean executeBranchAndBoundAlgorithm(double initialBoundValue, Map<TaskNode,Double> bottomLevels) {
+        _bottomLevels = bottomLevels;
 
         // Initializing the search tree with a partial schedule for each root node
         LinkedList<PartialSchedule> searchTree = new LinkedList<PartialSchedule>();
@@ -61,7 +63,7 @@ public class ParallelOptimalScheduler implements Scheduler {
             List<TaskNode> canBeScheduled = new ArrayList<TaskNode>(_rootNodes);
             canBeScheduled.remove(rootNode);
 
-            PartialSchedule rootSchedule = new PartialSchedule(_numProcessors, rootNode, canBeScheduled, _topologicalOrderedTasks);
+            PartialSchedule rootSchedule = new PartialSchedule(_numProcessors, rootNode, canBeScheduled, bottomLevels);
             searchTree.push(rootSchedule);
         }
 
@@ -106,7 +108,7 @@ public class ParallelOptimalScheduler implements Scheduler {
             while (!searchTree.isEmpty()) {
 
                 PartialSchedule nodeToExplore = searchTree.pop();
-                PartialSchedule[] foundChildren = nodeToExplore.createChildren(_topologicalOrderedTasks);
+                PartialSchedule[] foundChildren = nodeToExplore.createChildren(_bottomLevels);
 
                 localBound = Math.min(localBound, _globalBound);
                 for (PartialSchedule child: foundChildren) {
@@ -126,7 +128,7 @@ public class ParallelOptimalScheduler implements Scheduler {
                     }
 
                     // Branch by pushing child into search tree or bound
-                    if (!_syncExploredScheduleIds.contains(child.getScheduleId()) && childLength < localBound && child.getEstimatedFinish() < localBound) {
+                    if (childLength < localBound && child.getEstimatedFinish() < localBound && !_syncExploredScheduleIds.contains(child.getScheduleId())) {
                         searchTree.addFirst(child);
 
                         // As storing the explored schedules may result in overflow, we must detect and avoid this

@@ -9,6 +9,6 @@ import java.util.*;
 
 public interface Scheduler {
 
-    public boolean executeBranchAndBoundAlgorithm(double initialBoundValue);
+    public boolean executeBranchAndBoundAlgorithm(double initialBoundValue, Map<TaskNode, Double> bottomLevels);
     public PartialSchedule getSolution();
 }
