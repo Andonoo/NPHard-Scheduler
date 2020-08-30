@@ -60,31 +60,29 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
     /**
      * Creates a new child PartialSchedule, by taking the processor schedules of its parent and scheduling the new
      * task on the specified processor. Used to create a PartialSchedules child schedules.
-     * @param parentProcessorSchedules
      * @param scheduledProcessorIndex
      * @param scheduledTask task to be scheduled
      */
-    private PartialSchedule(Map<TaskNode, PartialSchedule> schedulings, TaskNode[][] parentProcessorSchedules, Set<TaskNode> canBeScheduled,
-                           int scheduledProcessorIndex, TaskNode scheduledTask, int firstAvailableProcessor, double[] processorEndTimes,
-                            Map<TaskNode, Double> bottomLevels, String[] parentProcessorIds) {
-        generateProcessorSchedules(parentProcessorSchedules, scheduledTask, scheduledProcessorIndex);
+    private PartialSchedule(PartialSchedule parent, int scheduledProcessorIndex, TaskNode scheduledTask,
+                            int firstAvailableProcessor, Map<TaskNode, Double> bottomLevels) {
+        generateProcessorSchedules(parent._processorSchedules, scheduledTask, scheduledProcessorIndex);
 
-        _processorIds = Arrays.copyOf(parentProcessorIds, parentProcessorIds.length);
+        _processorIds = Arrays.copyOf(parent._processorIds, parent._processorIds.length);
         _processorIds[scheduledProcessorIndex] = _processorIds[scheduledProcessorIndex] + scheduledTask.getId() + "-";
 
         _processorUsedIndex = scheduledProcessorIndex;
         _firstAvailableProcessor = firstAvailableProcessor;
 
-        _schedulings = new HashMap<TaskNode, PartialSchedule>(schedulings);
+        _schedulings = new HashMap<TaskNode, PartialSchedule>(parent._schedulings);
         _schedulings.put(scheduledTask, this);
 
-        _canBeScheduled = new HashSet<TaskNode>(canBeScheduled);
+        _canBeScheduled = new HashSet<TaskNode>(parent._canBeScheduled);
         _canBeScheduled.remove(scheduledTask);
         _canBeScheduled.addAll(getNewlySchedulable(scheduledTask));
 
         _scheduledTaskEndTime = computeScheduledEndTime(scheduledTask);
 
-        _processorEndTimes = Arrays.copyOf(processorEndTimes, processorEndTimes.length);
+        _processorEndTimes = Arrays.copyOf(parent._processorEndTimes, parent._processorEndTimes.length);
         _processorEndTimes[scheduledProcessorIndex] = _scheduledTaskEndTime;
         _scheduleLength = computeScheduleLength();
 
@@ -136,8 +134,7 @@ public class PartialSchedule implements Comparable<PartialSchedule> {
             scheduled.add(task);
             for (int processorIndex = 0; processorIndex <= _firstAvailableProcessor; processorIndex++) {
                 int firstAvailableProcessor = Math.min(processorIndex + 1, _processorSchedules.length-1);
-                children[i] = new PartialSchedule(_schedulings, _processorSchedules, _canBeScheduled, processorIndex,
-                        task, firstAvailableProcessor, _processorEndTimes, bottomLevels, _processorIds);
+                children[i] = new PartialSchedule(this, processorIndex, task, firstAvailableProcessor, bottomLevels);
                 i++;
             }
         }
