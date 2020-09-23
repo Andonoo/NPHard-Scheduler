@@ -9,6 +9,8 @@ import java.util.*;
 
 /**
  * Class implementing an optimal scheduling algorithm based on an exhaustive branch and bound search.
+ *
+ * @author Andrew Donovan
  */
 public class SequentialOptimalScheduler implements Scheduler {
 
