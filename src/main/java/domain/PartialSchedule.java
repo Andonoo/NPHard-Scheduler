@@ -7,6 +7,8 @@ import java.util.*;
  * also be used to represent a complete solution. This class contains state pertaining to both the abstraction of
  * the schedule itself, as well as the scheduling which led to the creation of this schedule (the addition of one
  * task to a processor).
+ *
+ * @author Andrew Donovan
  */
 public class PartialSchedule {
 
